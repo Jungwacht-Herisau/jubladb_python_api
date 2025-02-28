@@ -67,3 +67,6 @@ target/
 
 
 openapi-generator-cli-*.jar
+
+/.idea/shelf/
+/.idea/workspace.xml
