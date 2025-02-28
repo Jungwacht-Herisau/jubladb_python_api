@@ -109,7 +109,6 @@ if __name__ == '__main__':
     # os.remove(".travis.yml")
     # os.remove(".gitlab-ci.yml")
     # os.remove("git_push.sh")
-    shutil.copyfile("README.md", "docs/README.md")
 
     #for extfile in os.listdir("extensions"):
     #    shutil.copy2(os.path.join("extensions", extfile), os.path.join("src", MODULE_NAME, MODULE_NAME, extfile))
