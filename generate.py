@@ -11,7 +11,7 @@ import yaml
 
 import build
 
-PACKAGE_VERSION = "0.0.2"
+PACKAGE_VERSION = "0.0.3"
 
 SPEC_FILE_NAME = "spec.yaml"
 
