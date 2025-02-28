@@ -11,6 +11,8 @@ import yaml
 
 import build
 
+PACKAGE_VERSION = "0.0.2"
+
 SPEC_FILE_NAME = "spec.yaml"
 
 # OPENAPI_GENERATOR_CLI_VERSION = "8.0.0-SNAPSHOT"
@@ -96,10 +98,10 @@ if __name__ == '__main__':
                                             "generate",
                                             "-g", "python",
                                             "-i", SPEC_FILE_NAME,
-                                            #"-o", f"src/{MODULE_NAME}",
+                                            # "-o", f"src/{MODULE_NAME}",
                                             "-o", ".",
                                             "-c", "openapi_config.yaml",
-                                            f"--additional-properties=packageName={MODULE_NAME},packageUrl=https://github.com/Jungwacht-Herisau/jubladb_python_api,packageVersion=0.0.1",
+                                            f"--additional-properties=packageName={MODULE_NAME},packageUrl=https://github.com/Jungwacht-Herisau/jubladb_python_api,packageVersion={PACKAGE_VERSION}",
                                             # f"--additional-properties=infoName=\"Basil Bader\"",
                                             ])
 
