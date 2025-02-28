@@ -76,9 +76,9 @@ class JsonapiInfo(BaseModel):
         # override the default output from pydantic by calling `to_dict()` of each value in links (dict)
         _field_dict = {}
         if self.links:
-            for _key_links in self.links:
-                if self.links[_key_links]:
-                    _field_dict[_key_links] = self.links[_key_links].to_dict()
+            for _key in self.links:
+                if self.links[_key]:
+                    _field_dict[_key] = self.links[_key].to_dict()
             _dict['links'] = _field_dict
         # override the default output from pydantic by calling `to_dict()` of jsonapi
         if self.jsonapi:
