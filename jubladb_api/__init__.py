@@ -150,4 +150,4 @@ from jubladb_api.models.social_accounts_resource import SocialAccountsResource
 from jubladb_api.models.social_accounts_single import SocialAccountsSingle
 from jubladb_api.models.types import Types
 
-from jubladb_api import iterators
+from jubladb_api import extensions
