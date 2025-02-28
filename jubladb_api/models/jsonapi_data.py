@@ -23,7 +23,7 @@ from pydantic import StrictStr, Field
 from typing import Union, List, Set, Optional, Dict
 from typing_extensions import Literal, Self
 
-JSONAPIDATA_ONE_OF_SCHEMAS = ["JsonapiResource", "List[JsonapiResource]"]
+JSONAPIDATA_ONE_OF_SCHEMAS = ["JsonapiResource", "List[JsonapiResource]", "object"]
 
 class JsonapiData(BaseModel):
     """
@@ -33,8 +33,10 @@ class JsonapiData(BaseModel):
     oneof_schema_1_validator: Optional[JsonapiResource] = None
     # data type: List[JsonapiResource]
     oneof_schema_2_validator: Optional[List[JsonapiResource]] = Field(default=None, description="An array of resource objects, an array of resource identifier objects, or an empty array ([]), for requests that target resource collections.")
-    actual_instance: Optional[Union[JsonapiResource, List[JsonapiResource]]] = None
-    one_of_schemas: Set[str] = { "JsonapiResource", "List[JsonapiResource]" }
+    # data type: object
+    oneof_schema_3_validator: Optional[Any] = Field(default=None, description="null if the request is one that might correspond to a single resource, but doesn't currently.")
+    actual_instance: Optional[Union[JsonapiResource, List[JsonapiResource], object]] = None
+    one_of_schemas: Set[str] = { "JsonapiResource", "List[JsonapiResource]", "object" }
 
     model_config = ConfigDict(
         validate_assignment=True,
@@ -54,9 +56,6 @@ class JsonapiData(BaseModel):
 
     @field_validator('actual_instance')
     def actual_instance_must_validate_oneof(cls, v):
-        if v is None:
-            return v
-
         instance = JsonapiData.model_construct()
         error_messages = []
         match = 0
@@ -71,12 +70,18 @@ class JsonapiData(BaseModel):
             match += 1
         except (ValidationError, ValueError) as e:
             error_messages.append(str(e))
+        # validate data type: object
+        try:
+            instance.oneof_schema_3_validator = v
+            match += 1
+        except (ValidationError, ValueError) as e:
+            error_messages.append(str(e))
         if match > 1:
             # more than 1 match
-            raise ValueError("Multiple matches found when setting `actual_instance` in JsonapiData with oneOf schemas: JsonapiResource, List[JsonapiResource]. Details: " + ", ".join(error_messages))
+            raise ValueError("Multiple matches found when setting `actual_instance` in JsonapiData with oneOf schemas: JsonapiResource, List[JsonapiResource], object. Details: " + ", ".join(error_messages))
         elif match == 0:
             # no match
-            raise ValueError("No match found when setting `actual_instance` in JsonapiData with oneOf schemas: JsonapiResource, List[JsonapiResource]. Details: " + ", ".join(error_messages))
+            raise ValueError("No match found when setting `actual_instance` in JsonapiData with oneOf schemas: JsonapiResource, List[JsonapiResource], object. Details: " + ", ".join(error_messages))
         else:
             return v
 
@@ -85,12 +90,9 @@ class JsonapiData(BaseModel):
         return cls.from_json(json.dumps(obj))
 
     @classmethod
-    def from_json(cls, json_str: Optional[str]) -> Self:
+    def from_json(cls, json_str: str) -> Self:
         """Returns the object represented by the json string"""
         instance = cls.model_construct()
-        if json_str is None:
-            return instance
-
         error_messages = []
         match = 0
 
@@ -109,13 +111,22 @@ class JsonapiData(BaseModel):
             match += 1
         except (ValidationError, ValueError) as e:
             error_messages.append(str(e))
+        # deserialize data into object
+        try:
+            # validation
+            instance.oneof_schema_3_validator = json.loads(json_str)
+            # assign value to actual_instance
+            instance.actual_instance = instance.oneof_schema_3_validator
+            match += 1
+        except (ValidationError, ValueError) as e:
+            error_messages.append(str(e))
 
         if match > 1:
             # more than 1 match
-            raise ValueError("Multiple matches found when deserializing the JSON string into JsonapiData with oneOf schemas: JsonapiResource, List[JsonapiResource]. Details: " + ", ".join(error_messages))
+            raise ValueError("Multiple matches found when deserializing the JSON string into JsonapiData with oneOf schemas: JsonapiResource, List[JsonapiResource], object. Details: " + ", ".join(error_messages))
         elif match == 0:
             # no match
-            raise ValueError("No match found when deserializing the JSON string into JsonapiData with oneOf schemas: JsonapiResource, List[JsonapiResource]. Details: " + ", ".join(error_messages))
+            raise ValueError("No match found when deserializing the JSON string into JsonapiData with oneOf schemas: JsonapiResource, List[JsonapiResource], object. Details: " + ", ".join(error_messages))
         else:
             return instance
 
@@ -129,7 +140,7 @@ class JsonapiData(BaseModel):
         else:
             return json.dumps(self.actual_instance)
 
-    def to_dict(self) -> Optional[Union[Dict[str, Any], JsonapiResource, List[JsonapiResource]]]:
+    def to_dict(self) -> Optional[Union[Dict[str, Any], JsonapiResource, List[JsonapiResource], object]]:
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

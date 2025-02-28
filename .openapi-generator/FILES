@@ -246,6 +246,7 @@ jubladb_api/models/types.py
 jubladb_api/py.typed
 jubladb_api/rest.py
 pyproject.toml
+requirements.txt
 setup.cfg
 setup.py
 test-requirements.txt

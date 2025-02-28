@@ -13,10 +13,10 @@ import build
 
 SPEC_FILE_NAME = "spec.yaml"
 
-OPENAPI_GENERATOR_CLI_VERSION = "8.0.0-SNAPSHOT"
-OPENAPI_GENERATOR_CLI_URL = f"https://oss.sonatype.org/content/repositories/snapshots/org/openapitools/openapi-generator-cli/{OPENAPI_GENERATOR_CLI_VERSION}/openapi-generator-cli-8.0.0-20240727.184357-6.jar"
-# OPENAPI_GENERATOR_CLI_VERSION = "7.8.0"
-# OPENAPI_GENERATOR_CLI_URL = f"https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/{OPENAPI_GENERATOR_CLI_VERSION}/openapi-generator-cli-{OPENAPI_GENERATOR_CLI_VERSION}.jar"
+# OPENAPI_GENERATOR_CLI_VERSION = "8.0.0-SNAPSHOT"
+# OPENAPI_GENERATOR_CLI_URL = f"https://oss.sonatype.org/content/repositories/snapshots/org/openapitools/openapi-generator-cli/{OPENAPI_GENERATOR_CLI_VERSION}/openapi-generator-cli-8.0.0-20240727.184357-6.jar"
+OPENAPI_GENERATOR_CLI_VERSION = "7.12.0"
+OPENAPI_GENERATOR_CLI_URL = f"https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/{OPENAPI_GENERATOR_CLI_VERSION}/openapi-generator-cli-{OPENAPI_GENERATOR_CLI_VERSION}.jar"
 
 GENERATOR_FILE_NAME = f"openapi-generator-cli-{OPENAPI_GENERATOR_CLI_VERSION}.jar"
 

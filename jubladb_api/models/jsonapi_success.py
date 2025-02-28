@@ -31,7 +31,7 @@ class JsonapiSuccess(BaseModel):
     """
     JsonapiSuccess
     """ # noqa: E501
-    data: Optional[JsonapiData]
+    data: JsonapiData
     included: Optional[List[JsonapiResource]] = Field(default=None, description="To reduce the number of HTTP requests, servers **MAY** allow responses that include related resources along with the requested primary resources. Such responses are called \"compound documents\".")
     meta: Optional[Dict[str, Any]] = Field(default=None, description="Non-standard meta-information that can not be represented as an attribute or relationship.")
     links: Optional[AdditionalEmailsSingleLinks] = None
@@ -83,9 +83,9 @@ class JsonapiSuccess(BaseModel):
         # override the default output from pydantic by calling `to_dict()` of each item in included (list)
         _items = []
         if self.included:
-            for _item in self.included:
-                if _item:
-                    _items.append(_item.to_dict())
+            for _item_included in self.included:
+                if _item_included:
+                    _items.append(_item_included.to_dict())
             _dict['included'] = _items
         # override the default output from pydantic by calling `to_dict()` of links
         if self.links:
@@ -93,11 +93,6 @@ class JsonapiSuccess(BaseModel):
         # override the default output from pydantic by calling `to_dict()` of jsonapi
         if self.jsonapi:
             _dict['jsonapi'] = self.jsonapi.to_dict()
-        # set to None if data (nullable) is None
-        # and model_fields_set contains the field
-        if self.data is None and "data" in self.model_fields_set:
-            _dict['data'] = None
-
         # set to None if meta (nullable) is None
         # and model_fields_set contains the field
         if self.meta is None and "meta" in self.model_fields_set:
