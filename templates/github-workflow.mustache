@@ -5,6 +5,8 @@
 
 name: {{packageName}} Python package
 
+{{=<% %>=}}
+
 on: [push, pull_request]
 
 jobs:
@@ -28,4 +30,4 @@ jobs:
           pip install -r test-requirements.txt
       - name: Test with pytest
         run: |
-          pytest --cov={{packageName}}
+          pytest --cov=<%packageName%>
