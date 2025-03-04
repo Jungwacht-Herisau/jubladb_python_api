@@ -11,6 +11,8 @@ import yaml
 
 import build
 
+import generate_roles
+
 PACKAGE_VERSION = "0.0.3"
 
 SPEC_FILE_NAME = "spec.yaml"
@@ -129,3 +131,5 @@ if __name__ == '__main__':
     # print(f"\n\nGenerated {os.path.basename(whl_files[0])}")
 
     # shutil.rmtree(f"src/{MODULE_NAME}")
+
+    generate_roles.generate_roles()

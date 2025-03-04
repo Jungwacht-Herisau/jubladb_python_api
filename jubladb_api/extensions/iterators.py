@@ -7,7 +7,7 @@ def _iterate(list_func: Callable[[Dict[str, Any]], Any]):
     chunk = list_func({})
     while chunk is not None:
         yield from chunk.data
-        if chunk.links.next is not None:
+        if chunk.links is not None and chunk.links.next is not None:
             next_query = urllib.parse.parse_qs(urllib.parse.urlparse(chunk.links.next.actual_instance).query)
             keeping_query = {key: value[0] for key, value in next_query.items() if key in ["page[number]", "page[size]"]}
 
@@ -29,3 +29,6 @@ def iterate_invoices(api: jubladb_api.InvoicesApi, **kwargs) -> Iterator[jubladb
 
 def iterate_people(api: jubladb_api.PeopleApi, **kwargs) -> Iterator[jubladb_api.PeopleResource]:
     return _iterate(lambda kwargs2: api.list_people(**kwargs, **kwargs2))
+
+def iterate_roles(api: jubladb_api.RolesApi, **kwargs) -> Iterator[jubladb_api.RolesResource]:
+    return _iterate(lambda kwargs2: api.list_roles(**kwargs, **kwargs2))
