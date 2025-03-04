@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "jubladb_api"
-version = "0.1.0"
+version = "0.1.1"
 description = "Hitobito JSON:API"
 authors = ["Basil Bader <oss@basilbader.com>"]
 license = "NoLicense"
