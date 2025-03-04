@@ -1,15 +1,10 @@
 #!/usr/bin/env python3
-import glob
 import os
-import shutil
 import subprocess
 
 import requests
 import tqdm
-import setuptools.sandbox
 import yaml
-
-import build
 
 import generate_roles
 
@@ -27,7 +22,6 @@ GENERATOR_FILE_NAME = f"openapi-generator-cli-{OPENAPI_GENERATOR_CLI_VERSION}.ja
 MODULE_NAME = "jubladb_api"
 
 
-
 def update_openapi_contact2(name, email, url):
     with open(SPEC_FILE_NAME, "r", encoding="utf-8") as f:
         content = f.read()
@@ -37,23 +31,20 @@ def update_openapi_contact2(name, email, url):
     with open(SPEC_FILE_NAME, "w", encoding="utf-8") as f:
         f.write(content)
 
+
 def update_openapi_contact(name, email, url):
-    # Load the OpenAPI YAML file
     with open(SPEC_FILE_NAME, "r", encoding="utf-8") as f:
         spec = yaml.safe_load(f)
 
-    # Ensure the "info" section exists
     if "info" not in spec:
         spec["info"] = {}
 
-    # Update or add the "contact" section
     spec["info"]["contact"] = {
         "name": name,
         "email": email,
         "url": url
     }
 
-    # Save the modified OpenAPI file
     with open(SPEC_FILE_NAME, "w", encoding="utf-8") as f:
         yaml.dump(spec, f, default_flow_style=False, allow_unicode=True)
 
@@ -100,36 +91,13 @@ if __name__ == '__main__':
                                             "generate",
                                             "-g", "python",
                                             "-i", SPEC_FILE_NAME,
-                                            # "-o", f"src/{MODULE_NAME}",
                                             "-o", ".",
                                             "-c", "openapi_config.yaml",
                                             f"--additional-properties=packageName={MODULE_NAME},packageUrl=https://github.com/Jungwacht-Herisau/jubladb_python_api,packageVersion={PACKAGE_VERSION}",
-                                            # f"--additional-properties=infoName=\"Basil Bader\"",
                                             ])
 
     if generator_returncode != 0:
         raise RuntimeError(f"OpenAPI Generator CLI exited with code {generator_returncode}")
 
-    # os.remove(".travis.yml")
-    # os.remove(".gitlab-ci.yml")
-    # os.remove("git_push.sh")
-
-    #for extfile in os.listdir("extensions"):
-    #    shutil.copy2(os.path.join("extensions", extfile), os.path.join("src", MODULE_NAME, MODULE_NAME, extfile))
-
-    #os.chdir(MODULE_NAME)
-    try:
-        #setuptools.sandbox.run_setup("setup.py", ["clean", "bdist_wheel"])
-        subprocess.run(["python", "-m" "build"], check=True)
-    finally:
-        pass # os.chdir("..")
-
-    # whl_files = glob.glob(f"{MODULE_NAME}/dist/*.whl")
-    # if not whl_files:
-    #     raise RuntimeError("Could not find any .whl files")
-    # shutil.copy2(whl_files[0], ".")
-    # print(f"\n\nGenerated {os.path.basename(whl_files[0])}")
-
-    # shutil.rmtree(f"src/{MODULE_NAME}")
-
+    subprocess.run(["python", "-m" "build"], check=True)
     generate_roles.generate_roles()
