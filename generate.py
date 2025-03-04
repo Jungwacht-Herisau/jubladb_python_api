@@ -8,7 +8,7 @@ import yaml
 
 import generate_roles
 
-PACKAGE_VERSION = "0.0.3"
+PACKAGE_VERSION = "0.1.0"
 
 SPEC_FILE_NAME = "spec.yaml"
 

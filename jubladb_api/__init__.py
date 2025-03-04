@@ -15,7 +15,7 @@
 """  # noqa: E501
 
 
-__version__ = "0.0.3"
+__version__ = "0.1.0"
 
 # import apis into sdk package
 from jubladb_api.api.event_kind_categories_api import EventKindCategoriesApi
