@@ -36,6 +36,7 @@ class TemplatedGenerator(object):
         self.env.filters["snake_case_to_pascal_case"] = snake_case_to_pascal_case
         self.env.filters["attribute_type_to_python_type"] = attribute_type_to_python_type
         self.env.filters["entity_has_sortable_attributes"] = entity_has_sortable_attributes
+        self.env.filters["repr"] = repr
 
         self.template = self.env.get_template(template_name)
 

@@ -10,14 +10,21 @@ import datetime
 {% if entity.allowed_operations|length > 0 %}
 {% if entity.includeable|length > 0 %}
 _{{ entity.name_singular|snake_case_to_pascal_case }}_Include = typing.Literal[
-{% for inc in entity.includeable %}    "{{ inc }}",
+{% for inc in entity.includeable %}
+    "{{ inc }}",
 {% endfor %}]
 {% endif %}
 {% if entity|entity_has_sortable_attributes > 0 %}
 _{{ entity.name_singular|snake_case_to_pascal_case }}_Sort = typing.Literal[
-{% for attr in entity.attributes %}{% if attr.sortable %}    "{{ attr.name }}_asc",{% endif %}
+{% for attr in entity.attributes %}
+{% if attr.sortable %}
+    "{{ attr.name }}_asc",
+{% endif %}
 {% endfor %}
-{% for attr in entity.attributes %}{% if attr.sortable %}    "{{ attr.name }}_desc",{% endif %}
+{% for attr in entity.attributes %}
+{% if attr.sortable %}
+    "{{ attr.name }}_desc",
+{% endif %}
 {% endfor %}
 ]
 {% endif %}
@@ -35,16 +42,26 @@ class Client(base.BaseClient):
     {% for op in entity.allowed_operations %}
     {% if op.name == "GetList" %}
     def get_{{ entity.name_plural }}_list(self,
-                            {% if entity.includeable|length > 0 %}include: list[_{{ entity.name_singular|snake_case_to_pascal_case }}_Include], {% endif %}
-                            {% if entity|entity_has_sortable_attributes %}sort: list[_{{ entity.name_singular|snake_case_to_pascal_case }}_Sort], {% endif %}
-                            {% for attr in entity.attributes %}{% for ft in attr.filter_types %}
-                            filter_{{ attr.name }}_{{ ft }}: {{ attr.type_|attribute_type_to_python_type }},{% endfor %}{% endfor %}
+                            {% if entity.includeable|length > 0 %}
+                                          include: list[_{{ entity.name_singular|snake_case_to_pascal_case }}_Include],
+                            {% endif %}
+                            {% if entity|entity_has_sortable_attributes %}
+                                          sort: list[_{{ entity.name_singular|snake_case_to_pascal_case }}_Sort],
+                            {% endif %}
+                            {% for attr in entity.attributes %}
+                            {% for ft in attr.filter_types %}
+                            filter_{{ attr.name }}_{{ ft }}: {{ attr.type_|attribute_type_to_python_type }},
+                            {% endfor %}
+                            {% endfor %}
                             ) -> list[entities.{{ entity.name_singular | snake_case_to_pascal_case }}]:
         raise NotImplementedError()
     {% endif %}
     {% if op.name == "GetSingle" %}
     def get_{{ entity.name_singular }}(self,
-            {% if entity.includeable|length > 0 %}include: list[_{{ entity.name_singular|snake_case_to_pascal_case }}_Include], {% endif %}
+            id_: int,
+            {% if entity.includeable|length > 0 %}
+            include: list[_{{ entity.name_singular|snake_case_to_pascal_case }}_Include],
+            {% endif %}
                     ) -> entities.{{ entity.name_singular | snake_case_to_pascal_case }}:
         raise NotImplementedError()
     {% endif %}

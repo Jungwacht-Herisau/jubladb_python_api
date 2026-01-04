@@ -28,13 +28,13 @@ class Attribute:
     name: str
     type_: AttributeType
     sortable: bool = False
-    filter_types: set[str] = dataclasses.field(default_factory=set)
+    filter_types: list[str] = dataclasses.field(default_factory=list)
 
 @dataclasses.dataclass
 class Entity:
     url: str
     name_singular: str
     name_plural: str
-    allowed_operations: set[Operation] = dataclasses.field(default_factory=set)
+    allowed_operations: list[Operation] = dataclasses.field(default_factory=list)
     attributes: list[Attribute] = dataclasses.field(default_factory=list)
     includeable: list[str] = dataclasses.field(default_factory=list)

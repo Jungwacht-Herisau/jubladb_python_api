@@ -27,6 +27,7 @@ class Course(base.EntityBase):
         created_at: datetime.datetime,
         updated_at: datetime.datetime,
         state: str,
+        training_days: float,
         applicant_count: int,
         participant_count: int,
         minimum_participants: int,
@@ -52,6 +53,7 @@ class Course(base.EntityBase):
         self._created_at = created_at
         self._updated_at = updated_at
         self._state = state
+        self._training_days = training_days
         self._applicant_count = applicant_count
         self._participant_count = participant_count
         self._minimum_participants = minimum_participants
@@ -125,6 +127,10 @@ class Course(base.EntityBase):
     @property
     def state(self) -> str:
         return self._state
+
+    @property
+    def training_days(self) -> float:
+        return self._training_days
 
     @property
     def applicant_count(self) -> int:
