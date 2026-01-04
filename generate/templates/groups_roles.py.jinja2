@@ -1,0 +1,53 @@
+import dataclasses
+
+@dataclasses.dataclass(frozen=True)
+class RoleType(object):
+    id: str
+    name: str
+    rights: list[str]
+    requires_2fa: bool
+    group_type: "GroupType"
+
+    def __hash__(self):
+        return hash(id)
+
+    def __eq__(self, other):
+        return isinstance(other, RoleType) and self.id == other.id
+
+
+@dataclasses.dataclass(frozen=True)
+class GroupType(object):
+    id: str
+    name: str
+    role_types: list[RoleType]
+
+    def __hash__(self):
+        return hash(id)
+
+    def __eq__(self, other):
+        return isinstance(other, GroupType) and self.id == other.id
+
+{% for n, v in grouptype_vars %}
+{{ n }} = {{ v }}
+{% endfor %}
+{% for n, v in roletype_vars %}
+{{ n }} = {{ v }}
+{% endfor %}
+
+{% for n, v in group_role_vars %}
+{{ n }}.role_types.extend([{{ v }}])
+{% endfor %}
+
+ALL_GROUPS = {
+    {% for key, value in group_var_names|dict_items %}
+    "{{ key }}": {{ value }},
+    {% endfor %}
+}
+
+ALL_ROLES = {
+    {% for key, value in role_var_names|dict_items %}
+    "{{ key }}": {{ value }},
+    {% endfor %}
+}
+
+
