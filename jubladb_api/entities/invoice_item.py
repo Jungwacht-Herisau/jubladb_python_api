@@ -11,8 +11,6 @@ class InvoiceItem(jubladb_api.entities.base.EntityBase):
                  invoice_id: int, 
                  name: str, 
                  description: str, 
-                 unit_cost: float, 
-                 vat_rate: float, 
                  cost: int, 
                  count: int, 
                  cost_center: str, 
@@ -23,8 +21,6 @@ class InvoiceItem(jubladb_api.entities.base.EntityBase):
         self._invoice_id = invoice_id 
         self._name = name 
         self._description = description 
-        self._unit_cost = unit_cost 
-        self._vat_rate = vat_rate 
         self._cost = cost 
         self._count = count 
         self._cost_center = cost_center 
@@ -42,14 +38,6 @@ class InvoiceItem(jubladb_api.entities.base.EntityBase):
     @property
     def description(self) -> str:
         return self._description
-    
-    @property
-    def unit_cost(self) -> float:
-        return self._unit_cost
-    
-    @property
-    def vat_rate(self) -> float:
-        return self._vat_rate
     
     @property
     def cost(self) -> int:

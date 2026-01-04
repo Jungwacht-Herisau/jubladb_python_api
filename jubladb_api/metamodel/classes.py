@@ -19,6 +19,7 @@ class AttributeType(_EnumReprHelper, enum.Enum):
     INTEGER = "integer"
     FLOAT = "float"
     DATE = "date"
+    TIME = "time"
     DATETIME = "datetime"
     BOOLEAN = "boolean"
 

@@ -2,6 +2,8 @@
 import jubladb_api.metamodel
 import jubladb_api.entities.base
 
+import datetime
+
 
 # @formatter:off
 class Date(jubladb_api.entities.base.EntityBase):
@@ -11,8 +13,8 @@ class Date(jubladb_api.entities.base.EntityBase):
                  event_id: int, 
                  label: str, 
                  location: str, 
-                 start_at: str, 
-                 finish_at: str, 
+                 start_at: datetime.datetime, 
+                 finish_at: datetime.datetime, 
                  ):
         super().__init__(id_)
         
@@ -36,11 +38,11 @@ class Date(jubladb_api.entities.base.EntityBase):
         return self._location
     
     @property
-    def start_at(self) -> str:
+    def start_at(self) -> datetime.datetime:
         return self._start_at
     
     @property
-    def finish_at(self) -> str:
+    def finish_at(self) -> datetime.datetime:
         return self._finish_at
     
 

@@ -2,6 +2,8 @@
 import jubladb_api.metamodel
 import jubladb_api.entities.base
 
+import datetime
+
 
 # @formatter:off
 class Person(jubladb_api.entities.base.EntityBase):
@@ -24,9 +26,9 @@ class Person(jubladb_api.entities.base.EntityBase):
                  country: str, 
                  primary_group_id: int, 
                  gender: str, 
-                 birthday: str, 
+                 birthday: datetime.date, 
                  picture: str, 
-                 updated_at: str, 
+                 updated_at: datetime.datetime, 
                  additional_information: str, 
                  language: str, 
                  ):
@@ -120,7 +122,7 @@ class Person(jubladb_api.entities.base.EntityBase):
         return self._gender
     
     @property
-    def birthday(self) -> str:
+    def birthday(self) -> datetime.date:
         return self._birthday
     
     @property
@@ -128,7 +130,7 @@ class Person(jubladb_api.entities.base.EntityBase):
         return self._picture
     
     @property
-    def updated_at(self) -> str:
+    def updated_at(self) -> datetime.datetime:
         return self._updated_at
     
     @property

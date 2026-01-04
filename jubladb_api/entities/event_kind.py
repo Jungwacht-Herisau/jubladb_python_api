@@ -2,6 +2,8 @@
 import jubladb_api.metamodel
 import jubladb_api.entities.base
 
+import datetime
+
 
 # @formatter:off
 class EventKind(jubladb_api.entities.base.EntityBase):
@@ -13,8 +15,8 @@ class EventKind(jubladb_api.entities.base.EntityBase):
                  general_information: str, 
                  application_conditions: str, 
                  minimum_age: int, 
-                 created_at: str, 
-                 updated_at: str, 
+                 created_at: datetime.datetime, 
+                 updated_at: datetime.datetime, 
                  ):
         super().__init__(id_)
         
@@ -48,11 +50,11 @@ class EventKind(jubladb_api.entities.base.EntityBase):
         return self._minimum_age
     
     @property
-    def created_at(self) -> str:
+    def created_at(self) -> datetime.datetime:
         return self._created_at
     
     @property
-    def updated_at(self) -> str:
+    def updated_at(self) -> datetime.datetime:
         return self._updated_at
     
 

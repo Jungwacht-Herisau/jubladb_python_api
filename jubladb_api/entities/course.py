@@ -2,9 +2,11 @@
 import jubladb_api.metamodel
 import jubladb_api.entities.base
 
+import datetime
+
 
 # @formatter:off
-class Cours(jubladb_api.entities.base.EntityBase):
+class Course(jubladb_api.entities.base.EntityBase):
     def __init__(self,
                  id_: int,
                  
@@ -17,15 +19,14 @@ class Cours(jubladb_api.entities.base.EntityBase):
                  motto: str, 
                  cost: str, 
                  location: str, 
-                 application_opening_at: str, 
-                 application_closing_at: str, 
+                 application_opening_at: datetime.date, 
+                 application_closing_at: datetime.date, 
                  application_contact_id: int, 
                  external_application_link: str, 
                  maximum_participants: int, 
-                 created_at: str, 
-                 updated_at: str, 
+                 created_at: datetime.datetime, 
+                 updated_at: datetime.datetime, 
                  state: str, 
-                 training_days: float, 
                  applicant_count: int, 
                  participant_count: int, 
                  minimum_participants: int, 
@@ -51,7 +52,6 @@ class Cours(jubladb_api.entities.base.EntityBase):
         self._created_at = created_at 
         self._updated_at = updated_at 
         self._state = state 
-        self._training_days = training_days 
         self._applicant_count = applicant_count 
         self._participant_count = participant_count 
         self._minimum_participants = minimum_participants 
@@ -96,11 +96,11 @@ class Cours(jubladb_api.entities.base.EntityBase):
         return self._location
     
     @property
-    def application_opening_at(self) -> str:
+    def application_opening_at(self) -> datetime.date:
         return self._application_opening_at
     
     @property
-    def application_closing_at(self) -> str:
+    def application_closing_at(self) -> datetime.date:
         return self._application_closing_at
     
     @property
@@ -116,20 +116,16 @@ class Cours(jubladb_api.entities.base.EntityBase):
         return self._maximum_participants
     
     @property
-    def created_at(self) -> str:
+    def created_at(self) -> datetime.datetime:
         return self._created_at
     
     @property
-    def updated_at(self) -> str:
+    def updated_at(self) -> datetime.datetime:
         return self._updated_at
     
     @property
     def state(self) -> str:
         return self._state
-    
-    @property
-    def training_days(self) -> float:
-        return self._training_days
     
     @property
     def applicant_count(self) -> int:
@@ -154,6 +150,6 @@ class Cours(jubladb_api.entities.base.EntityBase):
 
     @property
     def meta(self) -> jubladb_api.metamodel.Entity:
-        return jubladb_api.metamodel.ENTITIES["cours"]
+        return jubladb_api.metamodel.ENTITIES["course"]
 
 # @formatter:on

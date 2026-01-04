@@ -2,6 +2,8 @@
 import jubladb_api.metamodel
 import jubladb_api.entities.base
 
+import datetime
+
 
 # @formatter:off
 class Event(jubladb_api.entities.base.EntityBase):
@@ -17,13 +19,13 @@ class Event(jubladb_api.entities.base.EntityBase):
                  motto: str, 
                  cost: str, 
                  location: str, 
-                 application_opening_at: str, 
-                 application_closing_at: str, 
+                 application_opening_at: datetime.date, 
+                 application_closing_at: datetime.date, 
                  application_contact_id: int, 
                  external_application_link: str, 
                  maximum_participants: int, 
-                 created_at: str, 
-                 updated_at: str, 
+                 created_at: datetime.datetime, 
+                 updated_at: datetime.datetime, 
                  ):
         super().__init__(id_)
         
@@ -82,11 +84,11 @@ class Event(jubladb_api.entities.base.EntityBase):
         return self._location
     
     @property
-    def application_opening_at(self) -> str:
+    def application_opening_at(self) -> datetime.date:
         return self._application_opening_at
     
     @property
-    def application_closing_at(self) -> str:
+    def application_closing_at(self) -> datetime.date:
         return self._application_closing_at
     
     @property
@@ -102,11 +104,11 @@ class Event(jubladb_api.entities.base.EntityBase):
         return self._maximum_participants
     
     @property
-    def created_at(self) -> str:
+    def created_at(self) -> datetime.datetime:
         return self._created_at
     
     @property
-    def updated_at(self) -> str:
+    def updated_at(self) -> datetime.datetime:
         return self._updated_at
     
 

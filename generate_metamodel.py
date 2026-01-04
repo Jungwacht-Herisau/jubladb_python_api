@@ -3,11 +3,14 @@ import openapi_parser.specification
 import jubladb_api.metamodel
 import jubladb_api.metamodel.classes
 
-DATA_TYPE_MAP: dict[openapi_parser.specification.DataType, jubladb_api.metamodel.classes.AttributeType] = {
-    openapi_parser.specification.DataType.INTEGER: jubladb_api.metamodel.classes.AttributeType.INTEGER,
-    openapi_parser.specification.DataType.BOOLEAN: jubladb_api.metamodel.classes.AttributeType.BOOLEAN,
-    openapi_parser.specification.DataType.STRING: jubladb_api.metamodel.classes.AttributeType.STRING,
-    openapi_parser.specification.DataType.NUMBER: jubladb_api.metamodel.classes.AttributeType.FLOAT,
+DATA_TYPE_MAP: dict[tuple[openapi_parser.specification.DataType, openapi_parser.specification.StringFormat|openapi_parser.specification.NumberFormat|openapi_parser.specification.IntegerFormat|None], jubladb_api.metamodel.classes.AttributeType] = {
+    (openapi_parser.specification.DataType.INTEGER, None): jubladb_api.metamodel.classes.AttributeType.INTEGER,
+    (openapi_parser.specification.DataType.BOOLEAN, None): jubladb_api.metamodel.classes.AttributeType.BOOLEAN,
+    (openapi_parser.specification.DataType.NUMBER, None): jubladb_api.metamodel.classes.AttributeType.FLOAT,
+    (openapi_parser.specification.DataType.STRING, None): jubladb_api.metamodel.classes.AttributeType.STRING,
+    (openapi_parser.specification.DataType.STRING, openapi_parser.specification.StringFormat.DATE): jubladb_api.metamodel.classes.AttributeType.DATE,
+    (openapi_parser.specification.DataType.STRING, openapi_parser.specification.StringFormat.TIME): jubladb_api.metamodel.classes.AttributeType.TIME,
+    (openapi_parser.specification.DataType.STRING, openapi_parser.specification.StringFormat.DATETIME): jubladb_api.metamodel.classes.AttributeType.DATETIME,
 }
 
 OPERATIONS_MAP: dict[tuple[bool, openapi_parser.specification.OperationMethod], jubladb_api.metamodel.classes.Operation] = {
@@ -115,12 +118,12 @@ def generate_metamodel(spec: openapi_parser.specification.Specification) -> list
                     attr_filters.setdefault(attr_name, set()).add(filter_type)
 
         for prop in schema.properties:
-            type_ = DATA_TYPE_MAP.get(prop.schema.type, None)
+            type_ = DATA_TYPE_MAP.get((prop.schema.type, getattr(prop.schema, "format", None)), None)
             if type_ is None:
                 print(f"Unknown type {prop.schema.type} for property {entity_type}.{prop.name}")
                 continue
             attr = jubladb_api.metamodel.classes.Attribute(name=prop.name,
-                                                           type_=DATA_TYPE_MAP[prop.schema.type],
+                                                           type_=type_,
                                                            sortable=prop.name in sort_attrs,
                                                            filter_types=attr_filters.get(prop.name, set()),
                                                            )

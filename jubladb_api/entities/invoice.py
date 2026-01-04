@@ -2,6 +2,8 @@
 import jubladb_api.metamodel
 import jubladb_api.entities.base
 
+import datetime
+
 
 # @formatter:off
 class Invoice(jubladb_api.entities.base.EntityBase):
@@ -13,8 +15,8 @@ class Invoice(jubladb_api.entities.base.EntityBase):
                  state: str, 
                  group_id: int, 
                  recipient_id: int, 
-                 due_at: str, 
-                 issued_at: str, 
+                 due_at: datetime.date, 
+                 issued_at: datetime.date, 
                  recipient_email: str, 
                  payment_information: str, 
                  payment_purpose: str, 
@@ -56,11 +58,11 @@ class Invoice(jubladb_api.entities.base.EntityBase):
         return self._recipient_id
     
     @property
-    def due_at(self) -> str:
+    def due_at(self) -> datetime.date:
         return self._due_at
     
     @property
-    def issued_at(self) -> str:
+    def issued_at(self) -> datetime.date:
         return self._issued_at
     
     @property

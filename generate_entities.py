@@ -5,11 +5,16 @@ import jinja2
 
 import jubladb_api
 
+DATETIME_ATTRIBUTE_TYPES = {jubladb_api.metamodel.AttributeType.DATE, jubladb_api.metamodel.AttributeType.TIME, jubladb_api.metamodel.AttributeType.DATETIME}
+
 ATTR_TYPE_TO_PY_CLASS = {
     jubladb_api.metamodel.AttributeType.INTEGER: "int",
     jubladb_api.metamodel.AttributeType.BOOLEAN: "bool",
     jubladb_api.metamodel.AttributeType.STRING: "str",
     jubladb_api.metamodel.AttributeType.FLOAT: "float",
+    jubladb_api.metamodel.AttributeType.DATE: "datetime.date",
+    jubladb_api.metamodel.AttributeType.TIME: "datetime.time",
+    jubladb_api.metamodel.AttributeType.DATETIME: "datetime.datetime",
 }
 
 
@@ -34,5 +39,7 @@ def generate_entities(entities: list[jubladb_api.metamodel.Entity]) -> None:
     env.filters["attribute_type_to_python_type"] = attribute_type_to_python_type
     template = env.get_template("entity.py.jinja2")
     for entity in entities:
+        rendered = template.render(entity=entity,
+                                   need_datetime_import=any(attr.type_ in DATETIME_ATTRIBUTE_TYPES for attr in entity.attributes))
         with open(f"jubladb_api/entities/{entity.name_singular}.py", "w") as f:
-            f.write(template.render(entity=entity))
+            f.write(rendered)

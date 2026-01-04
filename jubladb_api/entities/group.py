@@ -2,6 +2,8 @@
 import jubladb_api.metamodel
 import jubladb_api.entities.base
 
+import datetime
+
 
 # @formatter:off
 class Group(jubladb_api.entities.base.EntityBase):
@@ -23,10 +25,10 @@ class Group(jubladb_api.entities.base.EntityBase):
                  country: str, 
                  require_person_add_requests: bool, 
                  self_registration_url: str, 
-                 archived_at: str, 
-                 created_at: str, 
-                 updated_at: str, 
-                 deleted_at: str, 
+                 archived_at: datetime.datetime, 
+                 created_at: datetime.datetime, 
+                 updated_at: datetime.datetime, 
+                 deleted_at: datetime.datetime, 
                  logo: str, 
                  ):
         super().__init__(id_)
@@ -114,19 +116,19 @@ class Group(jubladb_api.entities.base.EntityBase):
         return self._self_registration_url
     
     @property
-    def archived_at(self) -> str:
+    def archived_at(self) -> datetime.datetime:
         return self._archived_at
     
     @property
-    def created_at(self) -> str:
+    def created_at(self) -> datetime.datetime:
         return self._created_at
     
     @property
-    def updated_at(self) -> str:
+    def updated_at(self) -> datetime.datetime:
         return self._updated_at
     
     @property
-    def deleted_at(self) -> str:
+    def deleted_at(self) -> datetime.datetime:
         return self._deleted_at
     
     @property

@@ -2,16 +2,18 @@
 import jubladb_api.metamodel
 import jubladb_api.entities.base
 
+import datetime
+
 
 # @formatter:off
 class Role(jubladb_api.entities.base.EntityBase):
     def __init__(self,
                  id_: int,
                  
-                 created_at: str, 
-                 updated_at: str, 
-                 start_on: str, 
-                 end_on: str, 
+                 created_at: datetime.datetime, 
+                 updated_at: datetime.datetime, 
+                 start_on: datetime.date, 
+                 end_on: datetime.date, 
                  name: str, 
                  person_id: int, 
                  group_id: int, 
@@ -32,19 +34,19 @@ class Role(jubladb_api.entities.base.EntityBase):
 
     
     @property
-    def created_at(self) -> str:
+    def created_at(self) -> datetime.datetime:
         return self._created_at
     
     @property
-    def updated_at(self) -> str:
+    def updated_at(self) -> datetime.datetime:
         return self._updated_at
     
     @property
-    def start_on(self) -> str:
+    def start_on(self) -> datetime.date:
         return self._start_on
     
     @property
-    def end_on(self) -> str:
+    def end_on(self) -> datetime.date:
         return self._end_on
     
     @property
