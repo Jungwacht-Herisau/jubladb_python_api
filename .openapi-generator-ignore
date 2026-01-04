@@ -1,7 +1,0 @@
-# OpenAPI Generator Ignore
-
-/.gitignore
-/.travis.yml
-/.gitlab-ci.yml
-/git_push.sh
-/.github/workflows/python.yml

@@ -102,28 +102,27 @@ with jubladb_api.ApiClient(configuration) as api_client:
 
 All URIs are relative to *http://localhost*
 
-Class | Method | HTTP request | Description
------------- | ------------- | ------------- | -------------
-*EventKindCategoriesApi* | [**get_event_kind_category**](docs/EventKindCategoriesApi.md#get_event_kind_category) | **GET** /api/event_kind_categories/{id} | Fetch Event kind category
-*EventKindCategoriesApi* | [**list_event_kind_categories**](docs/EventKindCategoriesApi.md#list_event_kind_categories) | **GET** /api/event_kind_categories | List Event kind categories
-*EventKindsApi* | [**get_event_kind**](docs/EventKindsApi.md#get_event_kind) | **GET** /api/event_kinds/{id} | Fetch Event kind
-*EventKindsApi* | [**list_event_kinds**](docs/EventKindsApi.md#list_event_kinds) | **GET** /api/event_kinds | List Event kinds
-*EventsApi* | [**get_event**](docs/EventsApi.md#get_event) | **GET** /api/events/{id} | Fetch Event
-*EventsApi* | [**list_events**](docs/EventsApi.md#list_events) | **GET** /api/events | List Events
-*GroupsApi* | [**get_group**](docs/GroupsApi.md#get_group) | **GET** /api/groups/{id} | Fetch Group
-*GroupsApi* | [**list_groups**](docs/GroupsApi.md#list_groups) | **GET** /api/groups | List Groups
-*InvoicesApi* | [**get_invoice**](docs/InvoicesApi.md#get_invoice) | **GET** /api/invoices/{id} | Fetch Invoice
-*InvoicesApi* | [**list_invoices**](docs/InvoicesApi.md#list_invoices) | **GET** /api/invoices | List Invoices
-*InvoicesApi* | [**update_invoice**](docs/InvoicesApi.md#update_invoice) | **PUT** /api/invoices/{id} | Update Invoice
-*PeopleApi* | [**get_person**](docs/PeopleApi.md#get_person) | **GET** /api/people/{id} | Fetch Person
-*PeopleApi* | [**list_people**](docs/PeopleApi.md#list_people) | **GET** /api/people | List People
-*PeopleApi* | [**update_person**](docs/PeopleApi.md#update_person) | **PUT** /api/people/{id} | Update Person
-*RolesApi* | [**create_role**](docs/RolesApi.md#create_role) | **POST** /api/roles | Create Role
-*RolesApi* | [**delete_role**](docs/RolesApi.md#delete_role) | **DELETE** /api/roles/{id} | Destroy Role
-*RolesApi* | [**get_role**](docs/RolesApi.md#get_role) | **GET** /api/roles/{id} | Fetch Role
-*RolesApi* | [**list_roles**](docs/RolesApi.md#list_roles) | **GET** /api/roles | List Roles
-*RolesApi* | [**update_role**](docs/RolesApi.md#update_role) | **PUT** /api/roles/{id} | Update Role
-
+| Class                    | Method                                                                                      | HTTP request                            | Description                |
+|--------------------------|---------------------------------------------------------------------------------------------|-----------------------------------------|----------------------------|
+| *EventKindCategoriesApi* | [**get_event_kind_category**](docs/EventKindCategoriesApi.md#get_event_kind_category)       | **GET** /api/event_kind_categories/{id} | Fetch Event kind category  |
+| *EventKindCategoriesApi* | [**list_event_kind_categories**](docs/EventKindCategoriesApi.md#list_event_kind_categories) | **GET** /api/event_kind_categories      | List Event kind categories |
+| *EventKindsApi*          | [**get_event_kind**](docs/EventKindsApi.md#get_event_kind)                                  | **GET** /api/event_kinds/{id}           | Fetch Event kind           |
+| *EventKindsApi*          | [**list_event_kinds**](docs/EventKindsApi.md#list_event_kinds)                              | **GET** /api/event_kinds                | List Event kinds           |
+| *EventsApi*              | [**get_event**](docs/EventsApi.md#get_event)                                                | **GET** /api/events/{id}                | Fetch Event                |
+| *EventsApi*              | [**list_events**](docs/EventsApi.md#list_events)                                            | **GET** /api/events                     | List Events                |
+| *GroupsApi*              | [**get_group**](docs/GroupsApi.md#get_group)                                                | **GET** /api/groups/{id}                | Fetch Group                |
+| *GroupsApi*              | [**list_groups**](docs/GroupsApi.md#list_groups)                                            | **GET** /api/groups                     | List Groups                |
+| *InvoicesApi*            | [**get_invoice**](docs/InvoicesApi.md#get_invoice)                                          | **GET** /api/invoices/{id}              | Fetch Invoice              |
+| *InvoicesApi*            | [**list_invoices**](docs/InvoicesApi.md#list_invoices)                                      | **GET** /api/invoices                   | List Invoices              |
+| *InvoicesApi*            | [**update_invoice**](docs/InvoicesApi.md#update_invoice)                                    | **PUT** /api/invoices/{id}              | Update Invoice             |
+| *PeopleApi*              | [**get_person**](docs/PeopleApi.md#get_person)                                              | **GET** /api/people/{id}                | Fetch Person               |
+| *PeopleApi*              | [**list_people**](docs/PeopleApi.md#list_people)                                            | **GET** /api/people                     | List People                |
+| *PeopleApi*              | [**update_person**](docs/PeopleApi.md#update_person)                                        | **PUT** /api/people/{id}                | Update Person              |
+| *RolesApi*               | [**create_role**](docs/RolesApi.md#create_role)                                             | **POST** /api/roles                     | Create Role                |
+| *RolesApi*               | [**delete_role**](docs/RolesApi.md#delete_role)                                             | **DELETE** /api/roles/{id}              | Destroy Role               |
+| *RolesApi*               | [**get_role**](docs/RolesApi.md#get_role)                                                   | **GET** /api/roles/{id}                 | Fetch Role                 |
+| *RolesApi*               | [**list_roles**](docs/RolesApi.md#list_roles)                                               | **GET** /api/roles                      | List Roles                 |
+| *RolesApi*               | [**update_role**](docs/RolesApi.md#update_role)                                             | **PUT** /api/roles/{id}                 | Update Role                |
 
 ## Documentation For Models
 
