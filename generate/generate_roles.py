@@ -1,3 +1,5 @@
+import pathlib
+
 import requests
 
 CODE_START = """
@@ -81,7 +83,10 @@ def generate_roles():
 
             last_indent = current_indent
         line = next(it, None)
-    with open("./jubladb_api/const/groups_roles.py", "w") as f:
+
+    code_dir = pathlib.Path(__file__).parent / "../jubladb_api/const"
+
+    with open(code_dir / "groups_roles.py", "w") as f:
         f.write(CODE_START)
         group_var_names: dict[str, str] = {}
         role_var_names: dict[str, str] = {}

@@ -1,20 +1,13 @@
 #!/usr/bin/env python3
-import os
-import subprocess
 
 import aenum
 import openapi_parser
 import requests
 import tqdm
-import yaml
-
-import generate_entities
-import generate_metamodel
-import generate_roles
 
 # PACKAGE_VERSION = "0.1.1"
 
-SPEC_FILE_NAME = "spec.yaml"
+SPEC_FILE_NAME = "../spec.yaml"
 MODULE_NAME = "jubladb_api"
 
 def download_spec():
@@ -36,6 +29,10 @@ def patch_openapi_parser():
 GENERATE_METAMODEL = False
 
 if __name__ == '__main__':
+    import generate_entities
+
+    generate_entities.cleanup()
+
     if GENERATE_METAMODEL:
         download_spec()
 
@@ -44,6 +41,7 @@ if __name__ == '__main__':
         spec = openapi_parser.parse(SPEC_FILE_NAME)
         print("Parsed OpenAPI spec successfully.")
 
+        import generate_metamodel
         entities = generate_metamodel.generate_metamodel(spec)
     else:
         from jubladb_api.metamodel.model import ENTITIES
@@ -51,4 +49,8 @@ if __name__ == '__main__':
 
     generate_entities.generate_entities(entities)
 
+    import generate_client
+    generate_client.generate_client(entities)
+
+    import generate_roles
     generate_roles.generate_roles()

@@ -1,24 +1,23 @@
 import openapi_parser.specification
 
-import jubladb_api.metamodel
-import jubladb_api.metamodel.classes
+from jubladb_api.metamodel import classes
 
-DATA_TYPE_MAP: dict[tuple[openapi_parser.specification.DataType, openapi_parser.specification.StringFormat|openapi_parser.specification.NumberFormat|openapi_parser.specification.IntegerFormat|None], jubladb_api.metamodel.classes.AttributeType] = {
-    (openapi_parser.specification.DataType.INTEGER, None): jubladb_api.metamodel.classes.AttributeType.INTEGER,
-    (openapi_parser.specification.DataType.BOOLEAN, None): jubladb_api.metamodel.classes.AttributeType.BOOLEAN,
-    (openapi_parser.specification.DataType.NUMBER, None): jubladb_api.metamodel.classes.AttributeType.FLOAT,
-    (openapi_parser.specification.DataType.STRING, None): jubladb_api.metamodel.classes.AttributeType.STRING,
-    (openapi_parser.specification.DataType.STRING, openapi_parser.specification.StringFormat.DATE): jubladb_api.metamodel.classes.AttributeType.DATE,
-    (openapi_parser.specification.DataType.STRING, openapi_parser.specification.StringFormat.TIME): jubladb_api.metamodel.classes.AttributeType.TIME,
-    (openapi_parser.specification.DataType.STRING, openapi_parser.specification.StringFormat.DATETIME): jubladb_api.metamodel.classes.AttributeType.DATETIME,
+DATA_TYPE_MAP: dict[tuple[openapi_parser.specification.DataType, openapi_parser.specification.StringFormat|openapi_parser.specification.NumberFormat|openapi_parser.specification.IntegerFormat|None], classes.AttributeType] = {
+    (openapi_parser.specification.DataType.INTEGER, None): classes.AttributeType.INTEGER,
+    (openapi_parser.specification.DataType.BOOLEAN, None): classes.AttributeType.BOOLEAN,
+    (openapi_parser.specification.DataType.NUMBER, None): classes.AttributeType.FLOAT,
+    (openapi_parser.specification.DataType.STRING, None): classes.AttributeType.STRING,
+    (openapi_parser.specification.DataType.STRING, openapi_parser.specification.StringFormat.DATE): classes.AttributeType.DATE,
+    (openapi_parser.specification.DataType.STRING, openapi_parser.specification.StringFormat.TIME): classes.AttributeType.TIME,
+    (openapi_parser.specification.DataType.STRING, openapi_parser.specification.StringFormat.DATETIME): classes.AttributeType.DATETIME,
 }
 
-OPERATIONS_MAP: dict[tuple[bool, openapi_parser.specification.OperationMethod], jubladb_api.metamodel.classes.Operation] = {
-    (True, openapi_parser.specification.OperationMethod.GET): jubladb_api.metamodel.classes.Operation.GetList,
-    (False, openapi_parser.specification.OperationMethod.GET): jubladb_api.metamodel.classes.Operation.GetSingle,
-    (False, openapi_parser.specification.OperationMethod.PUT): jubladb_api.metamodel.classes.Operation.CreateSingle,
-    (False, openapi_parser.specification.OperationMethod.PATCH): jubladb_api.metamodel.classes.Operation.UpdateSingle,
-    (False, openapi_parser.specification.OperationMethod.DELETE): jubladb_api.metamodel.classes.Operation.DeleteSingle,
+OPERATIONS_MAP: dict[tuple[bool, openapi_parser.specification.OperationMethod], classes.Operation] = {
+    (True, openapi_parser.specification.OperationMethod.GET): classes.Operation.GetList,
+    (False, openapi_parser.specification.OperationMethod.GET): classes.Operation.GetSingle,
+    (False, openapi_parser.specification.OperationMethod.PUT): classes.Operation.CreateSingle,
+    (False, openapi_parser.specification.OperationMethod.PATCH): classes.Operation.UpdateSingle,
+    (False, openapi_parser.specification.OperationMethod.DELETE): classes.Operation.DeleteSingle,
 }
 
 PLURAL_SINGULAR_CONVERSION: list[tuple[str, str]] = [
@@ -33,7 +32,7 @@ PLURAL_SINGULAR_SPECIAL_CASES = {
     "addresses": "person",
 }
 
-def pretty_repr(x: object, indent=0) -> str:
+def pretty_repr(x: object, indent=1) -> str:
     if isinstance(x, dict):
         res = "{\n"
         for (key, value) in x.items():
@@ -56,8 +55,8 @@ def get_singular_name(plural: str) -> str:
     print(f"WARNING: Cannot get singular name for {plural}")
     return plural
 
-def generate_metamodel(spec: openapi_parser.specification.Specification) -> list[jubladb_api.metamodel.classes.Entity]:
-    entities: list[jubladb_api.metamodel.classes.Entity] = []
+def generate_metamodel(spec: openapi_parser.specification.Specification) -> list[classes.Entity]:
+    entities: list[classes.Entity] = []
     spec_types: openapi_parser.specification.String = spec.schemas["types"]
     for entity_type in spec_types.enum:
         schema: openapi_parser.specification.Object = spec.schemas[entity_type]
@@ -78,7 +77,7 @@ def generate_metamodel(spec: openapi_parser.specification.Specification) -> list
         attr_filters: dict[str, set[str]] = {}
 
         name = entity_type.replace("-", "_")
-        entity = jubladb_api.metamodel.classes.Entity(url=base_url if base_url in spec_paths else "",
+        entity = classes.Entity(url=base_url if base_url in spec_paths else "",
                                                       name_singular=get_singular_name(name),
                                                       name_plural=name,
                                                       )
@@ -122,16 +121,20 @@ def generate_metamodel(spec: openapi_parser.specification.Specification) -> list
             if type_ is None:
                 print(f"Unknown type {prop.schema.type} for property {entity_type}.{prop.name}")
                 continue
-            attr = jubladb_api.metamodel.classes.Attribute(name=prop.name,
+            attr = classes.Attribute(name=prop.name,
                                                            type_=type_,
                                                            sortable=prop.name in sort_attrs,
                                                            filter_types=attr_filters.get(prop.name, set()),
                                                            )
             entity.attributes.append(attr)
 
-    with open("jubladb_api/metamodel/model.py", "w") as f:
+    with open("../jubladb_api/metamodel/model.py", "w") as f:
         f.write(f"""# This file is auto-generated by generate_metamodel.py
 from jubladb_api.metamodel.classes import *
+import typing
 
-ENTITIES = {pretty_repr({e.name_singular: e for e in entities})}\n""")
+ENTITIES = {pretty_repr({e.name_singular: e for e in entities})}
+
+EntityName = typing.Literal[{', '.join(f'"{e.name_singular}"' for e in entities)}]
+""")
     return entities
