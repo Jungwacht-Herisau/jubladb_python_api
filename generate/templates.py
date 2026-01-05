@@ -25,6 +25,18 @@ def attribute_type_to_python_type(attr_type: "classes.AttributeType") -> str:
     }
     return attr_type_to_py_class[attr_type]
 
+def attribute_type_python_constructor(attr_type: "classes.AttributeType") -> str:
+    attr_type_to_py_ctor = {
+        classes.AttributeType.INTEGER: "int",
+        classes.AttributeType.BOOLEAN: "bool",
+        classes.AttributeType.STRING: "str",
+        classes.AttributeType.FLOAT: "float",
+        classes.AttributeType.DATE: "datetime.date.fromisoformat",
+        classes.AttributeType.TIME: "datetime.time.fromisoformat",
+        classes.AttributeType.DATETIME: "datetime.datetime.fromisoformat",
+    }
+    return attr_type_to_py_ctor[attr_type]
+
 def entity_has_sortable_attributes(entity: "classes.Entity") -> bool:
     return any(attr.sortable for attr in entity.attributes)
 
@@ -37,6 +49,7 @@ class TemplatedGenerator(object):
         )
         self.env.filters["snake_case_to_pascal_case"] = snake_case_to_pascal_case
         self.env.filters["attribute_type_to_python_type"] = attribute_type_to_python_type
+        self.env.filters["attribute_type_python_constructor"] = attribute_type_python_constructor
         self.env.filters["entity_has_sortable_attributes"] = entity_has_sortable_attributes
         self.env.filters["repr"] = repr
         self.env.filters["dict_items"] = dict_items

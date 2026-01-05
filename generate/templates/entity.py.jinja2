@@ -18,7 +18,7 @@ class {{ class_name }}(jubladb_api.core.base_entity.BaseEntity):
                  {% endfor %}
 
                  {% for rel in entity.relations %}
-                 {{ rel.relation_name }}: {% if rel.to_many %} list[ {% endif %} jubladb_api.generated.entities.keys.{{ rel.related_type_singular | snake_case_to_pascal_case }}Key {% if rel.to_many %} ] {% endif %},
+                 {{ rel.relation_name }}: {% if rel.to_many %} list[ {% endif %} jubladb_api.generated.entities.keys.{{ rel.related_type_singular | snake_case_to_pascal_case }}Key {% if rel.to_many %} ] {% endif %} | None,
                  {% endfor %}
                  ):
         super().__init__(id_)
@@ -37,6 +37,8 @@ class {{ class_name }}(jubladb_api.core.base_entity.BaseEntity):
     {% for rel in entity.relations %}
     @property
     def {{ rel.relation_name }}(self) -> {% if rel.to_many %} list[ {% endif %} jubladb_api.generated.entities.keys.{{ rel.related_type_singular | snake_case_to_pascal_case }}Key {% if rel.to_many %} ] {% endif %}:
+        if self._{{ rel.relation_name }} is None:
+            raise ValueError("Relation {{ rel.relation_name }} is not included")
         return self._{{ rel.relation_name }}
     {% endfor %}
 
@@ -56,21 +58,13 @@ class {{ class_name }}(jubladb_api.core.base_entity.BaseEntity):
         return cls(
             id_=int(json_data["id"]),
             {% for attr in entity.attributes %}
-            {% if attr.type_.name=="date" %}
-            {{ attr.name }}=datetime.date.fromisoformat(json_data["attributes"]["{{ attr.name }}"]),
-            {% elif attr.type_.name=="time" %}
-            {{ attr.name }}=datetime.time.fromisoformat(json_data["attributes"]["{{ attr.name }}"]),
-            {% elif attr.type_.name=="datetime" %}
-            {{ attr.name }}=datetime.datetime.fromisoformat(json_data["attributes"]["{{ attr.name }}"]),
-            {% else %}
-            {{ attr.name }}=json_data["attributes"]["{{ attr.name }}"],
-            {% endif %}
+            {{ attr.name }}={{ attr.type_ | attribute_type_python_constructor }}(json_data["attributes"]["{{ attr.name }}"]),
             {% endfor %}
             {% for rel in entity.relations %}
             {% if rel.to_many %}
-            {{ rel.relation_name }} = [jubladb_api.generated.entities.keys.{{ rel.related_type_singular | snake_case_to_pascal_case }}Key(id_) for id_ in cls._access_json_many_relation_ids(json_data, "{{ rel.relation_name }}", "{{ rel.related_type_plural }}")],
+            {{ rel.relation_name }} = cls._create_many_relation_keys(json_data, "{{ rel.relation_name }}", "{{ rel.related_type_plural }}", jubladb_api.generated.entities.keys.{{ rel.related_type_singular | snake_case_to_pascal_case }}Key),
             {% else %}
-            {{ rel.relation_name }} = jubladb_api.generated.entities.keys.{{ rel.related_type_singular | snake_case_to_pascal_case }}Key(cls._access_json_single_relation_id(json_data, "{{ rel.relation_name }}", "{{ rel.related_type_plural }}")),
+            {{ rel.relation_name }} = cls._create_single_relation_key(json_data, "{{ rel.relation_name }}", "{{ rel.related_type_plural }}", jubladb_api.generated.entities.keys.{{ rel.related_type_singular | snake_case_to_pascal_case }}Key),
             {% endif %}
             {% endfor %}
         )
