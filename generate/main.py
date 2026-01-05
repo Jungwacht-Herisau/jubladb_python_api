@@ -2,6 +2,8 @@
 import pathlib
 import sys
 
+from openapi_parser.specification import Specification
+
 PROJECT_ROOT = pathlib.Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
@@ -100,11 +102,6 @@ def get_singular_name(plural: str) -> str:
 
 
 def _generate_api_info(spec: openapi_parser.specification.Specification) -> classes.APIInfo:
-    auth_header = ""
-    for sschema in spec.security_schemas.values():
-        if sschema.type == openapi_parser.specification.SecurityType.API_KEY and sschema.location == openapi_parser.specification.BaseLocation.HEADER:
-            auth_header = sschema.name
-
     default_server_url = ""
     for srv in spec.servers:
         default_server_url = srv.url
@@ -112,9 +109,17 @@ def _generate_api_info(spec: openapi_parser.specification.Specification) -> clas
 
     return classes.APIInfo(
         version=spec.info.version,
-        auth_header=auth_header,
+        auth_header=_get_auth_header_name(spec),
         default_server_url=default_server_url,
     )
+
+
+def _get_auth_header_name(spec: Specification) -> str:
+    auth_header = ""
+    for sschema in spec.security_schemas.values():
+        if sschema.type == openapi_parser.specification.SecurityType.API_KEY and sschema.location == openapi_parser.specification.BaseLocation.HEADER:
+            auth_header = sschema.name
+    return auth_header
 
 
 class CodeGenerator(object):
@@ -238,7 +243,7 @@ class CodeGenerator(object):
         renderer = self.generator.renderer("client.py.jinja2")
         code = renderer.render({
             "entities": entities,
-            "api_key_header": "",
+            "api_key_header": _get_auth_header_name(self.spec),
         })
         with open(self.output_dir / "client.py", "w") as f:
             f.write(code)

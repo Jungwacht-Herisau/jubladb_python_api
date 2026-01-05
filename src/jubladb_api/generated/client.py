@@ -167,31 +167,43 @@ _Role_Sort = typing.Literal[
 class Client(base_client.BaseClient):
 
     def __init__(self, url: str, api_key: str):
-        super().__init__(url, {"": api_key})
+        super().__init__(url, {"X-TOKEN": api_key})
 
     def get_event_kind_categories_list(
         self,
     ) -> list[entities.EventKindCategory]:
-        raise NotImplementedError()
+        filters = []
+        filters = [f for f in filters if f[2] is not None]
+        json_response = self._request_list("event_kind_category", [], [], filters)
+        print(json_response)
+        # todo parse json response
 
     def get_event_kind_category(
         self,
         id_: int,
     ) -> entities.EventKindCategory:
-        raise NotImplementedError()
+        json_response = self._request_single_get("event_kind_category", id_, include)
+        print(json_response)
+        # todo parse json response
 
     def get_event_kinds_list(
         self,
         include: list[_EventKind_Include],
     ) -> list[entities.EventKind]:
-        raise NotImplementedError()
+        filters = []
+        filters = [f for f in filters if f[2] is not None]
+        json_response = self._request_list("event_kind", [], include, filters)
+        print(json_response)
+        # todo parse json response
 
     def get_event_kind(
         self,
         id_: int,
         include: list[_EventKind_Include],
     ) -> entities.EventKind:
-        raise NotImplementedError()
+        json_response = self._request_single_get("event_kind", id_, include)
+        print(json_response)
+        # todo parse json response
 
     def get_events_list(
         self,
@@ -210,14 +222,34 @@ class Client(base_client.BaseClient):
         filter_updated_at_lt: datetime.datetime,
         filter_updated_at_lte: datetime.datetime,
     ) -> list[entities.Event]:
-        raise NotImplementedError()
+        filters = [
+            ("type", "eq", filter_type_eq),
+            ("kind_id", "eq", filter_kind_id_eq),
+            ("kind_id", "not_eq", filter_kind_id_not_eq),
+            ("kind_id", "gt", filter_kind_id_gt),
+            ("kind_id", "gte", filter_kind_id_gte),
+            ("kind_id", "lt", filter_kind_id_lt),
+            ("kind_id", "lte", filter_kind_id_lte),
+            ("updated_at", "eq", filter_updated_at_eq),
+            ("updated_at", "not_eq", filter_updated_at_not_eq),
+            ("updated_at", "gt", filter_updated_at_gt),
+            ("updated_at", "gte", filter_updated_at_gte),
+            ("updated_at", "lt", filter_updated_at_lt),
+            ("updated_at", "lte", filter_updated_at_lte),
+        ]
+        filters = [f for f in filters if f[2] is not None]
+        json_response = self._request_list("event", [], include, filters)
+        print(json_response)
+        # todo parse json response
 
     def get_event(
         self,
         id_: int,
         include: list[_Event_Include],
     ) -> entities.Event:
-        raise NotImplementedError()
+        json_response = self._request_single_get("event", id_, include)
+        print(json_response)
+        # todo parse json response
 
     def get_groups_list(
         self,
@@ -368,14 +400,181 @@ class Client(base_client.BaseClient):
         filter_deleted_at_lt: datetime.datetime,
         filter_deleted_at_lte: datetime.datetime,
     ) -> list[entities.Group]:
-        raise NotImplementedError()
+        filters = [
+            ("name", "eq", filter_name_eq),
+            ("name", "not_eq", filter_name_not_eq),
+            ("name", "eql", filter_name_eql),
+            ("name", "not_eql", filter_name_not_eql),
+            ("name", "prefix", filter_name_prefix),
+            ("name", "not_prefix", filter_name_not_prefix),
+            ("name", "suffix", filter_name_suffix),
+            ("name", "not_suffix", filter_name_not_suffix),
+            ("name", "match", filter_name_match),
+            ("name", "not_match", filter_name_not_match),
+            ("short_name", "eq", filter_short_name_eq),
+            ("short_name", "not_eq", filter_short_name_not_eq),
+            ("short_name", "eql", filter_short_name_eql),
+            ("short_name", "not_eql", filter_short_name_not_eql),
+            ("short_name", "prefix", filter_short_name_prefix),
+            ("short_name", "not_prefix", filter_short_name_not_prefix),
+            ("short_name", "suffix", filter_short_name_suffix),
+            ("short_name", "not_suffix", filter_short_name_not_suffix),
+            ("short_name", "match", filter_short_name_match),
+            ("short_name", "not_match", filter_short_name_not_match),
+            ("display_name", "eq", filter_display_name_eq),
+            ("display_name", "not_eq", filter_display_name_not_eq),
+            ("display_name", "eql", filter_display_name_eql),
+            ("display_name", "not_eql", filter_display_name_not_eql),
+            ("display_name", "prefix", filter_display_name_prefix),
+            ("display_name", "not_prefix", filter_display_name_not_prefix),
+            ("display_name", "suffix", filter_display_name_suffix),
+            ("display_name", "not_suffix", filter_display_name_not_suffix),
+            ("display_name", "match", filter_display_name_match),
+            ("display_name", "not_match", filter_display_name_not_match),
+            ("description", "eq", filter_description_eq),
+            ("description", "not_eq", filter_description_not_eq),
+            ("description", "eql", filter_description_eql),
+            ("description", "not_eql", filter_description_not_eql),
+            ("description", "prefix", filter_description_prefix),
+            ("description", "not_prefix", filter_description_not_prefix),
+            ("description", "suffix", filter_description_suffix),
+            ("description", "not_suffix", filter_description_not_suffix),
+            ("description", "match", filter_description_match),
+            ("description", "not_match", filter_description_not_match),
+            ("layer", "eq", filter_layer_eq),
+            ("parent_id", "eq", filter_parent_id_eq),
+            ("parent_id", "not_eq", filter_parent_id_not_eq),
+            ("parent_id", "gt", filter_parent_id_gt),
+            ("parent_id", "gte", filter_parent_id_gte),
+            ("parent_id", "lt", filter_parent_id_lt),
+            ("parent_id", "lte", filter_parent_id_lte),
+            ("layer_group_id", "eq", filter_layer_group_id_eq),
+            ("layer_group_id", "not_eq", filter_layer_group_id_not_eq),
+            ("layer_group_id", "gt", filter_layer_group_id_gt),
+            ("layer_group_id", "gte", filter_layer_group_id_gte),
+            ("layer_group_id", "lt", filter_layer_group_id_lt),
+            ("layer_group_id", "lte", filter_layer_group_id_lte),
+            ("type", "eq", filter_type_eq),
+            ("type", "not_eq", filter_type_not_eq),
+            ("type", "eql", filter_type_eql),
+            ("type", "not_eql", filter_type_not_eql),
+            ("type", "prefix", filter_type_prefix),
+            ("type", "not_prefix", filter_type_not_prefix),
+            ("type", "suffix", filter_type_suffix),
+            ("type", "not_suffix", filter_type_not_suffix),
+            ("type", "match", filter_type_match),
+            ("type", "not_match", filter_type_not_match),
+            ("email", "eq", filter_email_eq),
+            ("email", "not_eq", filter_email_not_eq),
+            ("email", "eql", filter_email_eql),
+            ("email", "not_eql", filter_email_not_eql),
+            ("email", "prefix", filter_email_prefix),
+            ("email", "not_prefix", filter_email_not_prefix),
+            ("email", "suffix", filter_email_suffix),
+            ("email", "not_suffix", filter_email_not_suffix),
+            ("email", "match", filter_email_match),
+            ("email", "not_match", filter_email_not_match),
+            ("address", "eq", filter_address_eq),
+            ("address", "not_eq", filter_address_not_eq),
+            ("address", "eql", filter_address_eql),
+            ("address", "not_eql", filter_address_not_eql),
+            ("address", "prefix", filter_address_prefix),
+            ("address", "not_prefix", filter_address_not_prefix),
+            ("address", "suffix", filter_address_suffix),
+            ("address", "not_suffix", filter_address_not_suffix),
+            ("address", "match", filter_address_match),
+            ("address", "not_match", filter_address_not_match),
+            ("zip_code", "eq", filter_zip_code_eq),
+            ("zip_code", "not_eq", filter_zip_code_not_eq),
+            ("zip_code", "gt", filter_zip_code_gt),
+            ("zip_code", "gte", filter_zip_code_gte),
+            ("zip_code", "lt", filter_zip_code_lt),
+            ("zip_code", "lte", filter_zip_code_lte),
+            ("town", "eq", filter_town_eq),
+            ("town", "not_eq", filter_town_not_eq),
+            ("town", "eql", filter_town_eql),
+            ("town", "not_eql", filter_town_not_eql),
+            ("town", "prefix", filter_town_prefix),
+            ("town", "not_prefix", filter_town_not_prefix),
+            ("town", "suffix", filter_town_suffix),
+            ("town", "not_suffix", filter_town_not_suffix),
+            ("town", "match", filter_town_match),
+            ("town", "not_match", filter_town_not_match),
+            ("country", "eq", filter_country_eq),
+            ("country", "not_eq", filter_country_not_eq),
+            ("country", "eql", filter_country_eql),
+            ("country", "not_eql", filter_country_not_eql),
+            ("country", "prefix", filter_country_prefix),
+            ("country", "not_prefix", filter_country_not_prefix),
+            ("country", "suffix", filter_country_suffix),
+            ("country", "not_suffix", filter_country_not_suffix),
+            ("country", "match", filter_country_match),
+            ("country", "not_match", filter_country_not_match),
+            (
+                "require_person_add_requests",
+                "eq",
+                filter_require_person_add_requests_eq,
+            ),
+            ("self_registration_url", "eq", filter_self_registration_url_eq),
+            ("self_registration_url", "not_eq", filter_self_registration_url_not_eq),
+            ("self_registration_url", "eql", filter_self_registration_url_eql),
+            ("self_registration_url", "not_eql", filter_self_registration_url_not_eql),
+            ("self_registration_url", "prefix", filter_self_registration_url_prefix),
+            (
+                "self_registration_url",
+                "not_prefix",
+                filter_self_registration_url_not_prefix,
+            ),
+            ("self_registration_url", "suffix", filter_self_registration_url_suffix),
+            (
+                "self_registration_url",
+                "not_suffix",
+                filter_self_registration_url_not_suffix,
+            ),
+            ("self_registration_url", "match", filter_self_registration_url_match),
+            (
+                "self_registration_url",
+                "not_match",
+                filter_self_registration_url_not_match,
+            ),
+            ("archived_at", "eq", filter_archived_at_eq),
+            ("archived_at", "not_eq", filter_archived_at_not_eq),
+            ("archived_at", "gt", filter_archived_at_gt),
+            ("archived_at", "gte", filter_archived_at_gte),
+            ("archived_at", "lt", filter_archived_at_lt),
+            ("archived_at", "lte", filter_archived_at_lte),
+            ("created_at", "eq", filter_created_at_eq),
+            ("created_at", "not_eq", filter_created_at_not_eq),
+            ("created_at", "gt", filter_created_at_gt),
+            ("created_at", "gte", filter_created_at_gte),
+            ("created_at", "lt", filter_created_at_lt),
+            ("created_at", "lte", filter_created_at_lte),
+            ("updated_at", "eq", filter_updated_at_eq),
+            ("updated_at", "not_eq", filter_updated_at_not_eq),
+            ("updated_at", "gt", filter_updated_at_gt),
+            ("updated_at", "gte", filter_updated_at_gte),
+            ("updated_at", "lt", filter_updated_at_lt),
+            ("updated_at", "lte", filter_updated_at_lte),
+            ("deleted_at", "eq", filter_deleted_at_eq),
+            ("deleted_at", "not_eq", filter_deleted_at_not_eq),
+            ("deleted_at", "gt", filter_deleted_at_gt),
+            ("deleted_at", "gte", filter_deleted_at_gte),
+            ("deleted_at", "lt", filter_deleted_at_lt),
+            ("deleted_at", "lte", filter_deleted_at_lte),
+        ]
+        filters = [f for f in filters if f[2] is not None]
+        json_response = self._request_list("group", sort, include, filters)
+        print(json_response)
+        # todo parse json response
 
     def get_group(
         self,
         id_: int,
         include: list[_Group_Include],
     ) -> entities.Group:
-        raise NotImplementedError()
+        json_response = self._request_single_get("group", id_, include)
+        print(json_response)
+        # todo parse json response
 
     def get_invoices_list(
         self,
@@ -393,14 +592,33 @@ class Client(base_client.BaseClient):
         filter_recipient_id_lt: int,
         filter_recipient_id_lte: int,
     ) -> list[entities.Invoice]:
-        raise NotImplementedError()
+        filters = [
+            ("group_id", "eq", filter_group_id_eq),
+            ("group_id", "not_eq", filter_group_id_not_eq),
+            ("group_id", "gt", filter_group_id_gt),
+            ("group_id", "gte", filter_group_id_gte),
+            ("group_id", "lt", filter_group_id_lt),
+            ("group_id", "lte", filter_group_id_lte),
+            ("recipient_id", "eq", filter_recipient_id_eq),
+            ("recipient_id", "not_eq", filter_recipient_id_not_eq),
+            ("recipient_id", "gt", filter_recipient_id_gt),
+            ("recipient_id", "gte", filter_recipient_id_gte),
+            ("recipient_id", "lt", filter_recipient_id_lt),
+            ("recipient_id", "lte", filter_recipient_id_lte),
+        ]
+        filters = [f for f in filters if f[2] is not None]
+        json_response = self._request_list("invoice", [], include, filters)
+        print(json_response)
+        # todo parse json response
 
     def get_invoice(
         self,
         id_: int,
         include: list[_Invoice_Include],
     ) -> entities.Invoice:
-        raise NotImplementedError()
+        json_response = self._request_single_get("invoice", id_, include)
+        print(json_response)
+        # todo parse json response
 
     def get_people_list(
         self,
@@ -596,14 +814,226 @@ class Client(base_client.BaseClient):
         filter_language_match: str,
         filter_language_not_match: str,
     ) -> list[entities.Person]:
-        raise NotImplementedError()
+        filters = [
+            ("first_name", "eq", filter_first_name_eq),
+            ("first_name", "not_eq", filter_first_name_not_eq),
+            ("first_name", "eql", filter_first_name_eql),
+            ("first_name", "not_eql", filter_first_name_not_eql),
+            ("first_name", "prefix", filter_first_name_prefix),
+            ("first_name", "not_prefix", filter_first_name_not_prefix),
+            ("first_name", "suffix", filter_first_name_suffix),
+            ("first_name", "not_suffix", filter_first_name_not_suffix),
+            ("first_name", "match", filter_first_name_match),
+            ("first_name", "not_match", filter_first_name_not_match),
+            ("last_name", "eq", filter_last_name_eq),
+            ("last_name", "not_eq", filter_last_name_not_eq),
+            ("last_name", "eql", filter_last_name_eql),
+            ("last_name", "not_eql", filter_last_name_not_eql),
+            ("last_name", "prefix", filter_last_name_prefix),
+            ("last_name", "not_prefix", filter_last_name_not_prefix),
+            ("last_name", "suffix", filter_last_name_suffix),
+            ("last_name", "not_suffix", filter_last_name_not_suffix),
+            ("last_name", "match", filter_last_name_match),
+            ("last_name", "not_match", filter_last_name_not_match),
+            ("nickname", "eq", filter_nickname_eq),
+            ("nickname", "not_eq", filter_nickname_not_eq),
+            ("nickname", "eql", filter_nickname_eql),
+            ("nickname", "not_eql", filter_nickname_not_eql),
+            ("nickname", "prefix", filter_nickname_prefix),
+            ("nickname", "not_prefix", filter_nickname_not_prefix),
+            ("nickname", "suffix", filter_nickname_suffix),
+            ("nickname", "not_suffix", filter_nickname_not_suffix),
+            ("nickname", "match", filter_nickname_match),
+            ("nickname", "not_match", filter_nickname_not_match),
+            ("company_name", "eq", filter_company_name_eq),
+            ("company_name", "not_eq", filter_company_name_not_eq),
+            ("company_name", "eql", filter_company_name_eql),
+            ("company_name", "not_eql", filter_company_name_not_eql),
+            ("company_name", "prefix", filter_company_name_prefix),
+            ("company_name", "not_prefix", filter_company_name_not_prefix),
+            ("company_name", "suffix", filter_company_name_suffix),
+            ("company_name", "not_suffix", filter_company_name_not_suffix),
+            ("company_name", "match", filter_company_name_match),
+            ("company_name", "not_match", filter_company_name_not_match),
+            ("company", "eq", filter_company_eq),
+            ("email", "eq", filter_email_eq),
+            ("email", "not_eq", filter_email_not_eq),
+            ("email", "eql", filter_email_eql),
+            ("email", "not_eql", filter_email_not_eql),
+            ("email", "prefix", filter_email_prefix),
+            ("email", "not_prefix", filter_email_not_prefix),
+            ("email", "suffix", filter_email_suffix),
+            ("email", "not_suffix", filter_email_not_suffix),
+            ("email", "match", filter_email_match),
+            ("email", "not_match", filter_email_not_match),
+            ("address", "eq", filter_address_eq),
+            ("address", "not_eq", filter_address_not_eq),
+            ("address", "eql", filter_address_eql),
+            ("address", "not_eql", filter_address_not_eql),
+            ("address", "prefix", filter_address_prefix),
+            ("address", "not_prefix", filter_address_not_prefix),
+            ("address", "suffix", filter_address_suffix),
+            ("address", "not_suffix", filter_address_not_suffix),
+            ("address", "match", filter_address_match),
+            ("address", "not_match", filter_address_not_match),
+            ("address_care_of", "eq", filter_address_care_of_eq),
+            ("address_care_of", "not_eq", filter_address_care_of_not_eq),
+            ("address_care_of", "eql", filter_address_care_of_eql),
+            ("address_care_of", "not_eql", filter_address_care_of_not_eql),
+            ("address_care_of", "prefix", filter_address_care_of_prefix),
+            ("address_care_of", "not_prefix", filter_address_care_of_not_prefix),
+            ("address_care_of", "suffix", filter_address_care_of_suffix),
+            ("address_care_of", "not_suffix", filter_address_care_of_not_suffix),
+            ("address_care_of", "match", filter_address_care_of_match),
+            ("address_care_of", "not_match", filter_address_care_of_not_match),
+            ("street", "eq", filter_street_eq),
+            ("street", "not_eq", filter_street_not_eq),
+            ("street", "eql", filter_street_eql),
+            ("street", "not_eql", filter_street_not_eql),
+            ("street", "prefix", filter_street_prefix),
+            ("street", "not_prefix", filter_street_not_prefix),
+            ("street", "suffix", filter_street_suffix),
+            ("street", "not_suffix", filter_street_not_suffix),
+            ("street", "match", filter_street_match),
+            ("street", "not_match", filter_street_not_match),
+            ("housenumber", "eq", filter_housenumber_eq),
+            ("housenumber", "not_eq", filter_housenumber_not_eq),
+            ("housenumber", "eql", filter_housenumber_eql),
+            ("housenumber", "not_eql", filter_housenumber_not_eql),
+            ("housenumber", "prefix", filter_housenumber_prefix),
+            ("housenumber", "not_prefix", filter_housenumber_not_prefix),
+            ("housenumber", "suffix", filter_housenumber_suffix),
+            ("housenumber", "not_suffix", filter_housenumber_not_suffix),
+            ("housenumber", "match", filter_housenumber_match),
+            ("housenumber", "not_match", filter_housenumber_not_match),
+            ("postbox", "eq", filter_postbox_eq),
+            ("postbox", "not_eq", filter_postbox_not_eq),
+            ("postbox", "eql", filter_postbox_eql),
+            ("postbox", "not_eql", filter_postbox_not_eql),
+            ("postbox", "prefix", filter_postbox_prefix),
+            ("postbox", "not_prefix", filter_postbox_not_prefix),
+            ("postbox", "suffix", filter_postbox_suffix),
+            ("postbox", "not_suffix", filter_postbox_not_suffix),
+            ("postbox", "match", filter_postbox_match),
+            ("postbox", "not_match", filter_postbox_not_match),
+            ("zip_code", "eq", filter_zip_code_eq),
+            ("zip_code", "not_eq", filter_zip_code_not_eq),
+            ("zip_code", "eql", filter_zip_code_eql),
+            ("zip_code", "not_eql", filter_zip_code_not_eql),
+            ("zip_code", "prefix", filter_zip_code_prefix),
+            ("zip_code", "not_prefix", filter_zip_code_not_prefix),
+            ("zip_code", "suffix", filter_zip_code_suffix),
+            ("zip_code", "not_suffix", filter_zip_code_not_suffix),
+            ("zip_code", "match", filter_zip_code_match),
+            ("zip_code", "not_match", filter_zip_code_not_match),
+            ("town", "eq", filter_town_eq),
+            ("town", "not_eq", filter_town_not_eq),
+            ("town", "eql", filter_town_eql),
+            ("town", "not_eql", filter_town_not_eql),
+            ("town", "prefix", filter_town_prefix),
+            ("town", "not_prefix", filter_town_not_prefix),
+            ("town", "suffix", filter_town_suffix),
+            ("town", "not_suffix", filter_town_not_suffix),
+            ("town", "match", filter_town_match),
+            ("town", "not_match", filter_town_not_match),
+            ("country", "eq", filter_country_eq),
+            ("country", "not_eq", filter_country_not_eq),
+            ("country", "eql", filter_country_eql),
+            ("country", "not_eql", filter_country_not_eql),
+            ("country", "prefix", filter_country_prefix),
+            ("country", "not_prefix", filter_country_not_prefix),
+            ("country", "suffix", filter_country_suffix),
+            ("country", "not_suffix", filter_country_not_suffix),
+            ("country", "match", filter_country_match),
+            ("country", "not_match", filter_country_not_match),
+            ("primary_group_id", "eq", filter_primary_group_id_eq),
+            ("primary_group_id", "not_eq", filter_primary_group_id_not_eq),
+            ("primary_group_id", "gt", filter_primary_group_id_gt),
+            ("primary_group_id", "gte", filter_primary_group_id_gte),
+            ("primary_group_id", "lt", filter_primary_group_id_lt),
+            ("primary_group_id", "lte", filter_primary_group_id_lte),
+            ("gender", "eq", filter_gender_eq),
+            ("gender", "not_eq", filter_gender_not_eq),
+            ("gender", "eql", filter_gender_eql),
+            ("gender", "not_eql", filter_gender_not_eql),
+            ("gender", "prefix", filter_gender_prefix),
+            ("gender", "not_prefix", filter_gender_not_prefix),
+            ("gender", "suffix", filter_gender_suffix),
+            ("gender", "not_suffix", filter_gender_not_suffix),
+            ("gender", "match", filter_gender_match),
+            ("gender", "not_match", filter_gender_not_match),
+            ("birthday", "eq", filter_birthday_eq),
+            ("birthday", "not_eq", filter_birthday_not_eq),
+            ("birthday", "gt", filter_birthday_gt),
+            ("birthday", "gte", filter_birthday_gte),
+            ("birthday", "lt", filter_birthday_lt),
+            ("birthday", "lte", filter_birthday_lte),
+            ("picture", "eq", filter_picture_eq),
+            ("picture", "not_eq", filter_picture_not_eq),
+            ("picture", "eql", filter_picture_eql),
+            ("picture", "not_eql", filter_picture_not_eql),
+            ("picture", "prefix", filter_picture_prefix),
+            ("picture", "not_prefix", filter_picture_not_prefix),
+            ("picture", "suffix", filter_picture_suffix),
+            ("picture", "not_suffix", filter_picture_not_suffix),
+            ("picture", "match", filter_picture_match),
+            ("picture", "not_match", filter_picture_not_match),
+            ("updated_at", "eq", filter_updated_at_eq),
+            ("updated_at", "not_eq", filter_updated_at_not_eq),
+            ("updated_at", "gt", filter_updated_at_gt),
+            ("updated_at", "gte", filter_updated_at_gte),
+            ("updated_at", "lt", filter_updated_at_lt),
+            ("updated_at", "lte", filter_updated_at_lte),
+            ("additional_information", "eq", filter_additional_information_eq),
+            ("additional_information", "not_eq", filter_additional_information_not_eq),
+            ("additional_information", "eql", filter_additional_information_eql),
+            (
+                "additional_information",
+                "not_eql",
+                filter_additional_information_not_eql,
+            ),
+            ("additional_information", "prefix", filter_additional_information_prefix),
+            (
+                "additional_information",
+                "not_prefix",
+                filter_additional_information_not_prefix,
+            ),
+            ("additional_information", "suffix", filter_additional_information_suffix),
+            (
+                "additional_information",
+                "not_suffix",
+                filter_additional_information_not_suffix,
+            ),
+            ("additional_information", "match", filter_additional_information_match),
+            (
+                "additional_information",
+                "not_match",
+                filter_additional_information_not_match,
+            ),
+            ("language", "eq", filter_language_eq),
+            ("language", "not_eq", filter_language_not_eq),
+            ("language", "eql", filter_language_eql),
+            ("language", "not_eql", filter_language_not_eql),
+            ("language", "prefix", filter_language_prefix),
+            ("language", "not_prefix", filter_language_not_prefix),
+            ("language", "suffix", filter_language_suffix),
+            ("language", "not_suffix", filter_language_not_suffix),
+            ("language", "match", filter_language_match),
+            ("language", "not_match", filter_language_not_match),
+        ]
+        filters = [f for f in filters if f[2] is not None]
+        json_response = self._request_list("person", sort, include, filters)
+        print(json_response)
+        # todo parse json response
 
     def get_person(
         self,
         id_: int,
         include: list[_Person_Include],
     ) -> entities.Person:
-        raise NotImplementedError()
+        json_response = self._request_single_get("person", id_, include)
+        print(json_response)
+        # todo parse json response
 
     def get_roles_list(
         self,
@@ -676,14 +1106,87 @@ class Client(base_client.BaseClient):
         filter_label_match: str,
         filter_label_not_match: str,
     ) -> list[entities.Role]:
-        raise NotImplementedError()
+        filters = [
+            ("created_at", "eq", filter_created_at_eq),
+            ("created_at", "not_eq", filter_created_at_not_eq),
+            ("created_at", "gt", filter_created_at_gt),
+            ("created_at", "gte", filter_created_at_gte),
+            ("created_at", "lt", filter_created_at_lt),
+            ("created_at", "lte", filter_created_at_lte),
+            ("updated_at", "eq", filter_updated_at_eq),
+            ("updated_at", "not_eq", filter_updated_at_not_eq),
+            ("updated_at", "gt", filter_updated_at_gt),
+            ("updated_at", "gte", filter_updated_at_gte),
+            ("updated_at", "lt", filter_updated_at_lt),
+            ("updated_at", "lte", filter_updated_at_lte),
+            ("start_on", "eq", filter_start_on_eq),
+            ("start_on", "not_eq", filter_start_on_not_eq),
+            ("start_on", "gt", filter_start_on_gt),
+            ("start_on", "gte", filter_start_on_gte),
+            ("start_on", "lt", filter_start_on_lt),
+            ("start_on", "lte", filter_start_on_lte),
+            ("end_on", "eq", filter_end_on_eq),
+            ("end_on", "not_eq", filter_end_on_not_eq),
+            ("end_on", "gt", filter_end_on_gt),
+            ("end_on", "gte", filter_end_on_gte),
+            ("end_on", "lt", filter_end_on_lt),
+            ("end_on", "lte", filter_end_on_lte),
+            ("name", "eq", filter_name_eq),
+            ("name", "not_eq", filter_name_not_eq),
+            ("name", "eql", filter_name_eql),
+            ("name", "not_eql", filter_name_not_eql),
+            ("name", "prefix", filter_name_prefix),
+            ("name", "not_prefix", filter_name_not_prefix),
+            ("name", "suffix", filter_name_suffix),
+            ("name", "not_suffix", filter_name_not_suffix),
+            ("name", "match", filter_name_match),
+            ("name", "not_match", filter_name_not_match),
+            ("person_id", "eq", filter_person_id_eq),
+            ("person_id", "not_eq", filter_person_id_not_eq),
+            ("person_id", "gt", filter_person_id_gt),
+            ("person_id", "gte", filter_person_id_gte),
+            ("person_id", "lt", filter_person_id_lt),
+            ("person_id", "lte", filter_person_id_lte),
+            ("group_id", "eq", filter_group_id_eq),
+            ("group_id", "not_eq", filter_group_id_not_eq),
+            ("group_id", "gt", filter_group_id_gt),
+            ("group_id", "gte", filter_group_id_gte),
+            ("group_id", "lt", filter_group_id_lt),
+            ("group_id", "lte", filter_group_id_lte),
+            ("type", "eq", filter_type_eq),
+            ("type", "not_eq", filter_type_not_eq),
+            ("type", "eql", filter_type_eql),
+            ("type", "not_eql", filter_type_not_eql),
+            ("type", "prefix", filter_type_prefix),
+            ("type", "not_prefix", filter_type_not_prefix),
+            ("type", "suffix", filter_type_suffix),
+            ("type", "not_suffix", filter_type_not_suffix),
+            ("type", "match", filter_type_match),
+            ("type", "not_match", filter_type_not_match),
+            ("label", "eq", filter_label_eq),
+            ("label", "not_eq", filter_label_not_eq),
+            ("label", "eql", filter_label_eql),
+            ("label", "not_eql", filter_label_not_eql),
+            ("label", "prefix", filter_label_prefix),
+            ("label", "not_prefix", filter_label_not_prefix),
+            ("label", "suffix", filter_label_suffix),
+            ("label", "not_suffix", filter_label_not_suffix),
+            ("label", "match", filter_label_match),
+            ("label", "not_match", filter_label_not_match),
+        ]
+        filters = [f for f in filters if f[2] is not None]
+        json_response = self._request_list("role", sort, include, filters)
+        print(json_response)
+        # todo parse json response
 
     def get_role(
         self,
         id_: int,
         include: list[_Role_Include],
     ) -> entities.Role:
-        raise NotImplementedError()
+        json_response = self._request_single_get("role", id_, include)
+        print(json_response)
+        # todo parse json response
 
 
 # @formatter:on

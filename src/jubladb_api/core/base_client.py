@@ -32,6 +32,16 @@ class BaseClient(abc.ABC):
 
         return self._request_get(f"{self._url}/{meta_type.url}", params)
 
+    def _request_single_get(self,
+                            type_: jubladb_api.metamodel.EntityName,
+                            id_: int,
+                            include: list[str]|None=None):
+        meta_type = jubladb_api.metamodel.ENTITIES[type_]
+        params = []
+        if include:
+            params.append(("include", ",".join(include)))
+        return self._request_get(f"{self._url}/{meta_type.url}/{id_}", params)
+
     def _request_get(self,
                      url: str,
                      params: list[tuple[str, str]]) -> dict:

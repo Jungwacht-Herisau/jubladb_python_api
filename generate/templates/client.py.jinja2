@@ -53,7 +53,32 @@ class Client(base_client.BaseClient):
                             {% endfor %}
                             {% endfor %}
                             ) -> list[entities.{{ entity.name_singular | snake_case_to_pascal_case }}]:
-        raise NotImplementedError()
+        filters = [
+            {% for attr in entity.attributes %}
+            {% for ft in attr.filter_types %}
+            ("{{ attr.name }}", "{{ ft }}", filter_{{ attr.name }}_{{ ft }}),
+            {% endfor %}
+            {% endfor %}
+        ]
+        filters = [f for f in filters if f[2] is not None]
+        json_response = self._request_list(
+            "{{ entity.name_singular }}",
+
+            {% if entity|entity_has_sortable_attributes %}
+            sort,
+            {% else %}
+            [],
+            {% endif %}
+
+            {% if entity.includeable|length > 0 %}
+            include,
+            {% else %}
+            [],
+            {% endif %}
+
+            filters)
+        print(json_response)
+        # todo parse json response
     {% endif %}
     {% if op.name == "GetSingle" %}
     def get_{{ entity.name_singular }}(self,
@@ -62,7 +87,9 @@ class Client(base_client.BaseClient):
             include: list[_{{ entity.name_singular|snake_case_to_pascal_case }}_Include],
             {% endif %}
                     ) -> entities.{{ entity.name_singular | snake_case_to_pascal_case }}:
-        raise NotImplementedError()
+        json_response = self._request_single_get("{{ entity.name_singular }}", id_, include)
+        print(json_response)
+        # todo parse json response
     {% endif %}
     {% endfor %}
     {% endfor %}
