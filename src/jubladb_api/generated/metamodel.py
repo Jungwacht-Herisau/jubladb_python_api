@@ -73,6 +73,7 @@ ENTITIES = {
                 filter_types=[],
             ),
         ],
+        relations=[],
         includeable=[],
     ),
     "additional_email": Entity(
@@ -112,6 +113,7 @@ ENTITIES = {
                 filter_types=[],
             ),
         ],
+        relations=[],
         includeable=[],
     ),
     "course": Entity(
@@ -250,6 +252,14 @@ ENTITIES = {
                 filter_types=[],
             ),
         ],
+        relations=[
+            RelationType(relation_name="contact", related_type="person", to_many=False),
+            RelationType(
+                relation_name="kind", related_type="event_kind", to_many=False
+            ),
+            RelationType(relation_name="dates", related_type="date", to_many=True),
+            RelationType(relation_name="leaders", related_type="person", to_many=True),
+        ],
         includeable=[],
     ),
     "date": Entity(
@@ -289,6 +299,9 @@ ENTITIES = {
                 filter_types=[],
             ),
         ],
+        relations=[
+            RelationType(relation_name="event", related_type="event", to_many=False)
+        ],
         includeable=[],
     ),
     "event_kind_category": Entity(
@@ -310,6 +323,7 @@ ENTITIES = {
                 filter_types=[],
             ),
         ],
+        relations=[],
         includeable=[],
     ),
     "event_kind": Entity(
@@ -360,6 +374,13 @@ ENTITIES = {
                 sortable=False,
                 filter_types=[],
             ),
+        ],
+        relations=[
+            RelationType(
+                relation_name="kind_category",
+                related_type="event_kind_category",
+                to_many=False,
+            )
         ],
         includeable=["kind_category"],
     ),
@@ -459,6 +480,13 @@ ENTITIES = {
                 sortable=False,
                 filter_types=["eq", "not_eq", "gt", "gte", "lt", "lte"],
             ),
+        ],
+        relations=[
+            RelationType(relation_name="contact", related_type="person", to_many=False),
+            RelationType(
+                relation_name="kind", related_type="event_kind", to_many=False
+            ),
+            RelationType(relation_name="dates", related_type="date", to_many=True),
         ],
         includeable=["contact", "kind", "dates"],
     ),
@@ -696,6 +724,29 @@ ENTITIES = {
                 name="logo", type_=AttributeType.STRING, sortable=False, filter_types=[]
             ),
         ],
+        relations=[
+            RelationType(relation_name="contact", related_type="person", to_many=False),
+            RelationType(relation_name="creator", related_type="person", to_many=False),
+            RelationType(relation_name="updater", related_type="person", to_many=False),
+            RelationType(relation_name="deleter", related_type="person", to_many=False),
+            RelationType(relation_name="parent", related_type="group", to_many=False),
+            RelationType(
+                relation_name="layer_group", related_type="group", to_many=False
+            ),
+            RelationType(
+                relation_name="phone_numbers", related_type="phone_number", to_many=True
+            ),
+            RelationType(
+                relation_name="social_accounts",
+                related_type="social_account",
+                to_many=True,
+            ),
+            RelationType(
+                relation_name="additional_emails",
+                related_type="additional_email",
+                to_many=True,
+            ),
+        ],
         includeable=[
             "contact",
             "creator",
@@ -765,6 +816,9 @@ ENTITIES = {
                 sortable=False,
                 filter_types=[],
             ),
+        ],
+        relations=[
+            RelationType(relation_name="invoice", related_type="invoice", to_many=False)
         ],
         includeable=[],
     ),
@@ -842,6 +896,15 @@ ENTITIES = {
                 filter_types=[],
             ),
         ],
+        relations=[
+            RelationType(relation_name="group", related_type="group", to_many=False),
+            RelationType(
+                relation_name="recipient", related_type="people", to_many=False
+            ),
+            RelationType(
+                relation_name="invoice_items", related_type="invoice_item", to_many=True
+            ),
+        ],
         includeable=["group", "recipient", "invoice_items"],
     ),
     "person_name": Entity(
@@ -863,6 +926,7 @@ ENTITIES = {
                 filter_types=[],
             ),
         ],
+        relations=[],
         includeable=[],
     ),
     "person": Entity(
@@ -1189,6 +1253,28 @@ ENTITIES = {
                 ],
             ),
         ],
+        relations=[
+            RelationType(
+                relation_name="primary_group", related_type="group", to_many=False
+            ),
+            RelationType(
+                relation_name="layer_group", related_type="group", to_many=False
+            ),
+            RelationType(relation_name="roles", related_type="role", to_many=True),
+            RelationType(
+                relation_name="phone_numbers", related_type="phone_number", to_many=True
+            ),
+            RelationType(
+                relation_name="social_accounts",
+                related_type="social_account",
+                to_many=True,
+            ),
+            RelationType(
+                relation_name="additional_emails",
+                related_type="additional_email",
+                to_many=True,
+            ),
+        ],
         includeable=[
             "primary_group",
             "layer_group",
@@ -1235,6 +1321,7 @@ ENTITIES = {
                 filter_types=[],
             ),
         ],
+        relations=[],
         includeable=[],
     ),
     "role": Entity(
@@ -1336,6 +1423,13 @@ ENTITIES = {
                 ],
             ),
         ],
+        relations=[
+            RelationType(relation_name="person", related_type="person", to_many=False),
+            RelationType(relation_name="group", related_type="group", to_many=False),
+            RelationType(
+                relation_name="layer_group", related_type="group", to_many=False
+            ),
+        ],
         includeable=["person", "group", "layer_group"],
     ),
     "social_account": Entity(
@@ -1372,6 +1466,7 @@ ENTITIES = {
                 name="name", type_=AttributeType.STRING, sortable=False, filter_types=[]
             ),
         ],
+        relations=[],
         includeable=[],
     ),
 }

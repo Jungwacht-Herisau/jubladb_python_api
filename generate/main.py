@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import pathlib
+import pickle
 import sys
+from html.parser import piclose
 
 from openapi_parser.specification import Specification
 
@@ -59,6 +61,9 @@ OPERATIONS_MAP: dict[tuple[bool, openapi_parser.specification.OperationMethod], 
     (False, openapi_parser.specification.OperationMethod.DELETE): classes.Operation.DeleteSingle,
 }
 
+"""
+(ending, replacement)
+"""
 PLURAL_SINGULAR_CONVERSION: list[tuple[str, str]] = [
     ("people", "person"),
     ("addresses", "address"),
@@ -66,9 +71,41 @@ PLURAL_SINGULAR_CONVERSION: list[tuple[str, str]] = [
     ("s", ""),
 ]
 
-PLURAL_SINGULAR_SPECIAL_CASES = {
-    "people": "person",
-    "addresses": "person",
+"""
+(entity_type, relation_name): related_entity_type
+"""
+RELATION_TYPES: dict[tuple[str, str], str] = {
+    ("course", "contact"): "person",
+    ("course", "kind"): "event_kind",  # unsure if this is correct, because with the current API I don't see a way how to retrieve any course
+    ("course", "dates"): "date",
+    ("course", "leaders"): "person",
+    ("date", "event"): "event",
+    ("event_kind", "kind_category"): "event_kind_category",
+    ("event", "contact"): "person",
+    ("event", "kind"): "event_kind",
+    ("event", "dates"): "date",
+    ("group", "contact"): "person",
+    ("group", "creator"): "person",
+    ("group", "updater"): "person",
+    ("group", "deleter"): "person",
+    ("group", "parent"): "group",
+    ("group", "layer_group"): "group",
+    ("group", "phone_numbers"): "phone_number",
+    ("group", "social_accounts"): "social_account",
+    ("group", "additional_emails"): "additional_email",
+    ("invoice_item", "invoice"): "invoice",
+    ("invoice", "group"): "group",
+    ("invoice", "recipient"): "people",
+    ("invoice", "invoice_items"): "invoice_item",
+    ("person", "primary_group"): "group",
+    ("person", "layer_group"): "group",
+    ("person", "roles"): "role",
+    ("person", "phone_numbers"): "phone_number",
+    ("person", "social_accounts"): "social_account",
+    ("person", "additional_emails"): "additional_email",
+    ("role", "person"): "person",
+    ("role", "group"): "group",
+    ("role", "layer_group"): "group",
 }
 
 README_MD_URL = "https://raw.githubusercontent.com/hitobito/hitobito_jubla/refs/heads/master/README.md"
@@ -208,6 +245,29 @@ class CodeGenerator(object):
                                          )
                 entity.attributes.append(attr)
 
+            related_schema = self.spec.schemas.get(f"{entity_type}_related", None)
+            relations_schema = self.spec.schemas.get(f"{entity_type}_relationships", None)
+            if ((related_schema is not None and related_schema.type == openapi_parser.specification.DataType.ARRAY)
+                    and (relations_schema is not None and relations_schema.type == openapi_parser.specification.DataType.OBJECT)):
+                related_schema_array: openapi_parser.specification.Array = related_schema
+                relations_schema_object: openapi_parser.specification.Object = relations_schema
+                if related_schema_array.items.type == openapi_parser.specification.DataType.STRING:
+                    related_schema_items: openapi_parser.specification.String = related_schema_array.items
+                    for relation_name in related_schema_items.enum:
+                        try:
+                            relation_property: openapi_parser.specification.Object = next(p for p in relations_schema_object.properties if p.name == relation_name).schema
+                            relation_property_data = next(p for p in relation_property.properties if p.name=="data")
+                        except StopIteration:
+                            print(f"WARNING: relation {relation_name} not found in {entity_type}_relations")
+                            continue
+                        try:
+                            related_type = RELATION_TYPES[(entity.name_singular, relation_name)]
+                        except KeyError:
+                            print(f"WARNING: key (\"{entity_type}\", \"{relation_name}\") not found in RELATION_TYPES")
+                            continue
+                        to_many = relation_property_data.schema.type == openapi_parser.specification.DataType.ARRAY
+                        entity.relations.append(classes.RelationType(relation_name, related_type, to_many))
+
         api_info = _generate_api_info(self.spec)
 
         renderer = self.generator.renderer("metamodel.py.jinja2")
@@ -229,6 +289,10 @@ class CodeGenerator(object):
 
         rendered = self.generator.renderer("entities/__init__.py.jinja2").render({"entities": entities})
         with open(self.output_dir / "entities" / "__init__.py", "w") as f:
+            f.write(rendered)
+
+        rendered = self.generator.renderer("entities/keys.py.jinja2").render({"entities": entities})
+        with open(self.output_dir / "entities" / "keys.py", "w") as f:
             f.write(rendered)
 
         for entity in entities:
@@ -343,13 +407,22 @@ class CodeGenerator(object):
         self._generate_groups_roles()
 
 
-if __name__ == '__main__':
-    download_spec()
+PARSE_SPEC = False
 
-    print("Parsing OpenAPI spec... ")
+if __name__ == '__main__':
     patch_openapi_parser()
-    _spec = openapi_parser.parse(SPEC_FILE_NAME)
-    print("Parsed OpenAPI spec successfully.")
+    if PARSE_SPEC:
+        download_spec()
+
+        print("Parsing OpenAPI spec... ")
+        _spec = openapi_parser.parse(SPEC_FILE_NAME)
+        print("Parsed OpenAPI spec successfully.")
+
+        with open(f"spec.pickle", "wb") as f:
+            pickle.dump(_spec, f)
+    else:
+        with open(f"spec.pickle", "rb") as f:
+            _spec = pickle.load(f)
 
     generator = CodeGenerator(_spec)
     generator.cleanup()

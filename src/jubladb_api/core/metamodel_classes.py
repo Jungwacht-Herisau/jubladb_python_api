@@ -24,6 +24,12 @@ class AttributeType(_EnumReprHelper, enum.Enum):
     BOOLEAN = "boolean"
 
 @dataclasses.dataclass
+class RelationType(object):
+    relation_name: str
+    related_type: str
+    to_many: bool
+
+@dataclasses.dataclass
 class Attribute:
     name: str
     type_: AttributeType
@@ -37,6 +43,7 @@ class Entity:
     name_plural: str
     allowed_operations: list[Operation] = dataclasses.field(default_factory=list)
     attributes: list[Attribute] = dataclasses.field(default_factory=list)
+    relations: list[RelationType] = dataclasses.field(default_factory=list)
     includeable: list[str] = dataclasses.field(default_factory=list)
 
 @dataclasses.dataclass
