@@ -5,6 +5,7 @@ import jubladb_api.generated.entities.keys
 
 import datetime
 
+import typing
 
 # @formatter:off
 
@@ -103,6 +104,27 @@ class Role(jubladb_api.core.base_entity.BaseEntity):
     @property
     def meta(self) -> jubladb_api.core.metamodel_classes.Entity:
         return jubladb_api.generated.metamodel.ENTITIES["role"]
+
+    def is_relation_loaded(
+        self,
+        relation_name: typing.Literal[
+            "person",
+            "group",
+            "layer_group",
+        ],
+    ) -> bool:
+
+        if relation_name == "person":
+            return self._person is not None
+
+        elif relation_name == "group":
+            return self._group is not None
+
+        elif relation_name == "layer_group":
+            return self._layer_group is not None
+
+        else:
+            raise ValueError(f"relation {relation_name} does not exist on role")
 
     @classmethod
     def from_json(cls, json_data: dict):

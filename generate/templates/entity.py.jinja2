@@ -5,6 +5,7 @@ import jubladb_api.generated.entities.keys
 {% if need_datetime_import %}
 import datetime
 {% endif %}
+import typing
 
 # @formatter:off
 
@@ -49,6 +50,24 @@ class {{ class_name }}(jubladb_api.core.base_entity.BaseEntity):
     @property
     def meta(self) -> jubladb_api.core.metamodel_classes.Entity:
         return jubladb_api.generated.metamodel.ENTITIES["{{ entity.name_singular }}"]
+
+    def is_relation_loaded(self,
+                           {% if entity.relations|length > 0 %}
+                           relation_name: typing.Literal[{% for rel in entity.relations %}"{{ rel.relation_name }}", {% endfor %}],
+                           {% else %}
+                           relation_name: typing.Never,
+                           {% endif %}
+                           ) -> bool:
+        {% if entity.relations|length > 0 %}
+        {% for rel in entity.relations %}
+        {% if loop.first %}if{% else %}elif{% endif %} relation_name == "{{ rel.relation_name }}":
+            return self._{{ rel.relation_name }} is not None
+        {% endfor %}
+        else:
+            raise ValueError(f"relation {relation_name} does not exist on {{ entity.name_singular }}")
+        {% else %}
+        raise ValueError("no relations defined on {{ entity.name_singular }}")
+        {% endif %}
 
 
     @classmethod

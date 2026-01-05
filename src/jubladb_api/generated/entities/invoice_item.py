@@ -3,6 +3,7 @@ import jubladb_api.core.metamodel_classes
 import jubladb_api.core.base_entity
 import jubladb_api.generated.entities.keys
 
+import typing
 
 # @formatter:off
 
@@ -85,6 +86,17 @@ class InvoiceItem(jubladb_api.core.base_entity.BaseEntity):
     @property
     def meta(self) -> jubladb_api.core.metamodel_classes.Entity:
         return jubladb_api.generated.metamodel.ENTITIES["invoice_item"]
+
+    def is_relation_loaded(
+        self,
+        relation_name: typing.Literal["invoice",],
+    ) -> bool:
+
+        if relation_name == "invoice":
+            return self._invoice is not None
+
+        else:
+            raise ValueError(f"relation {relation_name} does not exist on invoice_item")
 
     @classmethod
     def from_json(cls, json_data: dict):

@@ -315,7 +315,9 @@ class Client(base_client.BaseClient):
 
         cached_entity = self._cache_get(entity_key)
         if cached_entity is not None:
+
             return cached_entity
+
         json_response = self._request_single_get(
             "event_kind_category",
             id_,
@@ -364,16 +366,25 @@ class Client(base_client.BaseClient):
             id_ = id_or_key.id
             entity_key = id_or_key
 
+        all_includes = [
+            "kind_category",
+        ]
         if include is None:
             include = []
         if include == "*":
-            include = [
-                "kind_category",
-            ]
+            include = all_includes
 
         cached_entity = self._cache_get(entity_key)
         if cached_entity is not None:
-            return cached_entity
+
+            cached_relations = [
+                rel for rel in all_includes if cached_entity.is_relation_loaded(rel)
+            ]
+            if all(rel in cached_relations for rel in include):
+                return cached_entity
+            else:
+                include.extend(cached_relations)
+
         json_response = self._request_single_get(
             "event_kind",
             id_,
@@ -459,18 +470,27 @@ class Client(base_client.BaseClient):
             id_ = id_or_key.id
             entity_key = id_or_key
 
+        all_includes = [
+            "contact",
+            "kind",
+            "dates",
+        ]
         if include is None:
             include = []
         if include == "*":
-            include = [
-                "contact",
-                "kind",
-                "dates",
-            ]
+            include = all_includes
 
         cached_entity = self._cache_get(entity_key)
         if cached_entity is not None:
-            return cached_entity
+
+            cached_relations = [
+                rel for rel in all_includes if cached_entity.is_relation_loaded(rel)
+            ]
+            if all(rel in cached_relations for rel in include):
+                return cached_entity
+            else:
+                include.extend(cached_relations)
+
         json_response = self._request_single_get(
             "event",
             id_,
@@ -845,24 +865,33 @@ class Client(base_client.BaseClient):
             id_ = id_or_key.id
             entity_key = id_or_key
 
+        all_includes = [
+            "contact",
+            "creator",
+            "updater",
+            "deleter",
+            "parent",
+            "layer_group",
+            "phone_numbers",
+            "social_accounts",
+            "additional_emails",
+        ]
         if include is None:
             include = []
         if include == "*":
-            include = [
-                "contact",
-                "creator",
-                "updater",
-                "deleter",
-                "parent",
-                "layer_group",
-                "phone_numbers",
-                "social_accounts",
-                "additional_emails",
-            ]
+            include = all_includes
 
         cached_entity = self._cache_get(entity_key)
         if cached_entity is not None:
-            return cached_entity
+
+            cached_relations = [
+                rel for rel in all_includes if cached_entity.is_relation_loaded(rel)
+            ]
+            if all(rel in cached_relations for rel in include):
+                return cached_entity
+            else:
+                include.extend(cached_relations)
+
         json_response = self._request_single_get(
             "group",
             id_,
@@ -984,18 +1013,27 @@ class Client(base_client.BaseClient):
             id_ = id_or_key.id
             entity_key = id_or_key
 
+        all_includes = [
+            "group",
+            "recipient",
+            "invoice_items",
+        ]
         if include is None:
             include = []
         if include == "*":
-            include = [
-                "group",
-                "recipient",
-                "invoice_items",
-            ]
+            include = all_includes
 
         cached_entity = self._cache_get(entity_key)
         if cached_entity is not None:
-            return cached_entity
+
+            cached_relations = [
+                rel for rel in all_includes if cached_entity.is_relation_loaded(rel)
+            ]
+            if all(rel in cached_relations for rel in include):
+                return cached_entity
+            else:
+                include.extend(cached_relations)
+
         json_response = self._request_single_get(
             "invoice",
             id_,
@@ -1474,21 +1512,30 @@ class Client(base_client.BaseClient):
             id_ = id_or_key.id
             entity_key = id_or_key
 
+        all_includes = [
+            "primary_group",
+            "layer_group",
+            "roles",
+            "phone_numbers",
+            "social_accounts",
+            "additional_emails",
+        ]
         if include is None:
             include = []
         if include == "*":
-            include = [
-                "primary_group",
-                "layer_group",
-                "roles",
-                "phone_numbers",
-                "social_accounts",
-                "additional_emails",
-            ]
+            include = all_includes
 
         cached_entity = self._cache_get(entity_key)
         if cached_entity is not None:
-            return cached_entity
+
+            cached_relations = [
+                rel for rel in all_includes if cached_entity.is_relation_loaded(rel)
+            ]
+            if all(rel in cached_relations for rel in include):
+                return cached_entity
+            else:
+                include.extend(cached_relations)
+
         json_response = self._request_single_get(
             "person",
             id_,
@@ -1708,18 +1755,27 @@ class Client(base_client.BaseClient):
             id_ = id_or_key.id
             entity_key = id_or_key
 
+        all_includes = [
+            "person",
+            "group",
+            "layer_group",
+        ]
         if include is None:
             include = []
         if include == "*":
-            include = [
-                "person",
-                "group",
-                "layer_group",
-            ]
+            include = all_includes
 
         cached_entity = self._cache_get(entity_key)
         if cached_entity is not None:
-            return cached_entity
+
+            cached_relations = [
+                rel for rel in all_includes if cached_entity.is_relation_loaded(rel)
+            ]
+            if all(rel in cached_relations for rel in include):
+                return cached_entity
+            else:
+                include.extend(cached_relations)
+
         json_response = self._request_single_get(
             "role",
             id_,

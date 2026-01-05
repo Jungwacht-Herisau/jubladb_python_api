@@ -5,6 +5,7 @@ import jubladb_api.generated.entities.keys
 
 import datetime
 
+import typing
 
 # @formatter:off
 
@@ -207,6 +208,39 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
     @property
     def meta(self) -> jubladb_api.core.metamodel_classes.Entity:
         return jubladb_api.generated.metamodel.ENTITIES["person"]
+
+    def is_relation_loaded(
+        self,
+        relation_name: typing.Literal[
+            "primary_group",
+            "layer_group",
+            "roles",
+            "phone_numbers",
+            "social_accounts",
+            "additional_emails",
+        ],
+    ) -> bool:
+
+        if relation_name == "primary_group":
+            return self._primary_group is not None
+
+        elif relation_name == "layer_group":
+            return self._layer_group is not None
+
+        elif relation_name == "roles":
+            return self._roles is not None
+
+        elif relation_name == "phone_numbers":
+            return self._phone_numbers is not None
+
+        elif relation_name == "social_accounts":
+            return self._social_accounts is not None
+
+        elif relation_name == "additional_emails":
+            return self._additional_emails is not None
+
+        else:
+            raise ValueError(f"relation {relation_name} does not exist on person")
 
     @classmethod
     def from_json(cls, json_data: dict):

@@ -5,6 +5,7 @@ import jubladb_api.generated.entities.keys
 
 import datetime
 
+import typing
 
 # @formatter:off
 
@@ -63,6 +64,17 @@ class Date(jubladb_api.core.base_entity.BaseEntity):
     @property
     def meta(self) -> jubladb_api.core.metamodel_classes.Entity:
         return jubladb_api.generated.metamodel.ENTITIES["date"]
+
+    def is_relation_loaded(
+        self,
+        relation_name: typing.Literal["event",],
+    ) -> bool:
+
+        if relation_name == "event":
+            return self._event is not None
+
+        else:
+            raise ValueError(f"relation {relation_name} does not exist on date")
 
     @classmethod
     def from_json(cls, json_data: dict):

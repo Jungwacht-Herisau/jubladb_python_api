@@ -19,6 +19,10 @@ class BaseEntity(abc.ABC):
     def meta(self) -> jubladb_api.core.metamodel_classes.Entity:
         pass
 
+    @abc.abstractmethod
+    def is_relation_loaded(self, relation_name: str) -> bool:
+        pass
+
     @classmethod
     @abc.abstractmethod
     def from_json(cls, json_dict: dict):
@@ -63,6 +67,10 @@ class BaseEntity(abc.ABC):
     def _create_many_relation_keys(cls, json_data: dict, relation_name: str, related_type_name_plural: str, key_class):
         relation_ids = cls._access_json_many_relation_ids(json_data, relation_name, related_type_name_plural)
         return [key_class(rid) for rid in relation_ids] if relation_ids is not None else None
+
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}({self.id})"
+
 
 class BaseEntityKey(abc.ABC):
     def __init__(self, id_: int):

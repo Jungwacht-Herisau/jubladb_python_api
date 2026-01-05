@@ -5,6 +5,7 @@ import jubladb_api.generated.entities.keys
 
 import datetime
 
+import typing
 
 # @formatter:off
 
@@ -225,6 +226,51 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
     @property
     def meta(self) -> jubladb_api.core.metamodel_classes.Entity:
         return jubladb_api.generated.metamodel.ENTITIES["group"]
+
+    def is_relation_loaded(
+        self,
+        relation_name: typing.Literal[
+            "contact",
+            "creator",
+            "updater",
+            "deleter",
+            "parent",
+            "layer_group",
+            "phone_numbers",
+            "social_accounts",
+            "additional_emails",
+        ],
+    ) -> bool:
+
+        if relation_name == "contact":
+            return self._contact is not None
+
+        elif relation_name == "creator":
+            return self._creator is not None
+
+        elif relation_name == "updater":
+            return self._updater is not None
+
+        elif relation_name == "deleter":
+            return self._deleter is not None
+
+        elif relation_name == "parent":
+            return self._parent is not None
+
+        elif relation_name == "layer_group":
+            return self._layer_group is not None
+
+        elif relation_name == "phone_numbers":
+            return self._phone_numbers is not None
+
+        elif relation_name == "social_accounts":
+            return self._social_accounts is not None
+
+        elif relation_name == "additional_emails":
+            return self._additional_emails is not None
+
+        else:
+            raise ValueError(f"relation {relation_name} does not exist on group")
 
     @classmethod
     def from_json(cls, json_data: dict):

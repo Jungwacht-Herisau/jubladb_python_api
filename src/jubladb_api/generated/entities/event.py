@@ -5,6 +5,7 @@ import jubladb_api.generated.entities.keys
 
 import datetime
 
+import typing
 
 # @formatter:off
 
@@ -145,6 +146,27 @@ class Event(jubladb_api.core.base_entity.BaseEntity):
     @property
     def meta(self) -> jubladb_api.core.metamodel_classes.Entity:
         return jubladb_api.generated.metamodel.ENTITIES["event"]
+
+    def is_relation_loaded(
+        self,
+        relation_name: typing.Literal[
+            "contact",
+            "kind",
+            "dates",
+        ],
+    ) -> bool:
+
+        if relation_name == "contact":
+            return self._contact is not None
+
+        elif relation_name == "kind":
+            return self._kind is not None
+
+        elif relation_name == "dates":
+            return self._dates is not None
+
+        else:
+            raise ValueError(f"relation {relation_name} does not exist on event")
 
     @classmethod
     def from_json(cls, json_data: dict):

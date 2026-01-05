@@ -3,6 +3,7 @@ import jubladb_api.core.metamodel_classes
 import jubladb_api.core.base_entity
 import jubladb_api.generated.entities.keys
 
+import typing
 
 # @formatter:off
 
@@ -34,6 +35,13 @@ class EventKindCategory(jubladb_api.core.base_entity.BaseEntity):
     @property
     def meta(self) -> jubladb_api.core.metamodel_classes.Entity:
         return jubladb_api.generated.metamodel.ENTITIES["event_kind_category"]
+
+    def is_relation_loaded(
+        self,
+        relation_name: typing.Never,
+    ) -> bool:
+
+        raise ValueError("no relations defined on event_kind_category")
 
     @classmethod
     def from_json(cls, json_data: dict):

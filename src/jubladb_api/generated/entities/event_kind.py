@@ -5,6 +5,7 @@ import jubladb_api.generated.entities.keys
 
 import datetime
 
+import typing
 
 # @formatter:off
 
@@ -75,6 +76,17 @@ class EventKind(jubladb_api.core.base_entity.BaseEntity):
     @property
     def meta(self) -> jubladb_api.core.metamodel_classes.Entity:
         return jubladb_api.generated.metamodel.ENTITIES["event_kind"]
+
+    def is_relation_loaded(
+        self,
+        relation_name: typing.Literal["kind_category",],
+    ) -> bool:
+
+        if relation_name == "kind_category":
+            return self._kind_category is not None
+
+        else:
+            raise ValueError(f"relation {relation_name} does not exist on event_kind")
 
     @classmethod
     def from_json(cls, json_data: dict):

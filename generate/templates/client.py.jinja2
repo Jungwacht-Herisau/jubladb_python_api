@@ -120,18 +120,28 @@ class Client(base_client.BaseClient):
             id_ = id_or_key.id
             entity_key = id_or_key
         {% if entity.includeable|length > 0 %}
-        if include is None:
-            include = []
-        if include == "*":
-            include = [
+        all_includes = [
                 {% for rel in entity.relations %}
                 "{{ rel.relation_name }}",
                 {% endfor %}
             ]
+        if include is None:
+            include = []
+        if include == "*":
+            include = all_includes
         {% endif %}
         cached_entity = self._cache_get(entity_key)
         if cached_entity is not None:
+            {% if entity.includeable|length > 0 %}
+            cached_relations = [rel for rel in all_includes if cached_entity.is_relation_loaded(rel)]
+            if all(rel in cached_relations for rel in include):
+                return cached_entity
+            else:
+                include.extend(cached_relations)
+            {% else %}
             return cached_entity
+            {% endif %}
+
         json_response = self._request_single_get("{{ entity.name_singular }}",
                                                  id_,
                                                  {% if entity.includeable|length > 0 %}include,{% endif %}
