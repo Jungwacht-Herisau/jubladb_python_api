@@ -108,6 +108,13 @@ RELATION_TYPES: dict[tuple[str, str], str] = {
     ("role", "layer_group"): "group",
 }
 
+OPTIONAL_ATTRIBUTES: set[tuple[str, str]] = {
+    ("group", "archived_at"),
+    ("group", "deleted_at"),
+    ("group", "logo"),
+    # this info isn't documented anywhere, so there are probably more
+}
+
 README_MD_URL = "https://raw.githubusercontent.com/hitobito/hitobito_jubla/refs/heads/master/README.md"
 ROLES_START = "<!-- roles:start -->"
 ROLES_END = "<!-- roles:end -->"
@@ -240,6 +247,7 @@ class CodeGenerator(object):
                     continue
                 attr = classes.Attribute(name=prop.name,
                                          type_=type_,
+                                         optional=(entity.name_singular, prop.name) in OPTIONAL_ATTRIBUTES,
                                          sortable=prop.name in sort_attrs,
                                          filter_types=attr_filters.get(prop.name, list()),
                                          )

@@ -12,63 +12,77 @@ ENTITIES = {
             Attribute(
                 name="label",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="public",
                 type_=AttributeType.BOOLEAN,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="contactable_id",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="contactable_type",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="address_care_of",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="street",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="housenumber",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="postbox",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="zip_code",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
-                name="town", type_=AttributeType.STRING, sortable=False, filter_types=[]
+                name="town",
+                type_=AttributeType.STRING,
+                optional=False,
+                sortable=False,
+                filter_types=[],
             ),
             Attribute(
                 name="country",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
@@ -85,30 +99,35 @@ ENTITIES = {
             Attribute(
                 name="label",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="public",
                 type_=AttributeType.BOOLEAN,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="contactable_id",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="contactable_type",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="email",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
@@ -125,129 +144,161 @@ ENTITIES = {
             Attribute(
                 name="group_ids",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
-                name="type", type_=AttributeType.STRING, sortable=False, filter_types=[]
+                name="type",
+                type_=AttributeType.STRING,
+                optional=False,
+                sortable=False,
+                filter_types=[],
             ),
             Attribute(
                 name="kind_id",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
-                name="name", type_=AttributeType.STRING, sortable=False, filter_types=[]
+                name="name",
+                type_=AttributeType.STRING,
+                optional=False,
+                sortable=False,
+                filter_types=[],
             ),
             Attribute(
                 name="description",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="application_conditions",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="motto",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
-                name="cost", type_=AttributeType.STRING, sortable=False, filter_types=[]
+                name="cost",
+                type_=AttributeType.STRING,
+                optional=False,
+                sortable=False,
+                filter_types=[],
             ),
             Attribute(
                 name="location",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="application_opening_at",
                 type_=AttributeType.DATE,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="application_closing_at",
                 type_=AttributeType.DATE,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="application_contact_id",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="external_application_link",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="maximum_participants",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="created_at",
                 type_=AttributeType.DATETIME,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="updated_at",
                 type_=AttributeType.DATETIME,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="state",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="training_days",
                 type_=AttributeType.FLOAT,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="applicant_count",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="participant_count",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="minimum_participants",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="number",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="teamer_count",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
@@ -289,30 +340,35 @@ ENTITIES = {
             Attribute(
                 name="event_id",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="label",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="location",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="start_at",
                 type_=AttributeType.DATETIME,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="finish_at",
                 type_=AttributeType.DATETIME,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
@@ -336,12 +392,14 @@ ENTITIES = {
             Attribute(
                 name="label",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="order",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
@@ -358,42 +416,49 @@ ENTITIES = {
             Attribute(
                 name="label",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="short_name",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="general_information",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="application_conditions",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="minimum_age",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="created_at",
                 type_=AttributeType.DATETIME,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="updated_at",
                 type_=AttributeType.DATETIME,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
@@ -417,90 +482,112 @@ ENTITIES = {
             Attribute(
                 name="group_ids",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="type",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=["eq"],
             ),
             Attribute(
                 name="kind_id",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=False,
                 filter_types=["eq", "not_eq", "gt", "gte", "lt", "lte"],
             ),
             Attribute(
-                name="name", type_=AttributeType.STRING, sortable=False, filter_types=[]
+                name="name",
+                type_=AttributeType.STRING,
+                optional=False,
+                sortable=False,
+                filter_types=[],
             ),
             Attribute(
                 name="description",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="application_conditions",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="motto",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
-                name="cost", type_=AttributeType.STRING, sortable=False, filter_types=[]
+                name="cost",
+                type_=AttributeType.STRING,
+                optional=False,
+                sortable=False,
+                filter_types=[],
             ),
             Attribute(
                 name="location",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="application_opening_at",
                 type_=AttributeType.DATE,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="application_closing_at",
                 type_=AttributeType.DATE,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="application_contact_id",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="external_application_link",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="maximum_participants",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="created_at",
                 type_=AttributeType.DATETIME,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="updated_at",
                 type_=AttributeType.DATETIME,
+                optional=False,
                 sortable=False,
                 filter_types=["eq", "not_eq", "gt", "gte", "lt", "lte"],
             ),
@@ -536,6 +623,7 @@ ENTITIES = {
             Attribute(
                 name="name",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -553,6 +641,7 @@ ENTITIES = {
             Attribute(
                 name="short_name",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -570,6 +659,7 @@ ENTITIES = {
             Attribute(
                 name="display_name",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -587,6 +677,7 @@ ENTITIES = {
             Attribute(
                 name="description",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -604,24 +695,28 @@ ENTITIES = {
             Attribute(
                 name="layer",
                 type_=AttributeType.BOOLEAN,
+                optional=False,
                 sortable=True,
                 filter_types=["eq"],
             ),
             Attribute(
                 name="parent_id",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=True,
                 filter_types=["eq", "not_eq", "gt", "gte", "lt", "lte"],
             ),
             Attribute(
                 name="layer_group_id",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=True,
                 filter_types=["eq", "not_eq", "gt", "gte", "lt", "lte"],
             ),
             Attribute(
                 name="type",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -639,6 +734,7 @@ ENTITIES = {
             Attribute(
                 name="email",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -656,6 +752,7 @@ ENTITIES = {
             Attribute(
                 name="address",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -673,12 +770,14 @@ ENTITIES = {
             Attribute(
                 name="zip_code",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=True,
                 filter_types=["eq", "not_eq", "gt", "gte", "lt", "lte"],
             ),
             Attribute(
                 name="town",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -696,6 +795,7 @@ ENTITIES = {
             Attribute(
                 name="country",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -713,12 +813,14 @@ ENTITIES = {
             Attribute(
                 name="require_person_add_requests",
                 type_=AttributeType.BOOLEAN,
+                optional=False,
                 sortable=True,
                 filter_types=["eq"],
             ),
             Attribute(
                 name="self_registration_url",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -736,29 +838,37 @@ ENTITIES = {
             Attribute(
                 name="archived_at",
                 type_=AttributeType.DATETIME,
+                optional=True,
                 sortable=True,
                 filter_types=["eq", "not_eq", "gt", "gte", "lt", "lte"],
             ),
             Attribute(
                 name="created_at",
                 type_=AttributeType.DATETIME,
+                optional=False,
                 sortable=True,
                 filter_types=["eq", "not_eq", "gt", "gte", "lt", "lte"],
             ),
             Attribute(
                 name="updated_at",
                 type_=AttributeType.DATETIME,
+                optional=False,
                 sortable=True,
                 filter_types=["eq", "not_eq", "gt", "gte", "lt", "lte"],
             ),
             Attribute(
                 name="deleted_at",
                 type_=AttributeType.DATETIME,
+                optional=True,
                 sortable=True,
                 filter_types=["eq", "not_eq", "gt", "gte", "lt", "lte"],
             ),
             Attribute(
-                name="logo", type_=AttributeType.STRING, sortable=False, filter_types=[]
+                name="logo",
+                type_=AttributeType.STRING,
+                optional=True,
+                sortable=False,
+                filter_types=[],
             ),
         ],
         relations=[
@@ -838,51 +948,63 @@ ENTITIES = {
             Attribute(
                 name="invoice_id",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
-                name="name", type_=AttributeType.STRING, sortable=False, filter_types=[]
+                name="name",
+                type_=AttributeType.STRING,
+                optional=False,
+                sortable=False,
+                filter_types=[],
             ),
             Attribute(
                 name="description",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="unit_cost",
                 type_=AttributeType.FLOAT,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="vat_rate",
                 type_=AttributeType.FLOAT,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="cost",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="count",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="cost_center",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="account",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
@@ -910,63 +1032,77 @@ ENTITIES = {
             Attribute(
                 name="title",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="description",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="state",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="group_id",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=False,
                 filter_types=["eq", "not_eq", "gt", "gte", "lt", "lte"],
             ),
             Attribute(
                 name="recipient_id",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=False,
                 filter_types=["eq", "not_eq", "gt", "gte", "lt", "lte"],
             ),
             Attribute(
-                name="due_at", type_=AttributeType.DATE, sortable=False, filter_types=[]
+                name="due_at",
+                type_=AttributeType.DATE,
+                optional=False,
+                sortable=False,
+                filter_types=[],
             ),
             Attribute(
                 name="issued_at",
                 type_=AttributeType.DATE,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="recipient_email",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="payment_information",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="payment_purpose",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="hide_total",
                 type_=AttributeType.BOOLEAN,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
@@ -1002,12 +1138,14 @@ ENTITIES = {
             Attribute(
                 name="first_name",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="last_name",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
@@ -1028,6 +1166,7 @@ ENTITIES = {
             Attribute(
                 name="first_name",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -1045,6 +1184,7 @@ ENTITIES = {
             Attribute(
                 name="last_name",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -1062,6 +1202,7 @@ ENTITIES = {
             Attribute(
                 name="nickname",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -1079,6 +1220,7 @@ ENTITIES = {
             Attribute(
                 name="company_name",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -1096,12 +1238,14 @@ ENTITIES = {
             Attribute(
                 name="company",
                 type_=AttributeType.BOOLEAN,
+                optional=False,
                 sortable=True,
                 filter_types=["eq"],
             ),
             Attribute(
                 name="email",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -1119,6 +1263,7 @@ ENTITIES = {
             Attribute(
                 name="address",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -1136,6 +1281,7 @@ ENTITIES = {
             Attribute(
                 name="address_care_of",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -1153,6 +1299,7 @@ ENTITIES = {
             Attribute(
                 name="street",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -1170,6 +1317,7 @@ ENTITIES = {
             Attribute(
                 name="housenumber",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -1187,6 +1335,7 @@ ENTITIES = {
             Attribute(
                 name="postbox",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -1204,6 +1353,7 @@ ENTITIES = {
             Attribute(
                 name="zip_code",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -1221,6 +1371,7 @@ ENTITIES = {
             Attribute(
                 name="town",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -1238,6 +1389,7 @@ ENTITIES = {
             Attribute(
                 name="country",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -1255,12 +1407,14 @@ ENTITIES = {
             Attribute(
                 name="primary_group_id",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=True,
                 filter_types=["eq", "not_eq", "gt", "gte", "lt", "lte"],
             ),
             Attribute(
                 name="gender",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -1278,12 +1432,14 @@ ENTITIES = {
             Attribute(
                 name="birthday",
                 type_=AttributeType.DATE,
+                optional=False,
                 sortable=True,
                 filter_types=["eq", "not_eq", "gt", "gte", "lt", "lte"],
             ),
             Attribute(
                 name="picture",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -1301,12 +1457,14 @@ ENTITIES = {
             Attribute(
                 name="updated_at",
                 type_=AttributeType.DATETIME,
+                optional=False,
                 sortable=True,
                 filter_types=["eq", "not_eq", "gt", "gte", "lt", "lte"],
             ),
             Attribute(
                 name="additional_information",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -1324,6 +1482,7 @@ ENTITIES = {
             Attribute(
                 name="language",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -1395,30 +1554,35 @@ ENTITIES = {
             Attribute(
                 name="label",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="public",
                 type_=AttributeType.BOOLEAN,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="contactable_id",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="contactable_type",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="number",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
@@ -1440,30 +1604,35 @@ ENTITIES = {
             Attribute(
                 name="created_at",
                 type_=AttributeType.DATETIME,
+                optional=False,
                 sortable=True,
                 filter_types=["eq", "not_eq", "gt", "gte", "lt", "lte"],
             ),
             Attribute(
                 name="updated_at",
                 type_=AttributeType.DATETIME,
+                optional=False,
                 sortable=True,
                 filter_types=["eq", "not_eq", "gt", "gte", "lt", "lte"],
             ),
             Attribute(
                 name="start_on",
                 type_=AttributeType.DATE,
+                optional=False,
                 sortable=True,
                 filter_types=["eq", "not_eq", "gt", "gte", "lt", "lte"],
             ),
             Attribute(
                 name="end_on",
                 type_=AttributeType.DATE,
+                optional=False,
                 sortable=True,
                 filter_types=["eq", "not_eq", "gt", "gte", "lt", "lte"],
             ),
             Attribute(
                 name="name",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -1481,18 +1650,21 @@ ENTITIES = {
             Attribute(
                 name="person_id",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=True,
                 filter_types=["eq", "not_eq", "gt", "gte", "lt", "lte"],
             ),
             Attribute(
                 name="group_id",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=True,
                 filter_types=["eq", "not_eq", "gt", "gte", "lt", "lte"],
             ),
             Attribute(
                 name="type",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -1510,6 +1682,7 @@ ENTITIES = {
             Attribute(
                 name="label",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -1556,29 +1729,37 @@ ENTITIES = {
             Attribute(
                 name="label",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="public",
                 type_=AttributeType.BOOLEAN,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="contactable_id",
                 type_=AttributeType.INTEGER,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
                 name="contactable_type",
                 type_=AttributeType.STRING,
+                optional=False,
                 sortable=False,
                 filter_types=[],
             ),
             Attribute(
-                name="name", type_=AttributeType.STRING, sortable=False, filter_types=[]
+                name="name",
+                type_=AttributeType.STRING,
+                optional=False,
+                sortable=False,
+                filter_types=[],
             ),
         ],
         relations=[],

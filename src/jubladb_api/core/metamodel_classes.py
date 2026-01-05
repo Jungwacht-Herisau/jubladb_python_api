@@ -34,6 +34,7 @@ class RelationType(object):
 class Attribute:
     name: str
     type_: AttributeType
+    optional: bool = False
     sortable: bool = False
     filter_types: list[str] = dataclasses.field(default_factory=list)
 

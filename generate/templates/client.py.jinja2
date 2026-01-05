@@ -3,6 +3,9 @@ from jubladb_api.core import base_client
 import typing
 import datetime
 
+from jubladb_api.generated.entities.keys import *
+from jubladb_api.core.base_entity import BaseEntity
+
 {% for entity in entities %}
 from jubladb_api.generated.entities.{{ entity.name_singular }} import {{ entity.name_singular | snake_case_to_pascal_case }}
 {% endfor %}
@@ -48,17 +51,27 @@ class Client(base_client.BaseClient):
     {% if op.name == "GetList" %}
     def get_{{ entity.name_plural }}_list(self,
                             {% if entity.includeable|length > 0 %}
-                                          include: list[_{{ class_name }}_Include],
+                            include: list[_{{ class_name }}_Include]|typing.Literal["*"]|None = None,
                             {% endif %}
                             {% if entity|entity_has_sortable_attributes %}
-                                          sort: list[_{{ class_name }}_Sort],
+                            sort: list[_{{ class_name }}_Sort]|None = None,
                             {% endif %}
                             {% for attr in entity.attributes %}
                             {% for ft in attr.filter_types %}
-                            filter_{{ attr.name }}_{{ ft }}: {{ attr.type_|attribute_type_to_python_type }},
+                            filter_{{ attr.name }}_{{ ft }}: {{ attr.type_|attribute_type_to_python_type }}|None = None,
                             {% endfor %}
                             {% endfor %}
                             ) -> list[{{ class_name }}]:
+        {% if entity.includeable|length > 0 %}
+        if include is None:
+            include = []
+        if include == "*":
+            include = [
+                {% for rel in entity.relations %}
+                "{{ rel.relation_name }}",
+                {% endfor %}
+            ]
+        {% endif %}
         filters = [
             {% for attr in entity.attributes %}
             {% for ft in attr.filter_types %}
@@ -83,21 +96,78 @@ class Client(base_client.BaseClient):
             {% endif %}
 
             filters)
-        return [{{ class_name }}.from_json(data_obj) for data_obj in json_response["data"]]
-        # todo return included too
+
+        response_entities = []
+        for data_obj in json_response["data"]:
+            re = {{ class_name }}.from_json(data_obj)
+            self._cache_add(re)
+        {% if entity.relations|length > 0 %}
+        self._add_included_of_{{ entity.name_plural }}_to_cache(json_response)
+        {% endif %}
+        return response_entities
     {% endif %}
     {% if op.name == "GetSingle" %}
     def get_{{ entity.name_singular }}(self,
-            id_: int,
+            id_or_key: int|{{ class_name }}Key,
             {% if entity.includeable|length > 0 %}
-            include: list[_{{ class_name }}_Include],
+            include: list[_{{ class_name }}_Include]|typing.Literal["*"]|None = None,
             {% endif %}
                     ) -> {{ class_name }}:
-        json_response = self._request_single_get("{{ entity.name_singular }}", id_, include)
-        return {{ class_name }}.from_json(json_response["data"])
-        # todo return included too
+        if isinstance(id_or_key, int):
+            id_ = id_or_key
+            entity_key = {{ class_name }}Key(id_)
+        else:
+            id_ = id_or_key.id
+            entity_key = id_or_key
+        {% if entity.includeable|length > 0 %}
+        if include is None:
+            include = []
+        if include == "*":
+            include = [
+                {% for rel in entity.relations %}
+                "{{ rel.relation_name }}",
+                {% endfor %}
+            ]
+        {% endif %}
+        cached_entity = self._cache_get(entity_key)
+        if cached_entity is not None:
+            return cached_entity
+        json_response = self._request_single_get("{{ entity.name_singular }}",
+                                                 id_,
+                                                 {% if entity.includeable|length > 0 %}include,{% endif %}
+                                                 )
+        response_entity = {{ class_name }}.from_json(json_response["data"])
+        if response_entity.key != entity_key:
+            raise ValueError("Entity key mismatch")
+        self._cache_add(response_entity)
+        {% if entity.relations|length > 0 %}
+        self._add_included_of_{{ entity.name_plural }}_to_cache(json_response)
+        {% endif %}
+        return response_entity
     {% endif %}
     {% endfor %}
+    {% if entity.allowed_operations|length == 0 %}
+    def get_{{ entity.name_singular }}(self,
+            id_or_key: int|{{ class_name }}Key,
+                    ) -> {{ class_name }}:
+        if isinstance(id_or_key, int):
+            id_ = id_or_key
+            entity_key = {{ class_name }}Key(id_)
+        else:
+            id_ = id_or_key.id
+            entity_key = id_or_key
+        cached_entity = self._cache_get(entity_key)
+        if cached_entity is not None:
+            return cached_entity
+        raise ValueError(f"no object known for {entity_key}. Entities of type {{ entity.name_singular }} can only be retrieved by including them while requesting other entities.")
+    {% endif %}
+    {% if entity.relations|length > 0 %}
+    def _add_included_of_{{ entity.name_plural }}_to_cache(self, json_response: dict) -> None:
+        for incl_data in json_response.get("included", []):
+            {% for rel in entity.relations %}{% if loop.first %}if{% else %}elif{% endif %} incl_data["type"] == "{{ rel.related_type_plural }}":
+                self._cache_add({{ rel.related_type_singular|snake_case_to_pascal_case }}.from_json(incl_data))
+            {% endfor %}
+    {% endif %}
     {% endwith %}
     {% endfor %}
 # @formatter:on

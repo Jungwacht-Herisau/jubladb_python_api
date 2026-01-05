@@ -11,6 +11,11 @@ class BaseEntity(abc.ABC):
 
     @property
     @abc.abstractmethod
+    def key(self) -> "BaseEntityKey":
+        pass
+
+    @property
+    @abc.abstractmethod
     def meta(self) -> jubladb_api.core.metamodel_classes.Entity:
         pass
 

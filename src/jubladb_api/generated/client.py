@@ -3,6 +3,9 @@ from jubladb_api.core import base_client
 import typing
 import datetime
 
+from jubladb_api.generated.entities.keys import *
+from jubladb_api.core.base_entity import BaseEntity
+
 
 from jubladb_api.generated.entities.additional_address import AdditionalAddress
 
@@ -200,61 +203,223 @@ class Client(base_client.BaseClient):
     def __init__(self, url: str, api_key: str):
         super().__init__(url, {"X-TOKEN": api_key})
 
+    def get_additional_address(
+        self,
+        id_or_key: int | AdditionalAddressKey,
+    ) -> AdditionalAddress:
+        if isinstance(id_or_key, int):
+            id_ = id_or_key
+            entity_key = AdditionalAddressKey(id_)
+        else:
+            id_ = id_or_key.id
+            entity_key = id_or_key
+        cached_entity = self._cache_get(entity_key)
+        if cached_entity is not None:
+            return cached_entity
+        raise ValueError(
+            f"no object known for {entity_key}. Entities of type additional_address can only be retrieved by including them while requesting other entities."
+        )
+
+    def get_additional_email(
+        self,
+        id_or_key: int | AdditionalEmailKey,
+    ) -> AdditionalEmail:
+        if isinstance(id_or_key, int):
+            id_ = id_or_key
+            entity_key = AdditionalEmailKey(id_)
+        else:
+            id_ = id_or_key.id
+            entity_key = id_or_key
+        cached_entity = self._cache_get(entity_key)
+        if cached_entity is not None:
+            return cached_entity
+        raise ValueError(
+            f"no object known for {entity_key}. Entities of type additional_email can only be retrieved by including them while requesting other entities."
+        )
+
+    def get_course(
+        self,
+        id_or_key: int | CourseKey,
+    ) -> Course:
+        if isinstance(id_or_key, int):
+            id_ = id_or_key
+            entity_key = CourseKey(id_)
+        else:
+            id_ = id_or_key.id
+            entity_key = id_or_key
+        cached_entity = self._cache_get(entity_key)
+        if cached_entity is not None:
+            return cached_entity
+        raise ValueError(
+            f"no object known for {entity_key}. Entities of type course can only be retrieved by including them while requesting other entities."
+        )
+
+    def _add_included_of_courses_to_cache(self, json_response: dict) -> None:
+        for incl_data in json_response.get("included", []):
+            if incl_data["type"] == "people":
+                self._cache_add(Person.from_json(incl_data))
+            elif incl_data["type"] == "event_kinds":
+                self._cache_add(EventKind.from_json(incl_data))
+            elif incl_data["type"] == "dates":
+                self._cache_add(Date.from_json(incl_data))
+            elif incl_data["type"] == "people":
+                self._cache_add(Person.from_json(incl_data))
+
+    def get_date(
+        self,
+        id_or_key: int | DateKey,
+    ) -> Date:
+        if isinstance(id_or_key, int):
+            id_ = id_or_key
+            entity_key = DateKey(id_)
+        else:
+            id_ = id_or_key.id
+            entity_key = id_or_key
+        cached_entity = self._cache_get(entity_key)
+        if cached_entity is not None:
+            return cached_entity
+        raise ValueError(
+            f"no object known for {entity_key}. Entities of type date can only be retrieved by including them while requesting other entities."
+        )
+
+    def _add_included_of_dates_to_cache(self, json_response: dict) -> None:
+        for incl_data in json_response.get("included", []):
+            if incl_data["type"] == "events":
+                self._cache_add(Event.from_json(incl_data))
+
     def get_event_kind_categories_list(
         self,
     ) -> list[EventKindCategory]:
+
         filters = []
         filters = [f for f in filters if f[2] is not None]
         json_response = self._request_list("event_kind_category", [], [], filters)
-        return [
-            EventKindCategory.from_json(data_obj) for data_obj in json_response["data"]
-        ]
-        # todo return included too
+
+        response_entities = []
+        for data_obj in json_response["data"]:
+            re = EventKindCategory.from_json(data_obj)
+            self._cache_add(re)
+
+        return response_entities
 
     def get_event_kind_category(
         self,
-        id_: int,
+        id_or_key: int | EventKindCategoryKey,
     ) -> EventKindCategory:
-        json_response = self._request_single_get("event_kind_category", id_, include)
-        return EventKindCategory.from_json(json_response["data"])
-        # todo return included too
+        if isinstance(id_or_key, int):
+            id_ = id_or_key
+            entity_key = EventKindCategoryKey(id_)
+        else:
+            id_ = id_or_key.id
+            entity_key = id_or_key
+
+        cached_entity = self._cache_get(entity_key)
+        if cached_entity is not None:
+            return cached_entity
+        json_response = self._request_single_get(
+            "event_kind_category",
+            id_,
+        )
+        response_entity = EventKindCategory.from_json(json_response["data"])
+        if response_entity.key != entity_key:
+            raise ValueError("Entity key mismatch")
+        self._cache_add(response_entity)
+
+        return response_entity
 
     def get_event_kinds_list(
         self,
-        include: list[_EventKind_Include],
+        include: list[_EventKind_Include] | typing.Literal["*"] | None = None,
     ) -> list[EventKind]:
+
+        if include is None:
+            include = []
+        if include == "*":
+            include = [
+                "kind_category",
+            ]
+
         filters = []
         filters = [f for f in filters if f[2] is not None]
         json_response = self._request_list("event_kind", [], include, filters)
-        return [EventKind.from_json(data_obj) for data_obj in json_response["data"]]
-        # todo return included too
+
+        response_entities = []
+        for data_obj in json_response["data"]:
+            re = EventKind.from_json(data_obj)
+            self._cache_add(re)
+
+        self._add_included_of_event_kinds_to_cache(json_response)
+
+        return response_entities
 
     def get_event_kind(
         self,
-        id_: int,
-        include: list[_EventKind_Include],
+        id_or_key: int | EventKindKey,
+        include: list[_EventKind_Include] | typing.Literal["*"] | None = None,
     ) -> EventKind:
-        json_response = self._request_single_get("event_kind", id_, include)
-        return EventKind.from_json(json_response["data"])
-        # todo return included too
+        if isinstance(id_or_key, int):
+            id_ = id_or_key
+            entity_key = EventKindKey(id_)
+        else:
+            id_ = id_or_key.id
+            entity_key = id_or_key
+
+        if include is None:
+            include = []
+        if include == "*":
+            include = [
+                "kind_category",
+            ]
+
+        cached_entity = self._cache_get(entity_key)
+        if cached_entity is not None:
+            return cached_entity
+        json_response = self._request_single_get(
+            "event_kind",
+            id_,
+            include,
+        )
+        response_entity = EventKind.from_json(json_response["data"])
+        if response_entity.key != entity_key:
+            raise ValueError("Entity key mismatch")
+        self._cache_add(response_entity)
+
+        self._add_included_of_event_kinds_to_cache(json_response)
+
+        return response_entity
+
+    def _add_included_of_event_kinds_to_cache(self, json_response: dict) -> None:
+        for incl_data in json_response.get("included", []):
+            if incl_data["type"] == "event_kind_categories":
+                self._cache_add(EventKindCategory.from_json(incl_data))
 
     def get_events_list(
         self,
-        include: list[_Event_Include],
-        filter_type_eq: str,
-        filter_kind_id_eq: int,
-        filter_kind_id_not_eq: int,
-        filter_kind_id_gt: int,
-        filter_kind_id_gte: int,
-        filter_kind_id_lt: int,
-        filter_kind_id_lte: int,
-        filter_updated_at_eq: datetime.datetime,
-        filter_updated_at_not_eq: datetime.datetime,
-        filter_updated_at_gt: datetime.datetime,
-        filter_updated_at_gte: datetime.datetime,
-        filter_updated_at_lt: datetime.datetime,
-        filter_updated_at_lte: datetime.datetime,
+        include: list[_Event_Include] | typing.Literal["*"] | None = None,
+        filter_type_eq: str | None = None,
+        filter_kind_id_eq: int | None = None,
+        filter_kind_id_not_eq: int | None = None,
+        filter_kind_id_gt: int | None = None,
+        filter_kind_id_gte: int | None = None,
+        filter_kind_id_lt: int | None = None,
+        filter_kind_id_lte: int | None = None,
+        filter_updated_at_eq: datetime.datetime | None = None,
+        filter_updated_at_not_eq: datetime.datetime | None = None,
+        filter_updated_at_gt: datetime.datetime | None = None,
+        filter_updated_at_gte: datetime.datetime | None = None,
+        filter_updated_at_lt: datetime.datetime | None = None,
+        filter_updated_at_lte: datetime.datetime | None = None,
     ) -> list[Event]:
+
+        if include is None:
+            include = []
+        if include == "*":
+            include = [
+                "contact",
+                "kind",
+                "dates",
+            ]
+
         filters = [
             ("type", "eq", filter_type_eq),
             ("kind_id", "eq", filter_kind_id_eq),
@@ -272,167 +437,228 @@ class Client(base_client.BaseClient):
         ]
         filters = [f for f in filters if f[2] is not None]
         json_response = self._request_list("event", [], include, filters)
-        return [Event.from_json(data_obj) for data_obj in json_response["data"]]
-        # todo return included too
+
+        response_entities = []
+        for data_obj in json_response["data"]:
+            re = Event.from_json(data_obj)
+            self._cache_add(re)
+
+        self._add_included_of_events_to_cache(json_response)
+
+        return response_entities
 
     def get_event(
         self,
-        id_: int,
-        include: list[_Event_Include],
+        id_or_key: int | EventKey,
+        include: list[_Event_Include] | typing.Literal["*"] | None = None,
     ) -> Event:
-        json_response = self._request_single_get("event", id_, include)
-        return Event.from_json(json_response["data"])
-        # todo return included too
+        if isinstance(id_or_key, int):
+            id_ = id_or_key
+            entity_key = EventKey(id_)
+        else:
+            id_ = id_or_key.id
+            entity_key = id_or_key
+
+        if include is None:
+            include = []
+        if include == "*":
+            include = [
+                "contact",
+                "kind",
+                "dates",
+            ]
+
+        cached_entity = self._cache_get(entity_key)
+        if cached_entity is not None:
+            return cached_entity
+        json_response = self._request_single_get(
+            "event",
+            id_,
+            include,
+        )
+        response_entity = Event.from_json(json_response["data"])
+        if response_entity.key != entity_key:
+            raise ValueError("Entity key mismatch")
+        self._cache_add(response_entity)
+
+        self._add_included_of_events_to_cache(json_response)
+
+        return response_entity
+
+    def _add_included_of_events_to_cache(self, json_response: dict) -> None:
+        for incl_data in json_response.get("included", []):
+            if incl_data["type"] == "people":
+                self._cache_add(Person.from_json(incl_data))
+            elif incl_data["type"] == "event_kinds":
+                self._cache_add(EventKind.from_json(incl_data))
+            elif incl_data["type"] == "dates":
+                self._cache_add(Date.from_json(incl_data))
 
     def get_groups_list(
         self,
-        include: list[_Group_Include],
-        sort: list[_Group_Sort],
-        filter_name_eq: str,
-        filter_name_not_eq: str,
-        filter_name_eql: str,
-        filter_name_not_eql: str,
-        filter_name_prefix: str,
-        filter_name_not_prefix: str,
-        filter_name_suffix: str,
-        filter_name_not_suffix: str,
-        filter_name_match: str,
-        filter_name_not_match: str,
-        filter_short_name_eq: str,
-        filter_short_name_not_eq: str,
-        filter_short_name_eql: str,
-        filter_short_name_not_eql: str,
-        filter_short_name_prefix: str,
-        filter_short_name_not_prefix: str,
-        filter_short_name_suffix: str,
-        filter_short_name_not_suffix: str,
-        filter_short_name_match: str,
-        filter_short_name_not_match: str,
-        filter_display_name_eq: str,
-        filter_display_name_not_eq: str,
-        filter_display_name_eql: str,
-        filter_display_name_not_eql: str,
-        filter_display_name_prefix: str,
-        filter_display_name_not_prefix: str,
-        filter_display_name_suffix: str,
-        filter_display_name_not_suffix: str,
-        filter_display_name_match: str,
-        filter_display_name_not_match: str,
-        filter_description_eq: str,
-        filter_description_not_eq: str,
-        filter_description_eql: str,
-        filter_description_not_eql: str,
-        filter_description_prefix: str,
-        filter_description_not_prefix: str,
-        filter_description_suffix: str,
-        filter_description_not_suffix: str,
-        filter_description_match: str,
-        filter_description_not_match: str,
-        filter_layer_eq: bool,
-        filter_parent_id_eq: int,
-        filter_parent_id_not_eq: int,
-        filter_parent_id_gt: int,
-        filter_parent_id_gte: int,
-        filter_parent_id_lt: int,
-        filter_parent_id_lte: int,
-        filter_layer_group_id_eq: int,
-        filter_layer_group_id_not_eq: int,
-        filter_layer_group_id_gt: int,
-        filter_layer_group_id_gte: int,
-        filter_layer_group_id_lt: int,
-        filter_layer_group_id_lte: int,
-        filter_type_eq: str,
-        filter_type_not_eq: str,
-        filter_type_eql: str,
-        filter_type_not_eql: str,
-        filter_type_prefix: str,
-        filter_type_not_prefix: str,
-        filter_type_suffix: str,
-        filter_type_not_suffix: str,
-        filter_type_match: str,
-        filter_type_not_match: str,
-        filter_email_eq: str,
-        filter_email_not_eq: str,
-        filter_email_eql: str,
-        filter_email_not_eql: str,
-        filter_email_prefix: str,
-        filter_email_not_prefix: str,
-        filter_email_suffix: str,
-        filter_email_not_suffix: str,
-        filter_email_match: str,
-        filter_email_not_match: str,
-        filter_address_eq: str,
-        filter_address_not_eq: str,
-        filter_address_eql: str,
-        filter_address_not_eql: str,
-        filter_address_prefix: str,
-        filter_address_not_prefix: str,
-        filter_address_suffix: str,
-        filter_address_not_suffix: str,
-        filter_address_match: str,
-        filter_address_not_match: str,
-        filter_zip_code_eq: int,
-        filter_zip_code_not_eq: int,
-        filter_zip_code_gt: int,
-        filter_zip_code_gte: int,
-        filter_zip_code_lt: int,
-        filter_zip_code_lte: int,
-        filter_town_eq: str,
-        filter_town_not_eq: str,
-        filter_town_eql: str,
-        filter_town_not_eql: str,
-        filter_town_prefix: str,
-        filter_town_not_prefix: str,
-        filter_town_suffix: str,
-        filter_town_not_suffix: str,
-        filter_town_match: str,
-        filter_town_not_match: str,
-        filter_country_eq: str,
-        filter_country_not_eq: str,
-        filter_country_eql: str,
-        filter_country_not_eql: str,
-        filter_country_prefix: str,
-        filter_country_not_prefix: str,
-        filter_country_suffix: str,
-        filter_country_not_suffix: str,
-        filter_country_match: str,
-        filter_country_not_match: str,
-        filter_require_person_add_requests_eq: bool,
-        filter_self_registration_url_eq: str,
-        filter_self_registration_url_not_eq: str,
-        filter_self_registration_url_eql: str,
-        filter_self_registration_url_not_eql: str,
-        filter_self_registration_url_prefix: str,
-        filter_self_registration_url_not_prefix: str,
-        filter_self_registration_url_suffix: str,
-        filter_self_registration_url_not_suffix: str,
-        filter_self_registration_url_match: str,
-        filter_self_registration_url_not_match: str,
-        filter_archived_at_eq: datetime.datetime,
-        filter_archived_at_not_eq: datetime.datetime,
-        filter_archived_at_gt: datetime.datetime,
-        filter_archived_at_gte: datetime.datetime,
-        filter_archived_at_lt: datetime.datetime,
-        filter_archived_at_lte: datetime.datetime,
-        filter_created_at_eq: datetime.datetime,
-        filter_created_at_not_eq: datetime.datetime,
-        filter_created_at_gt: datetime.datetime,
-        filter_created_at_gte: datetime.datetime,
-        filter_created_at_lt: datetime.datetime,
-        filter_created_at_lte: datetime.datetime,
-        filter_updated_at_eq: datetime.datetime,
-        filter_updated_at_not_eq: datetime.datetime,
-        filter_updated_at_gt: datetime.datetime,
-        filter_updated_at_gte: datetime.datetime,
-        filter_updated_at_lt: datetime.datetime,
-        filter_updated_at_lte: datetime.datetime,
-        filter_deleted_at_eq: datetime.datetime,
-        filter_deleted_at_not_eq: datetime.datetime,
-        filter_deleted_at_gt: datetime.datetime,
-        filter_deleted_at_gte: datetime.datetime,
-        filter_deleted_at_lt: datetime.datetime,
-        filter_deleted_at_lte: datetime.datetime,
+        include: list[_Group_Include] | typing.Literal["*"] | None = None,
+        sort: list[_Group_Sort] | None = None,
+        filter_name_eq: str | None = None,
+        filter_name_not_eq: str | None = None,
+        filter_name_eql: str | None = None,
+        filter_name_not_eql: str | None = None,
+        filter_name_prefix: str | None = None,
+        filter_name_not_prefix: str | None = None,
+        filter_name_suffix: str | None = None,
+        filter_name_not_suffix: str | None = None,
+        filter_name_match: str | None = None,
+        filter_name_not_match: str | None = None,
+        filter_short_name_eq: str | None = None,
+        filter_short_name_not_eq: str | None = None,
+        filter_short_name_eql: str | None = None,
+        filter_short_name_not_eql: str | None = None,
+        filter_short_name_prefix: str | None = None,
+        filter_short_name_not_prefix: str | None = None,
+        filter_short_name_suffix: str | None = None,
+        filter_short_name_not_suffix: str | None = None,
+        filter_short_name_match: str | None = None,
+        filter_short_name_not_match: str | None = None,
+        filter_display_name_eq: str | None = None,
+        filter_display_name_not_eq: str | None = None,
+        filter_display_name_eql: str | None = None,
+        filter_display_name_not_eql: str | None = None,
+        filter_display_name_prefix: str | None = None,
+        filter_display_name_not_prefix: str | None = None,
+        filter_display_name_suffix: str | None = None,
+        filter_display_name_not_suffix: str | None = None,
+        filter_display_name_match: str | None = None,
+        filter_display_name_not_match: str | None = None,
+        filter_description_eq: str | None = None,
+        filter_description_not_eq: str | None = None,
+        filter_description_eql: str | None = None,
+        filter_description_not_eql: str | None = None,
+        filter_description_prefix: str | None = None,
+        filter_description_not_prefix: str | None = None,
+        filter_description_suffix: str | None = None,
+        filter_description_not_suffix: str | None = None,
+        filter_description_match: str | None = None,
+        filter_description_not_match: str | None = None,
+        filter_layer_eq: bool | None = None,
+        filter_parent_id_eq: int | None = None,
+        filter_parent_id_not_eq: int | None = None,
+        filter_parent_id_gt: int | None = None,
+        filter_parent_id_gte: int | None = None,
+        filter_parent_id_lt: int | None = None,
+        filter_parent_id_lte: int | None = None,
+        filter_layer_group_id_eq: int | None = None,
+        filter_layer_group_id_not_eq: int | None = None,
+        filter_layer_group_id_gt: int | None = None,
+        filter_layer_group_id_gte: int | None = None,
+        filter_layer_group_id_lt: int | None = None,
+        filter_layer_group_id_lte: int | None = None,
+        filter_type_eq: str | None = None,
+        filter_type_not_eq: str | None = None,
+        filter_type_eql: str | None = None,
+        filter_type_not_eql: str | None = None,
+        filter_type_prefix: str | None = None,
+        filter_type_not_prefix: str | None = None,
+        filter_type_suffix: str | None = None,
+        filter_type_not_suffix: str | None = None,
+        filter_type_match: str | None = None,
+        filter_type_not_match: str | None = None,
+        filter_email_eq: str | None = None,
+        filter_email_not_eq: str | None = None,
+        filter_email_eql: str | None = None,
+        filter_email_not_eql: str | None = None,
+        filter_email_prefix: str | None = None,
+        filter_email_not_prefix: str | None = None,
+        filter_email_suffix: str | None = None,
+        filter_email_not_suffix: str | None = None,
+        filter_email_match: str | None = None,
+        filter_email_not_match: str | None = None,
+        filter_address_eq: str | None = None,
+        filter_address_not_eq: str | None = None,
+        filter_address_eql: str | None = None,
+        filter_address_not_eql: str | None = None,
+        filter_address_prefix: str | None = None,
+        filter_address_not_prefix: str | None = None,
+        filter_address_suffix: str | None = None,
+        filter_address_not_suffix: str | None = None,
+        filter_address_match: str | None = None,
+        filter_address_not_match: str | None = None,
+        filter_zip_code_eq: int | None = None,
+        filter_zip_code_not_eq: int | None = None,
+        filter_zip_code_gt: int | None = None,
+        filter_zip_code_gte: int | None = None,
+        filter_zip_code_lt: int | None = None,
+        filter_zip_code_lte: int | None = None,
+        filter_town_eq: str | None = None,
+        filter_town_not_eq: str | None = None,
+        filter_town_eql: str | None = None,
+        filter_town_not_eql: str | None = None,
+        filter_town_prefix: str | None = None,
+        filter_town_not_prefix: str | None = None,
+        filter_town_suffix: str | None = None,
+        filter_town_not_suffix: str | None = None,
+        filter_town_match: str | None = None,
+        filter_town_not_match: str | None = None,
+        filter_country_eq: str | None = None,
+        filter_country_not_eq: str | None = None,
+        filter_country_eql: str | None = None,
+        filter_country_not_eql: str | None = None,
+        filter_country_prefix: str | None = None,
+        filter_country_not_prefix: str | None = None,
+        filter_country_suffix: str | None = None,
+        filter_country_not_suffix: str | None = None,
+        filter_country_match: str | None = None,
+        filter_country_not_match: str | None = None,
+        filter_require_person_add_requests_eq: bool | None = None,
+        filter_self_registration_url_eq: str | None = None,
+        filter_self_registration_url_not_eq: str | None = None,
+        filter_self_registration_url_eql: str | None = None,
+        filter_self_registration_url_not_eql: str | None = None,
+        filter_self_registration_url_prefix: str | None = None,
+        filter_self_registration_url_not_prefix: str | None = None,
+        filter_self_registration_url_suffix: str | None = None,
+        filter_self_registration_url_not_suffix: str | None = None,
+        filter_self_registration_url_match: str | None = None,
+        filter_self_registration_url_not_match: str | None = None,
+        filter_archived_at_eq: datetime.datetime | None = None,
+        filter_archived_at_not_eq: datetime.datetime | None = None,
+        filter_archived_at_gt: datetime.datetime | None = None,
+        filter_archived_at_gte: datetime.datetime | None = None,
+        filter_archived_at_lt: datetime.datetime | None = None,
+        filter_archived_at_lte: datetime.datetime | None = None,
+        filter_created_at_eq: datetime.datetime | None = None,
+        filter_created_at_not_eq: datetime.datetime | None = None,
+        filter_created_at_gt: datetime.datetime | None = None,
+        filter_created_at_gte: datetime.datetime | None = None,
+        filter_created_at_lt: datetime.datetime | None = None,
+        filter_created_at_lte: datetime.datetime | None = None,
+        filter_updated_at_eq: datetime.datetime | None = None,
+        filter_updated_at_not_eq: datetime.datetime | None = None,
+        filter_updated_at_gt: datetime.datetime | None = None,
+        filter_updated_at_gte: datetime.datetime | None = None,
+        filter_updated_at_lt: datetime.datetime | None = None,
+        filter_updated_at_lte: datetime.datetime | None = None,
+        filter_deleted_at_eq: datetime.datetime | None = None,
+        filter_deleted_at_not_eq: datetime.datetime | None = None,
+        filter_deleted_at_gt: datetime.datetime | None = None,
+        filter_deleted_at_gte: datetime.datetime | None = None,
+        filter_deleted_at_lt: datetime.datetime | None = None,
+        filter_deleted_at_lte: datetime.datetime | None = None,
     ) -> list[Group]:
+
+        if include is None:
+            include = []
+        if include == "*":
+            include = [
+                "contact",
+                "creator",
+                "updater",
+                "deleter",
+                "parent",
+                "layer_group",
+                "phone_numbers",
+                "social_accounts",
+                "additional_emails",
+            ]
+
         filters = [
             ("name", "eq", filter_name_eq),
             ("name", "not_eq", filter_name_not_eq),
@@ -597,34 +823,129 @@ class Client(base_client.BaseClient):
         ]
         filters = [f for f in filters if f[2] is not None]
         json_response = self._request_list("group", sort, include, filters)
-        return [Group.from_json(data_obj) for data_obj in json_response["data"]]
-        # todo return included too
+
+        response_entities = []
+        for data_obj in json_response["data"]:
+            re = Group.from_json(data_obj)
+            self._cache_add(re)
+
+        self._add_included_of_groups_to_cache(json_response)
+
+        return response_entities
 
     def get_group(
         self,
-        id_: int,
-        include: list[_Group_Include],
+        id_or_key: int | GroupKey,
+        include: list[_Group_Include] | typing.Literal["*"] | None = None,
     ) -> Group:
-        json_response = self._request_single_get("group", id_, include)
-        return Group.from_json(json_response["data"])
-        # todo return included too
+        if isinstance(id_or_key, int):
+            id_ = id_or_key
+            entity_key = GroupKey(id_)
+        else:
+            id_ = id_or_key.id
+            entity_key = id_or_key
+
+        if include is None:
+            include = []
+        if include == "*":
+            include = [
+                "contact",
+                "creator",
+                "updater",
+                "deleter",
+                "parent",
+                "layer_group",
+                "phone_numbers",
+                "social_accounts",
+                "additional_emails",
+            ]
+
+        cached_entity = self._cache_get(entity_key)
+        if cached_entity is not None:
+            return cached_entity
+        json_response = self._request_single_get(
+            "group",
+            id_,
+            include,
+        )
+        response_entity = Group.from_json(json_response["data"])
+        if response_entity.key != entity_key:
+            raise ValueError("Entity key mismatch")
+        self._cache_add(response_entity)
+
+        self._add_included_of_groups_to_cache(json_response)
+
+        return response_entity
+
+    def _add_included_of_groups_to_cache(self, json_response: dict) -> None:
+        for incl_data in json_response.get("included", []):
+            if incl_data["type"] == "people":
+                self._cache_add(Person.from_json(incl_data))
+            elif incl_data["type"] == "people":
+                self._cache_add(Person.from_json(incl_data))
+            elif incl_data["type"] == "people":
+                self._cache_add(Person.from_json(incl_data))
+            elif incl_data["type"] == "people":
+                self._cache_add(Person.from_json(incl_data))
+            elif incl_data["type"] == "groups":
+                self._cache_add(Group.from_json(incl_data))
+            elif incl_data["type"] == "groups":
+                self._cache_add(Group.from_json(incl_data))
+            elif incl_data["type"] == "phone_numbers":
+                self._cache_add(PhoneNumber.from_json(incl_data))
+            elif incl_data["type"] == "social_accounts":
+                self._cache_add(SocialAccount.from_json(incl_data))
+            elif incl_data["type"] == "additional_emails":
+                self._cache_add(AdditionalEmail.from_json(incl_data))
+
+    def get_invoice_item(
+        self,
+        id_or_key: int | InvoiceItemKey,
+    ) -> InvoiceItem:
+        if isinstance(id_or_key, int):
+            id_ = id_or_key
+            entity_key = InvoiceItemKey(id_)
+        else:
+            id_ = id_or_key.id
+            entity_key = id_or_key
+        cached_entity = self._cache_get(entity_key)
+        if cached_entity is not None:
+            return cached_entity
+        raise ValueError(
+            f"no object known for {entity_key}. Entities of type invoice_item can only be retrieved by including them while requesting other entities."
+        )
+
+    def _add_included_of_invoice_items_to_cache(self, json_response: dict) -> None:
+        for incl_data in json_response.get("included", []):
+            if incl_data["type"] == "invoices":
+                self._cache_add(Invoice.from_json(incl_data))
 
     def get_invoices_list(
         self,
-        include: list[_Invoice_Include],
-        filter_group_id_eq: int,
-        filter_group_id_not_eq: int,
-        filter_group_id_gt: int,
-        filter_group_id_gte: int,
-        filter_group_id_lt: int,
-        filter_group_id_lte: int,
-        filter_recipient_id_eq: int,
-        filter_recipient_id_not_eq: int,
-        filter_recipient_id_gt: int,
-        filter_recipient_id_gte: int,
-        filter_recipient_id_lt: int,
-        filter_recipient_id_lte: int,
+        include: list[_Invoice_Include] | typing.Literal["*"] | None = None,
+        filter_group_id_eq: int | None = None,
+        filter_group_id_not_eq: int | None = None,
+        filter_group_id_gt: int | None = None,
+        filter_group_id_gte: int | None = None,
+        filter_group_id_lt: int | None = None,
+        filter_group_id_lte: int | None = None,
+        filter_recipient_id_eq: int | None = None,
+        filter_recipient_id_not_eq: int | None = None,
+        filter_recipient_id_gt: int | None = None,
+        filter_recipient_id_gte: int | None = None,
+        filter_recipient_id_lt: int | None = None,
+        filter_recipient_id_lte: int | None = None,
     ) -> list[Invoice]:
+
+        if include is None:
+            include = []
+        if include == "*":
+            include = [
+                "group",
+                "recipient",
+                "invoice_items",
+            ]
+
         filters = [
             ("group_id", "eq", filter_group_id_eq),
             ("group_id", "not_eq", filter_group_id_not_eq),
@@ -641,212 +962,287 @@ class Client(base_client.BaseClient):
         ]
         filters = [f for f in filters if f[2] is not None]
         json_response = self._request_list("invoice", [], include, filters)
-        return [Invoice.from_json(data_obj) for data_obj in json_response["data"]]
-        # todo return included too
+
+        response_entities = []
+        for data_obj in json_response["data"]:
+            re = Invoice.from_json(data_obj)
+            self._cache_add(re)
+
+        self._add_included_of_invoices_to_cache(json_response)
+
+        return response_entities
 
     def get_invoice(
         self,
-        id_: int,
-        include: list[_Invoice_Include],
+        id_or_key: int | InvoiceKey,
+        include: list[_Invoice_Include] | typing.Literal["*"] | None = None,
     ) -> Invoice:
-        json_response = self._request_single_get("invoice", id_, include)
-        return Invoice.from_json(json_response["data"])
-        # todo return included too
+        if isinstance(id_or_key, int):
+            id_ = id_or_key
+            entity_key = InvoiceKey(id_)
+        else:
+            id_ = id_or_key.id
+            entity_key = id_or_key
+
+        if include is None:
+            include = []
+        if include == "*":
+            include = [
+                "group",
+                "recipient",
+                "invoice_items",
+            ]
+
+        cached_entity = self._cache_get(entity_key)
+        if cached_entity is not None:
+            return cached_entity
+        json_response = self._request_single_get(
+            "invoice",
+            id_,
+            include,
+        )
+        response_entity = Invoice.from_json(json_response["data"])
+        if response_entity.key != entity_key:
+            raise ValueError("Entity key mismatch")
+        self._cache_add(response_entity)
+
+        self._add_included_of_invoices_to_cache(json_response)
+
+        return response_entity
+
+    def _add_included_of_invoices_to_cache(self, json_response: dict) -> None:
+        for incl_data in json_response.get("included", []):
+            if incl_data["type"] == "groups":
+                self._cache_add(Group.from_json(incl_data))
+            elif incl_data["type"] == "people":
+                self._cache_add(Person.from_json(incl_data))
+            elif incl_data["type"] == "invoice_items":
+                self._cache_add(InvoiceItem.from_json(incl_data))
+
+    def get_person_name(
+        self,
+        id_or_key: int | PersonNameKey,
+    ) -> PersonName:
+        if isinstance(id_or_key, int):
+            id_ = id_or_key
+            entity_key = PersonNameKey(id_)
+        else:
+            id_ = id_or_key.id
+            entity_key = id_or_key
+        cached_entity = self._cache_get(entity_key)
+        if cached_entity is not None:
+            return cached_entity
+        raise ValueError(
+            f"no object known for {entity_key}. Entities of type person_name can only be retrieved by including them while requesting other entities."
+        )
 
     def get_people_list(
         self,
-        include: list[_Person_Include],
-        sort: list[_Person_Sort],
-        filter_first_name_eq: str,
-        filter_first_name_not_eq: str,
-        filter_first_name_eql: str,
-        filter_first_name_not_eql: str,
-        filter_first_name_prefix: str,
-        filter_first_name_not_prefix: str,
-        filter_first_name_suffix: str,
-        filter_first_name_not_suffix: str,
-        filter_first_name_match: str,
-        filter_first_name_not_match: str,
-        filter_last_name_eq: str,
-        filter_last_name_not_eq: str,
-        filter_last_name_eql: str,
-        filter_last_name_not_eql: str,
-        filter_last_name_prefix: str,
-        filter_last_name_not_prefix: str,
-        filter_last_name_suffix: str,
-        filter_last_name_not_suffix: str,
-        filter_last_name_match: str,
-        filter_last_name_not_match: str,
-        filter_nickname_eq: str,
-        filter_nickname_not_eq: str,
-        filter_nickname_eql: str,
-        filter_nickname_not_eql: str,
-        filter_nickname_prefix: str,
-        filter_nickname_not_prefix: str,
-        filter_nickname_suffix: str,
-        filter_nickname_not_suffix: str,
-        filter_nickname_match: str,
-        filter_nickname_not_match: str,
-        filter_company_name_eq: str,
-        filter_company_name_not_eq: str,
-        filter_company_name_eql: str,
-        filter_company_name_not_eql: str,
-        filter_company_name_prefix: str,
-        filter_company_name_not_prefix: str,
-        filter_company_name_suffix: str,
-        filter_company_name_not_suffix: str,
-        filter_company_name_match: str,
-        filter_company_name_not_match: str,
-        filter_company_eq: bool,
-        filter_email_eq: str,
-        filter_email_not_eq: str,
-        filter_email_eql: str,
-        filter_email_not_eql: str,
-        filter_email_prefix: str,
-        filter_email_not_prefix: str,
-        filter_email_suffix: str,
-        filter_email_not_suffix: str,
-        filter_email_match: str,
-        filter_email_not_match: str,
-        filter_address_eq: str,
-        filter_address_not_eq: str,
-        filter_address_eql: str,
-        filter_address_not_eql: str,
-        filter_address_prefix: str,
-        filter_address_not_prefix: str,
-        filter_address_suffix: str,
-        filter_address_not_suffix: str,
-        filter_address_match: str,
-        filter_address_not_match: str,
-        filter_address_care_of_eq: str,
-        filter_address_care_of_not_eq: str,
-        filter_address_care_of_eql: str,
-        filter_address_care_of_not_eql: str,
-        filter_address_care_of_prefix: str,
-        filter_address_care_of_not_prefix: str,
-        filter_address_care_of_suffix: str,
-        filter_address_care_of_not_suffix: str,
-        filter_address_care_of_match: str,
-        filter_address_care_of_not_match: str,
-        filter_street_eq: str,
-        filter_street_not_eq: str,
-        filter_street_eql: str,
-        filter_street_not_eql: str,
-        filter_street_prefix: str,
-        filter_street_not_prefix: str,
-        filter_street_suffix: str,
-        filter_street_not_suffix: str,
-        filter_street_match: str,
-        filter_street_not_match: str,
-        filter_housenumber_eq: str,
-        filter_housenumber_not_eq: str,
-        filter_housenumber_eql: str,
-        filter_housenumber_not_eql: str,
-        filter_housenumber_prefix: str,
-        filter_housenumber_not_prefix: str,
-        filter_housenumber_suffix: str,
-        filter_housenumber_not_suffix: str,
-        filter_housenumber_match: str,
-        filter_housenumber_not_match: str,
-        filter_postbox_eq: str,
-        filter_postbox_not_eq: str,
-        filter_postbox_eql: str,
-        filter_postbox_not_eql: str,
-        filter_postbox_prefix: str,
-        filter_postbox_not_prefix: str,
-        filter_postbox_suffix: str,
-        filter_postbox_not_suffix: str,
-        filter_postbox_match: str,
-        filter_postbox_not_match: str,
-        filter_zip_code_eq: str,
-        filter_zip_code_not_eq: str,
-        filter_zip_code_eql: str,
-        filter_zip_code_not_eql: str,
-        filter_zip_code_prefix: str,
-        filter_zip_code_not_prefix: str,
-        filter_zip_code_suffix: str,
-        filter_zip_code_not_suffix: str,
-        filter_zip_code_match: str,
-        filter_zip_code_not_match: str,
-        filter_town_eq: str,
-        filter_town_not_eq: str,
-        filter_town_eql: str,
-        filter_town_not_eql: str,
-        filter_town_prefix: str,
-        filter_town_not_prefix: str,
-        filter_town_suffix: str,
-        filter_town_not_suffix: str,
-        filter_town_match: str,
-        filter_town_not_match: str,
-        filter_country_eq: str,
-        filter_country_not_eq: str,
-        filter_country_eql: str,
-        filter_country_not_eql: str,
-        filter_country_prefix: str,
-        filter_country_not_prefix: str,
-        filter_country_suffix: str,
-        filter_country_not_suffix: str,
-        filter_country_match: str,
-        filter_country_not_match: str,
-        filter_primary_group_id_eq: int,
-        filter_primary_group_id_not_eq: int,
-        filter_primary_group_id_gt: int,
-        filter_primary_group_id_gte: int,
-        filter_primary_group_id_lt: int,
-        filter_primary_group_id_lte: int,
-        filter_gender_eq: str,
-        filter_gender_not_eq: str,
-        filter_gender_eql: str,
-        filter_gender_not_eql: str,
-        filter_gender_prefix: str,
-        filter_gender_not_prefix: str,
-        filter_gender_suffix: str,
-        filter_gender_not_suffix: str,
-        filter_gender_match: str,
-        filter_gender_not_match: str,
-        filter_birthday_eq: datetime.date,
-        filter_birthday_not_eq: datetime.date,
-        filter_birthday_gt: datetime.date,
-        filter_birthday_gte: datetime.date,
-        filter_birthday_lt: datetime.date,
-        filter_birthday_lte: datetime.date,
-        filter_picture_eq: str,
-        filter_picture_not_eq: str,
-        filter_picture_eql: str,
-        filter_picture_not_eql: str,
-        filter_picture_prefix: str,
-        filter_picture_not_prefix: str,
-        filter_picture_suffix: str,
-        filter_picture_not_suffix: str,
-        filter_picture_match: str,
-        filter_picture_not_match: str,
-        filter_updated_at_eq: datetime.datetime,
-        filter_updated_at_not_eq: datetime.datetime,
-        filter_updated_at_gt: datetime.datetime,
-        filter_updated_at_gte: datetime.datetime,
-        filter_updated_at_lt: datetime.datetime,
-        filter_updated_at_lte: datetime.datetime,
-        filter_additional_information_eq: str,
-        filter_additional_information_not_eq: str,
-        filter_additional_information_eql: str,
-        filter_additional_information_not_eql: str,
-        filter_additional_information_prefix: str,
-        filter_additional_information_not_prefix: str,
-        filter_additional_information_suffix: str,
-        filter_additional_information_not_suffix: str,
-        filter_additional_information_match: str,
-        filter_additional_information_not_match: str,
-        filter_language_eq: str,
-        filter_language_not_eq: str,
-        filter_language_eql: str,
-        filter_language_not_eql: str,
-        filter_language_prefix: str,
-        filter_language_not_prefix: str,
-        filter_language_suffix: str,
-        filter_language_not_suffix: str,
-        filter_language_match: str,
-        filter_language_not_match: str,
+        include: list[_Person_Include] | typing.Literal["*"] | None = None,
+        sort: list[_Person_Sort] | None = None,
+        filter_first_name_eq: str | None = None,
+        filter_first_name_not_eq: str | None = None,
+        filter_first_name_eql: str | None = None,
+        filter_first_name_not_eql: str | None = None,
+        filter_first_name_prefix: str | None = None,
+        filter_first_name_not_prefix: str | None = None,
+        filter_first_name_suffix: str | None = None,
+        filter_first_name_not_suffix: str | None = None,
+        filter_first_name_match: str | None = None,
+        filter_first_name_not_match: str | None = None,
+        filter_last_name_eq: str | None = None,
+        filter_last_name_not_eq: str | None = None,
+        filter_last_name_eql: str | None = None,
+        filter_last_name_not_eql: str | None = None,
+        filter_last_name_prefix: str | None = None,
+        filter_last_name_not_prefix: str | None = None,
+        filter_last_name_suffix: str | None = None,
+        filter_last_name_not_suffix: str | None = None,
+        filter_last_name_match: str | None = None,
+        filter_last_name_not_match: str | None = None,
+        filter_nickname_eq: str | None = None,
+        filter_nickname_not_eq: str | None = None,
+        filter_nickname_eql: str | None = None,
+        filter_nickname_not_eql: str | None = None,
+        filter_nickname_prefix: str | None = None,
+        filter_nickname_not_prefix: str | None = None,
+        filter_nickname_suffix: str | None = None,
+        filter_nickname_not_suffix: str | None = None,
+        filter_nickname_match: str | None = None,
+        filter_nickname_not_match: str | None = None,
+        filter_company_name_eq: str | None = None,
+        filter_company_name_not_eq: str | None = None,
+        filter_company_name_eql: str | None = None,
+        filter_company_name_not_eql: str | None = None,
+        filter_company_name_prefix: str | None = None,
+        filter_company_name_not_prefix: str | None = None,
+        filter_company_name_suffix: str | None = None,
+        filter_company_name_not_suffix: str | None = None,
+        filter_company_name_match: str | None = None,
+        filter_company_name_not_match: str | None = None,
+        filter_company_eq: bool | None = None,
+        filter_email_eq: str | None = None,
+        filter_email_not_eq: str | None = None,
+        filter_email_eql: str | None = None,
+        filter_email_not_eql: str | None = None,
+        filter_email_prefix: str | None = None,
+        filter_email_not_prefix: str | None = None,
+        filter_email_suffix: str | None = None,
+        filter_email_not_suffix: str | None = None,
+        filter_email_match: str | None = None,
+        filter_email_not_match: str | None = None,
+        filter_address_eq: str | None = None,
+        filter_address_not_eq: str | None = None,
+        filter_address_eql: str | None = None,
+        filter_address_not_eql: str | None = None,
+        filter_address_prefix: str | None = None,
+        filter_address_not_prefix: str | None = None,
+        filter_address_suffix: str | None = None,
+        filter_address_not_suffix: str | None = None,
+        filter_address_match: str | None = None,
+        filter_address_not_match: str | None = None,
+        filter_address_care_of_eq: str | None = None,
+        filter_address_care_of_not_eq: str | None = None,
+        filter_address_care_of_eql: str | None = None,
+        filter_address_care_of_not_eql: str | None = None,
+        filter_address_care_of_prefix: str | None = None,
+        filter_address_care_of_not_prefix: str | None = None,
+        filter_address_care_of_suffix: str | None = None,
+        filter_address_care_of_not_suffix: str | None = None,
+        filter_address_care_of_match: str | None = None,
+        filter_address_care_of_not_match: str | None = None,
+        filter_street_eq: str | None = None,
+        filter_street_not_eq: str | None = None,
+        filter_street_eql: str | None = None,
+        filter_street_not_eql: str | None = None,
+        filter_street_prefix: str | None = None,
+        filter_street_not_prefix: str | None = None,
+        filter_street_suffix: str | None = None,
+        filter_street_not_suffix: str | None = None,
+        filter_street_match: str | None = None,
+        filter_street_not_match: str | None = None,
+        filter_housenumber_eq: str | None = None,
+        filter_housenumber_not_eq: str | None = None,
+        filter_housenumber_eql: str | None = None,
+        filter_housenumber_not_eql: str | None = None,
+        filter_housenumber_prefix: str | None = None,
+        filter_housenumber_not_prefix: str | None = None,
+        filter_housenumber_suffix: str | None = None,
+        filter_housenumber_not_suffix: str | None = None,
+        filter_housenumber_match: str | None = None,
+        filter_housenumber_not_match: str | None = None,
+        filter_postbox_eq: str | None = None,
+        filter_postbox_not_eq: str | None = None,
+        filter_postbox_eql: str | None = None,
+        filter_postbox_not_eql: str | None = None,
+        filter_postbox_prefix: str | None = None,
+        filter_postbox_not_prefix: str | None = None,
+        filter_postbox_suffix: str | None = None,
+        filter_postbox_not_suffix: str | None = None,
+        filter_postbox_match: str | None = None,
+        filter_postbox_not_match: str | None = None,
+        filter_zip_code_eq: str | None = None,
+        filter_zip_code_not_eq: str | None = None,
+        filter_zip_code_eql: str | None = None,
+        filter_zip_code_not_eql: str | None = None,
+        filter_zip_code_prefix: str | None = None,
+        filter_zip_code_not_prefix: str | None = None,
+        filter_zip_code_suffix: str | None = None,
+        filter_zip_code_not_suffix: str | None = None,
+        filter_zip_code_match: str | None = None,
+        filter_zip_code_not_match: str | None = None,
+        filter_town_eq: str | None = None,
+        filter_town_not_eq: str | None = None,
+        filter_town_eql: str | None = None,
+        filter_town_not_eql: str | None = None,
+        filter_town_prefix: str | None = None,
+        filter_town_not_prefix: str | None = None,
+        filter_town_suffix: str | None = None,
+        filter_town_not_suffix: str | None = None,
+        filter_town_match: str | None = None,
+        filter_town_not_match: str | None = None,
+        filter_country_eq: str | None = None,
+        filter_country_not_eq: str | None = None,
+        filter_country_eql: str | None = None,
+        filter_country_not_eql: str | None = None,
+        filter_country_prefix: str | None = None,
+        filter_country_not_prefix: str | None = None,
+        filter_country_suffix: str | None = None,
+        filter_country_not_suffix: str | None = None,
+        filter_country_match: str | None = None,
+        filter_country_not_match: str | None = None,
+        filter_primary_group_id_eq: int | None = None,
+        filter_primary_group_id_not_eq: int | None = None,
+        filter_primary_group_id_gt: int | None = None,
+        filter_primary_group_id_gte: int | None = None,
+        filter_primary_group_id_lt: int | None = None,
+        filter_primary_group_id_lte: int | None = None,
+        filter_gender_eq: str | None = None,
+        filter_gender_not_eq: str | None = None,
+        filter_gender_eql: str | None = None,
+        filter_gender_not_eql: str | None = None,
+        filter_gender_prefix: str | None = None,
+        filter_gender_not_prefix: str | None = None,
+        filter_gender_suffix: str | None = None,
+        filter_gender_not_suffix: str | None = None,
+        filter_gender_match: str | None = None,
+        filter_gender_not_match: str | None = None,
+        filter_birthday_eq: datetime.date | None = None,
+        filter_birthday_not_eq: datetime.date | None = None,
+        filter_birthday_gt: datetime.date | None = None,
+        filter_birthday_gte: datetime.date | None = None,
+        filter_birthday_lt: datetime.date | None = None,
+        filter_birthday_lte: datetime.date | None = None,
+        filter_picture_eq: str | None = None,
+        filter_picture_not_eq: str | None = None,
+        filter_picture_eql: str | None = None,
+        filter_picture_not_eql: str | None = None,
+        filter_picture_prefix: str | None = None,
+        filter_picture_not_prefix: str | None = None,
+        filter_picture_suffix: str | None = None,
+        filter_picture_not_suffix: str | None = None,
+        filter_picture_match: str | None = None,
+        filter_picture_not_match: str | None = None,
+        filter_updated_at_eq: datetime.datetime | None = None,
+        filter_updated_at_not_eq: datetime.datetime | None = None,
+        filter_updated_at_gt: datetime.datetime | None = None,
+        filter_updated_at_gte: datetime.datetime | None = None,
+        filter_updated_at_lt: datetime.datetime | None = None,
+        filter_updated_at_lte: datetime.datetime | None = None,
+        filter_additional_information_eq: str | None = None,
+        filter_additional_information_not_eq: str | None = None,
+        filter_additional_information_eql: str | None = None,
+        filter_additional_information_not_eql: str | None = None,
+        filter_additional_information_prefix: str | None = None,
+        filter_additional_information_not_prefix: str | None = None,
+        filter_additional_information_suffix: str | None = None,
+        filter_additional_information_not_suffix: str | None = None,
+        filter_additional_information_match: str | None = None,
+        filter_additional_information_not_match: str | None = None,
+        filter_language_eq: str | None = None,
+        filter_language_not_eq: str | None = None,
+        filter_language_eql: str | None = None,
+        filter_language_not_eql: str | None = None,
+        filter_language_prefix: str | None = None,
+        filter_language_not_prefix: str | None = None,
+        filter_language_suffix: str | None = None,
+        filter_language_not_suffix: str | None = None,
+        filter_language_match: str | None = None,
+        filter_language_not_match: str | None = None,
     ) -> list[Person]:
+
+        if include is None:
+            include = []
+        if include == "*":
+            include = [
+                "primary_group",
+                "layer_group",
+                "roles",
+                "phone_numbers",
+                "social_accounts",
+                "additional_emails",
+            ]
+
         filters = [
             ("first_name", "eq", filter_first_name_eq),
             ("first_name", "not_eq", filter_first_name_not_eq),
@@ -1056,89 +1452,170 @@ class Client(base_client.BaseClient):
         ]
         filters = [f for f in filters if f[2] is not None]
         json_response = self._request_list("person", sort, include, filters)
-        return [Person.from_json(data_obj) for data_obj in json_response["data"]]
-        # todo return included too
+
+        response_entities = []
+        for data_obj in json_response["data"]:
+            re = Person.from_json(data_obj)
+            self._cache_add(re)
+
+        self._add_included_of_people_to_cache(json_response)
+
+        return response_entities
 
     def get_person(
         self,
-        id_: int,
-        include: list[_Person_Include],
+        id_or_key: int | PersonKey,
+        include: list[_Person_Include] | typing.Literal["*"] | None = None,
     ) -> Person:
-        json_response = self._request_single_get("person", id_, include)
-        return Person.from_json(json_response["data"])
-        # todo return included too
+        if isinstance(id_or_key, int):
+            id_ = id_or_key
+            entity_key = PersonKey(id_)
+        else:
+            id_ = id_or_key.id
+            entity_key = id_or_key
+
+        if include is None:
+            include = []
+        if include == "*":
+            include = [
+                "primary_group",
+                "layer_group",
+                "roles",
+                "phone_numbers",
+                "social_accounts",
+                "additional_emails",
+            ]
+
+        cached_entity = self._cache_get(entity_key)
+        if cached_entity is not None:
+            return cached_entity
+        json_response = self._request_single_get(
+            "person",
+            id_,
+            include,
+        )
+        response_entity = Person.from_json(json_response["data"])
+        if response_entity.key != entity_key:
+            raise ValueError("Entity key mismatch")
+        self._cache_add(response_entity)
+
+        self._add_included_of_people_to_cache(json_response)
+
+        return response_entity
+
+    def _add_included_of_people_to_cache(self, json_response: dict) -> None:
+        for incl_data in json_response.get("included", []):
+            if incl_data["type"] == "groups":
+                self._cache_add(Group.from_json(incl_data))
+            elif incl_data["type"] == "groups":
+                self._cache_add(Group.from_json(incl_data))
+            elif incl_data["type"] == "roles":
+                self._cache_add(Role.from_json(incl_data))
+            elif incl_data["type"] == "phone_numbers":
+                self._cache_add(PhoneNumber.from_json(incl_data))
+            elif incl_data["type"] == "social_accounts":
+                self._cache_add(SocialAccount.from_json(incl_data))
+            elif incl_data["type"] == "additional_emails":
+                self._cache_add(AdditionalEmail.from_json(incl_data))
+
+    def get_phone_number(
+        self,
+        id_or_key: int | PhoneNumberKey,
+    ) -> PhoneNumber:
+        if isinstance(id_or_key, int):
+            id_ = id_or_key
+            entity_key = PhoneNumberKey(id_)
+        else:
+            id_ = id_or_key.id
+            entity_key = id_or_key
+        cached_entity = self._cache_get(entity_key)
+        if cached_entity is not None:
+            return cached_entity
+        raise ValueError(
+            f"no object known for {entity_key}. Entities of type phone_number can only be retrieved by including them while requesting other entities."
+        )
 
     def get_roles_list(
         self,
-        include: list[_Role_Include],
-        sort: list[_Role_Sort],
-        filter_created_at_eq: datetime.datetime,
-        filter_created_at_not_eq: datetime.datetime,
-        filter_created_at_gt: datetime.datetime,
-        filter_created_at_gte: datetime.datetime,
-        filter_created_at_lt: datetime.datetime,
-        filter_created_at_lte: datetime.datetime,
-        filter_updated_at_eq: datetime.datetime,
-        filter_updated_at_not_eq: datetime.datetime,
-        filter_updated_at_gt: datetime.datetime,
-        filter_updated_at_gte: datetime.datetime,
-        filter_updated_at_lt: datetime.datetime,
-        filter_updated_at_lte: datetime.datetime,
-        filter_start_on_eq: datetime.date,
-        filter_start_on_not_eq: datetime.date,
-        filter_start_on_gt: datetime.date,
-        filter_start_on_gte: datetime.date,
-        filter_start_on_lt: datetime.date,
-        filter_start_on_lte: datetime.date,
-        filter_end_on_eq: datetime.date,
-        filter_end_on_not_eq: datetime.date,
-        filter_end_on_gt: datetime.date,
-        filter_end_on_gte: datetime.date,
-        filter_end_on_lt: datetime.date,
-        filter_end_on_lte: datetime.date,
-        filter_name_eq: str,
-        filter_name_not_eq: str,
-        filter_name_eql: str,
-        filter_name_not_eql: str,
-        filter_name_prefix: str,
-        filter_name_not_prefix: str,
-        filter_name_suffix: str,
-        filter_name_not_suffix: str,
-        filter_name_match: str,
-        filter_name_not_match: str,
-        filter_person_id_eq: int,
-        filter_person_id_not_eq: int,
-        filter_person_id_gt: int,
-        filter_person_id_gte: int,
-        filter_person_id_lt: int,
-        filter_person_id_lte: int,
-        filter_group_id_eq: int,
-        filter_group_id_not_eq: int,
-        filter_group_id_gt: int,
-        filter_group_id_gte: int,
-        filter_group_id_lt: int,
-        filter_group_id_lte: int,
-        filter_type_eq: str,
-        filter_type_not_eq: str,
-        filter_type_eql: str,
-        filter_type_not_eql: str,
-        filter_type_prefix: str,
-        filter_type_not_prefix: str,
-        filter_type_suffix: str,
-        filter_type_not_suffix: str,
-        filter_type_match: str,
-        filter_type_not_match: str,
-        filter_label_eq: str,
-        filter_label_not_eq: str,
-        filter_label_eql: str,
-        filter_label_not_eql: str,
-        filter_label_prefix: str,
-        filter_label_not_prefix: str,
-        filter_label_suffix: str,
-        filter_label_not_suffix: str,
-        filter_label_match: str,
-        filter_label_not_match: str,
+        include: list[_Role_Include] | typing.Literal["*"] | None = None,
+        sort: list[_Role_Sort] | None = None,
+        filter_created_at_eq: datetime.datetime | None = None,
+        filter_created_at_not_eq: datetime.datetime | None = None,
+        filter_created_at_gt: datetime.datetime | None = None,
+        filter_created_at_gte: datetime.datetime | None = None,
+        filter_created_at_lt: datetime.datetime | None = None,
+        filter_created_at_lte: datetime.datetime | None = None,
+        filter_updated_at_eq: datetime.datetime | None = None,
+        filter_updated_at_not_eq: datetime.datetime | None = None,
+        filter_updated_at_gt: datetime.datetime | None = None,
+        filter_updated_at_gte: datetime.datetime | None = None,
+        filter_updated_at_lt: datetime.datetime | None = None,
+        filter_updated_at_lte: datetime.datetime | None = None,
+        filter_start_on_eq: datetime.date | None = None,
+        filter_start_on_not_eq: datetime.date | None = None,
+        filter_start_on_gt: datetime.date | None = None,
+        filter_start_on_gte: datetime.date | None = None,
+        filter_start_on_lt: datetime.date | None = None,
+        filter_start_on_lte: datetime.date | None = None,
+        filter_end_on_eq: datetime.date | None = None,
+        filter_end_on_not_eq: datetime.date | None = None,
+        filter_end_on_gt: datetime.date | None = None,
+        filter_end_on_gte: datetime.date | None = None,
+        filter_end_on_lt: datetime.date | None = None,
+        filter_end_on_lte: datetime.date | None = None,
+        filter_name_eq: str | None = None,
+        filter_name_not_eq: str | None = None,
+        filter_name_eql: str | None = None,
+        filter_name_not_eql: str | None = None,
+        filter_name_prefix: str | None = None,
+        filter_name_not_prefix: str | None = None,
+        filter_name_suffix: str | None = None,
+        filter_name_not_suffix: str | None = None,
+        filter_name_match: str | None = None,
+        filter_name_not_match: str | None = None,
+        filter_person_id_eq: int | None = None,
+        filter_person_id_not_eq: int | None = None,
+        filter_person_id_gt: int | None = None,
+        filter_person_id_gte: int | None = None,
+        filter_person_id_lt: int | None = None,
+        filter_person_id_lte: int | None = None,
+        filter_group_id_eq: int | None = None,
+        filter_group_id_not_eq: int | None = None,
+        filter_group_id_gt: int | None = None,
+        filter_group_id_gte: int | None = None,
+        filter_group_id_lt: int | None = None,
+        filter_group_id_lte: int | None = None,
+        filter_type_eq: str | None = None,
+        filter_type_not_eq: str | None = None,
+        filter_type_eql: str | None = None,
+        filter_type_not_eql: str | None = None,
+        filter_type_prefix: str | None = None,
+        filter_type_not_prefix: str | None = None,
+        filter_type_suffix: str | None = None,
+        filter_type_not_suffix: str | None = None,
+        filter_type_match: str | None = None,
+        filter_type_not_match: str | None = None,
+        filter_label_eq: str | None = None,
+        filter_label_not_eq: str | None = None,
+        filter_label_eql: str | None = None,
+        filter_label_not_eql: str | None = None,
+        filter_label_prefix: str | None = None,
+        filter_label_not_prefix: str | None = None,
+        filter_label_suffix: str | None = None,
+        filter_label_not_suffix: str | None = None,
+        filter_label_match: str | None = None,
+        filter_label_not_match: str | None = None,
     ) -> list[Role]:
+
+        if include is None:
+            include = []
+        if include == "*":
+            include = [
+                "person",
+                "group",
+                "layer_group",
+            ]
+
         filters = [
             ("created_at", "eq", filter_created_at_eq),
             ("created_at", "not_eq", filter_created_at_not_eq),
@@ -1209,17 +1686,79 @@ class Client(base_client.BaseClient):
         ]
         filters = [f for f in filters if f[2] is not None]
         json_response = self._request_list("role", sort, include, filters)
-        return [Role.from_json(data_obj) for data_obj in json_response["data"]]
-        # todo return included too
+
+        response_entities = []
+        for data_obj in json_response["data"]:
+            re = Role.from_json(data_obj)
+            self._cache_add(re)
+
+        self._add_included_of_roles_to_cache(json_response)
+
+        return response_entities
 
     def get_role(
         self,
-        id_: int,
-        include: list[_Role_Include],
+        id_or_key: int | RoleKey,
+        include: list[_Role_Include] | typing.Literal["*"] | None = None,
     ) -> Role:
-        json_response = self._request_single_get("role", id_, include)
-        return Role.from_json(json_response["data"])
-        # todo return included too
+        if isinstance(id_or_key, int):
+            id_ = id_or_key
+            entity_key = RoleKey(id_)
+        else:
+            id_ = id_or_key.id
+            entity_key = id_or_key
+
+        if include is None:
+            include = []
+        if include == "*":
+            include = [
+                "person",
+                "group",
+                "layer_group",
+            ]
+
+        cached_entity = self._cache_get(entity_key)
+        if cached_entity is not None:
+            return cached_entity
+        json_response = self._request_single_get(
+            "role",
+            id_,
+            include,
+        )
+        response_entity = Role.from_json(json_response["data"])
+        if response_entity.key != entity_key:
+            raise ValueError("Entity key mismatch")
+        self._cache_add(response_entity)
+
+        self._add_included_of_roles_to_cache(json_response)
+
+        return response_entity
+
+    def _add_included_of_roles_to_cache(self, json_response: dict) -> None:
+        for incl_data in json_response.get("included", []):
+            if incl_data["type"] == "people":
+                self._cache_add(Person.from_json(incl_data))
+            elif incl_data["type"] == "groups":
+                self._cache_add(Group.from_json(incl_data))
+            elif incl_data["type"] == "groups":
+                self._cache_add(Group.from_json(incl_data))
+
+    def get_social_account(
+        self,
+        id_or_key: int | SocialAccountKey,
+    ) -> SocialAccount:
+        if isinstance(id_or_key, int):
+            id_ = id_or_key
+            entity_key = SocialAccountKey(id_)
+        else:
+            id_ = id_or_key.id
+            entity_key = id_or_key
+        cached_entity = self._cache_get(entity_key)
+        if cached_entity is not None:
+            return cached_entity
+        raise ValueError(
+            f"no object known for {entity_key}. Entities of type social_account can only be retrieved by including them while requesting other entities."
+        )
 
 
 # @formatter:on

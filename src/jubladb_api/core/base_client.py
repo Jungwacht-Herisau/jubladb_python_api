@@ -5,6 +5,7 @@ import itertools
 import requests
 
 import jubladb_api.metamodel
+from jubladb_api.core import base_entity
 
 
 class BaseClient(abc.ABC):
@@ -13,6 +14,7 @@ class BaseClient(abc.ABC):
                  headers: dict[str, str]|None=None,):
         self._url = url
         self._headers = headers or {}
+        self._cache: dict[jubladb_api.metamodel.EntityName, dict[int, object]] = {}
 
     def _request_list(self,
                       type_: jubladb_api.metamodel.EntityName,
@@ -52,3 +54,10 @@ class BaseClient(abc.ABC):
                            headers=effective_headers,
                            )
         return res.json()
+
+    def _cache_add(self, entity: base_entity.BaseEntity) -> None:
+        entity_key = entity.key
+        self._cache.setdefault(entity_key.type, {})[entity_key.id] = entity
+
+    def _cache_get(self, entity_key: base_entity.BaseEntityKey) -> base_entity.BaseEntity | None:
+        return self._cache.get(entity_key.type, {}).get(entity_key.id)

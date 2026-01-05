@@ -14,7 +14,7 @@ class {{ class_name }}(jubladb_api.core.base_entity.BaseEntity):
     def __init__(self,
                  id_: int,
                  {% for attr in entity.attributes %}
-                 {{ attr.name }}: {{ attr.type_ | attribute_type_to_python_type }},
+                 {{ attr.name }}: {{ attr.type_ | attribute_type_to_python_type }}{% if attr.optional %}|None{% endif %},
                  {% endfor %}
 
                  {% for rel in entity.relations %}
@@ -30,7 +30,7 @@ class {{ class_name }}(jubladb_api.core.base_entity.BaseEntity):
 
     {% for attr in entity.attributes %}
     @property
-    def {{ attr.name }}(self) -> {{ attr.type_ | attribute_type_to_python_type }}:
+    def {{ attr.name }}(self) -> {{ attr.type_ | attribute_type_to_python_type }}{% if attr.optional %}|None{% endif %}:
         return self._{{ attr.name }}
     {% endfor %}
 
@@ -58,7 +58,11 @@ class {{ class_name }}(jubladb_api.core.base_entity.BaseEntity):
         return cls(
             id_=int(json_data["id"]),
             {% for attr in entity.attributes %}
+            {% if attr.optional %}
+            {{ attr.name }}={{ attr.type_ | attribute_type_python_constructor }}(json_data["attributes"]["{{ attr.name }}"]) if json_data["attributes"].get("{{ attr.name }}", None) is not None else None,
+            {% else %}
             {{ attr.name }}={{ attr.type_ | attribute_type_python_constructor }}(json_data["attributes"]["{{ attr.name }}"]),
+            {% endif %}
             {% endfor %}
             {% for rel in entity.relations %}
             {% if rel.to_many %}

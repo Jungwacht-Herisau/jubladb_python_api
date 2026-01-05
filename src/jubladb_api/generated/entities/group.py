@@ -28,11 +28,11 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
         country: str,
         require_person_add_requests: bool,
         self_registration_url: str,
-        archived_at: datetime.datetime,
+        archived_at: datetime.datetime | None,
         created_at: datetime.datetime,
         updated_at: datetime.datetime,
-        deleted_at: datetime.datetime,
-        logo: str,
+        deleted_at: datetime.datetime | None,
+        logo: str | None,
         contact: jubladb_api.generated.entities.keys.PersonKey | None,
         creator: jubladb_api.generated.entities.keys.PersonKey | None,
         updater: jubladb_api.generated.entities.keys.PersonKey | None,
@@ -141,7 +141,7 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
         return self._self_registration_url
 
     @property
-    def archived_at(self) -> datetime.datetime:
+    def archived_at(self) -> datetime.datetime | None:
         return self._archived_at
 
     @property
@@ -153,11 +153,11 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
         return self._updated_at
 
     @property
-    def deleted_at(self) -> datetime.datetime:
+    def deleted_at(self) -> datetime.datetime | None:
         return self._deleted_at
 
     @property
-    def logo(self) -> str:
+    def logo(self) -> str | None:
         return self._logo
 
     @property
@@ -249,8 +249,10 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
                 json_data["attributes"]["require_person_add_requests"]
             ),
             self_registration_url=str(json_data["attributes"]["self_registration_url"]),
-            archived_at=datetime.datetime.fromisoformat(
-                json_data["attributes"]["archived_at"]
+            archived_at=(
+                datetime.datetime.fromisoformat(json_data["attributes"]["archived_at"])
+                if json_data["attributes"].get("archived_at", None) is not None
+                else None
             ),
             created_at=datetime.datetime.fromisoformat(
                 json_data["attributes"]["created_at"]
@@ -258,10 +260,16 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
             updated_at=datetime.datetime.fromisoformat(
                 json_data["attributes"]["updated_at"]
             ),
-            deleted_at=datetime.datetime.fromisoformat(
-                json_data["attributes"]["deleted_at"]
+            deleted_at=(
+                datetime.datetime.fromisoformat(json_data["attributes"]["deleted_at"])
+                if json_data["attributes"].get("deleted_at", None) is not None
+                else None
             ),
-            logo=str(json_data["attributes"]["logo"]),
+            logo=(
+                str(json_data["attributes"]["logo"])
+                if json_data["attributes"].get("logo", None) is not None
+                else None
+            ),
             contact=cls._create_single_relation_key(
                 json_data,
                 "contact",
