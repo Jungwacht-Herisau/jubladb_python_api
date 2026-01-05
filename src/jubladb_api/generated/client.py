@@ -175,16 +175,19 @@ class Client(base_client.BaseClient):
         filters = []
         filters = [f for f in filters if f[2] is not None]
         json_response = self._request_list("event_kind_category", [], [], filters)
-        print(json_response)
-        # todo parse json response
+        return [
+            entities.EventKindCategory.from_json(data_obj)
+            for data_obj in json_response["data"]
+        ]
+        # todo return included too
 
     def get_event_kind_category(
         self,
         id_: int,
     ) -> entities.EventKindCategory:
         json_response = self._request_single_get("event_kind_category", id_, include)
-        print(json_response)
-        # todo parse json response
+        return entities.EventKindCategory.from_json(json_response["data"])
+        # todo return included too
 
     def get_event_kinds_list(
         self,
@@ -193,8 +196,10 @@ class Client(base_client.BaseClient):
         filters = []
         filters = [f for f in filters if f[2] is not None]
         json_response = self._request_list("event_kind", [], include, filters)
-        print(json_response)
-        # todo parse json response
+        return [
+            entities.EventKind.from_json(data_obj) for data_obj in json_response["data"]
+        ]
+        # todo return included too
 
     def get_event_kind(
         self,
@@ -202,8 +207,8 @@ class Client(base_client.BaseClient):
         include: list[_EventKind_Include],
     ) -> entities.EventKind:
         json_response = self._request_single_get("event_kind", id_, include)
-        print(json_response)
-        # todo parse json response
+        return entities.EventKind.from_json(json_response["data"])
+        # todo return included too
 
     def get_events_list(
         self,
@@ -239,8 +244,10 @@ class Client(base_client.BaseClient):
         ]
         filters = [f for f in filters if f[2] is not None]
         json_response = self._request_list("event", [], include, filters)
-        print(json_response)
-        # todo parse json response
+        return [
+            entities.Event.from_json(data_obj) for data_obj in json_response["data"]
+        ]
+        # todo return included too
 
     def get_event(
         self,
@@ -248,8 +255,8 @@ class Client(base_client.BaseClient):
         include: list[_Event_Include],
     ) -> entities.Event:
         json_response = self._request_single_get("event", id_, include)
-        print(json_response)
-        # todo parse json response
+        return entities.Event.from_json(json_response["data"])
+        # todo return included too
 
     def get_groups_list(
         self,
@@ -564,8 +571,10 @@ class Client(base_client.BaseClient):
         ]
         filters = [f for f in filters if f[2] is not None]
         json_response = self._request_list("group", sort, include, filters)
-        print(json_response)
-        # todo parse json response
+        return [
+            entities.Group.from_json(data_obj) for data_obj in json_response["data"]
+        ]
+        # todo return included too
 
     def get_group(
         self,
@@ -573,8 +582,8 @@ class Client(base_client.BaseClient):
         include: list[_Group_Include],
     ) -> entities.Group:
         json_response = self._request_single_get("group", id_, include)
-        print(json_response)
-        # todo parse json response
+        return entities.Group.from_json(json_response["data"])
+        # todo return included too
 
     def get_invoices_list(
         self,
@@ -608,8 +617,10 @@ class Client(base_client.BaseClient):
         ]
         filters = [f for f in filters if f[2] is not None]
         json_response = self._request_list("invoice", [], include, filters)
-        print(json_response)
-        # todo parse json response
+        return [
+            entities.Invoice.from_json(data_obj) for data_obj in json_response["data"]
+        ]
+        # todo return included too
 
     def get_invoice(
         self,
@@ -617,8 +628,8 @@ class Client(base_client.BaseClient):
         include: list[_Invoice_Include],
     ) -> entities.Invoice:
         json_response = self._request_single_get("invoice", id_, include)
-        print(json_response)
-        # todo parse json response
+        return entities.Invoice.from_json(json_response["data"])
+        # todo return included too
 
     def get_people_list(
         self,
@@ -1023,8 +1034,10 @@ class Client(base_client.BaseClient):
         ]
         filters = [f for f in filters if f[2] is not None]
         json_response = self._request_list("person", sort, include, filters)
-        print(json_response)
-        # todo parse json response
+        return [
+            entities.Person.from_json(data_obj) for data_obj in json_response["data"]
+        ]
+        # todo return included too
 
     def get_person(
         self,
@@ -1032,8 +1045,8 @@ class Client(base_client.BaseClient):
         include: list[_Person_Include],
     ) -> entities.Person:
         json_response = self._request_single_get("person", id_, include)
-        print(json_response)
-        # todo parse json response
+        return entities.Person.from_json(json_response["data"])
+        # todo return included too
 
     def get_roles_list(
         self,
@@ -1176,8 +1189,8 @@ class Client(base_client.BaseClient):
         ]
         filters = [f for f in filters if f[2] is not None]
         json_response = self._request_list("role", sort, include, filters)
-        print(json_response)
-        # todo parse json response
+        return [entities.Role.from_json(data_obj) for data_obj in json_response["data"]]
+        # todo return included too
 
     def get_role(
         self,
@@ -1185,8 +1198,8 @@ class Client(base_client.BaseClient):
         include: list[_Role_Include],
     ) -> entities.Role:
         json_response = self._request_single_get("role", id_, include)
-        print(json_response)
-        # todo parse json response
+        return entities.Role.from_json(json_response["data"])
+        # todo return included too
 
 
 # @formatter:on

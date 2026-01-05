@@ -9,4 +9,5 @@ class TestBasic(unittest.TestCase):
         self.client = jubladb_api.client.create(url=jubladb_api.metamodel.API_INFO.default_server_url,
                                                 api_key=os.environ["JUBLADB_API_KEY"])
     def test_request_person(self):
-        self.client.get_person(40822, include=["primary_group"])
+        person = self.client.get_person(40822, include=["primary_group"])
+        print(person)

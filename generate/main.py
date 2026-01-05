@@ -95,7 +95,7 @@ RELATION_TYPES: dict[tuple[str, str], str] = {
     ("group", "additional_emails"): "additional_email",
     ("invoice_item", "invoice"): "invoice",
     ("invoice", "group"): "group",
-    ("invoice", "recipient"): "people",
+    ("invoice", "recipient"): "person",
     ("invoice", "invoice_items"): "invoice_item",
     ("person", "primary_group"): "group",
     ("person", "layer_group"): "group",
@@ -261,12 +261,17 @@ class CodeGenerator(object):
                             print(f"WARNING: relation {relation_name} not found in {entity_type}_relations")
                             continue
                         try:
-                            related_type = RELATION_TYPES[(entity.name_singular, relation_name)]
+                            related_type_singular = RELATION_TYPES[(entity.name_singular, relation_name)]
                         except KeyError:
                             print(f"WARNING: key (\"{entity_type}\", \"{relation_name}\") not found in RELATION_TYPES")
                             continue
+                        try:
+                            related_type_plural = next(st for st in spec_types.enum if get_singular_name(st)==related_type_singular)
+                        except StopIteration:
+                            print(f"WARNING: no plural name for {related_type_singular}")
+                            continue
                         to_many = relation_property_data.schema.type == openapi_parser.specification.DataType.ARRAY
-                        entity.relations.append(classes.RelationType(relation_name, related_type, to_many))
+                        entity.relations.append(classes.RelationType(relation_name, related_type_singular, related_type_plural, to_many))
 
         api_info = _generate_api_info(self.spec)
 

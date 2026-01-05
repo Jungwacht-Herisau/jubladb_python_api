@@ -26,7 +26,8 @@ class AttributeType(_EnumReprHelper, enum.Enum):
 @dataclasses.dataclass
 class RelationType(object):
     relation_name: str
-    related_type: str
+    related_type_singular: str
+    related_type_plural: str
     to_many: bool
 
 @dataclasses.dataclass

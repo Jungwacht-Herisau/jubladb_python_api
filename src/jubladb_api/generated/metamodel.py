@@ -253,12 +253,30 @@ ENTITIES = {
             ),
         ],
         relations=[
-            RelationType(relation_name="contact", related_type="person", to_many=False),
             RelationType(
-                relation_name="kind", related_type="event_kind", to_many=False
+                relation_name="contact",
+                related_type_singular="person",
+                related_type_plural="people",
+                to_many=False,
             ),
-            RelationType(relation_name="dates", related_type="date", to_many=True),
-            RelationType(relation_name="leaders", related_type="person", to_many=True),
+            RelationType(
+                relation_name="kind",
+                related_type_singular="event_kind",
+                related_type_plural="event_kinds",
+                to_many=False,
+            ),
+            RelationType(
+                relation_name="dates",
+                related_type_singular="date",
+                related_type_plural="dates",
+                to_many=True,
+            ),
+            RelationType(
+                relation_name="leaders",
+                related_type_singular="person",
+                related_type_plural="people",
+                to_many=True,
+            ),
         ],
         includeable=[],
     ),
@@ -300,7 +318,12 @@ ENTITIES = {
             ),
         ],
         relations=[
-            RelationType(relation_name="event", related_type="event", to_many=False)
+            RelationType(
+                relation_name="event",
+                related_type_singular="event",
+                related_type_plural="events",
+                to_many=False,
+            )
         ],
         includeable=[],
     ),
@@ -378,7 +401,8 @@ ENTITIES = {
         relations=[
             RelationType(
                 relation_name="kind_category",
-                related_type="event_kind_category",
+                related_type_singular="event_kind_category",
+                related_type_plural="event_kind_categories",
                 to_many=False,
             )
         ],
@@ -482,11 +506,24 @@ ENTITIES = {
             ),
         ],
         relations=[
-            RelationType(relation_name="contact", related_type="person", to_many=False),
             RelationType(
-                relation_name="kind", related_type="event_kind", to_many=False
+                relation_name="contact",
+                related_type_singular="person",
+                related_type_plural="people",
+                to_many=False,
             ),
-            RelationType(relation_name="dates", related_type="date", to_many=True),
+            RelationType(
+                relation_name="kind",
+                related_type_singular="event_kind",
+                related_type_plural="event_kinds",
+                to_many=False,
+            ),
+            RelationType(
+                relation_name="dates",
+                related_type_singular="date",
+                related_type_plural="dates",
+                to_many=True,
+            ),
         ],
         includeable=["contact", "kind", "dates"],
     ),
@@ -725,25 +762,58 @@ ENTITIES = {
             ),
         ],
         relations=[
-            RelationType(relation_name="contact", related_type="person", to_many=False),
-            RelationType(relation_name="creator", related_type="person", to_many=False),
-            RelationType(relation_name="updater", related_type="person", to_many=False),
-            RelationType(relation_name="deleter", related_type="person", to_many=False),
-            RelationType(relation_name="parent", related_type="group", to_many=False),
             RelationType(
-                relation_name="layer_group", related_type="group", to_many=False
+                relation_name="contact",
+                related_type_singular="person",
+                related_type_plural="people",
+                to_many=False,
             ),
             RelationType(
-                relation_name="phone_numbers", related_type="phone_number", to_many=True
+                relation_name="creator",
+                related_type_singular="person",
+                related_type_plural="people",
+                to_many=False,
+            ),
+            RelationType(
+                relation_name="updater",
+                related_type_singular="person",
+                related_type_plural="people",
+                to_many=False,
+            ),
+            RelationType(
+                relation_name="deleter",
+                related_type_singular="person",
+                related_type_plural="people",
+                to_many=False,
+            ),
+            RelationType(
+                relation_name="parent",
+                related_type_singular="group",
+                related_type_plural="groups",
+                to_many=False,
+            ),
+            RelationType(
+                relation_name="layer_group",
+                related_type_singular="group",
+                related_type_plural="groups",
+                to_many=False,
+            ),
+            RelationType(
+                relation_name="phone_numbers",
+                related_type_singular="phone_number",
+                related_type_plural="phone_numbers",
+                to_many=True,
             ),
             RelationType(
                 relation_name="social_accounts",
-                related_type="social_account",
+                related_type_singular="social_account",
+                related_type_plural="social_accounts",
                 to_many=True,
             ),
             RelationType(
                 relation_name="additional_emails",
-                related_type="additional_email",
+                related_type_singular="additional_email",
+                related_type_plural="additional_emails",
                 to_many=True,
             ),
         ],
@@ -818,7 +888,12 @@ ENTITIES = {
             ),
         ],
         relations=[
-            RelationType(relation_name="invoice", related_type="invoice", to_many=False)
+            RelationType(
+                relation_name="invoice",
+                related_type_singular="invoice",
+                related_type_plural="invoices",
+                to_many=False,
+            )
         ],
         includeable=[],
     ),
@@ -897,12 +972,23 @@ ENTITIES = {
             ),
         ],
         relations=[
-            RelationType(relation_name="group", related_type="group", to_many=False),
             RelationType(
-                relation_name="recipient", related_type="people", to_many=False
+                relation_name="group",
+                related_type_singular="group",
+                related_type_plural="groups",
+                to_many=False,
             ),
             RelationType(
-                relation_name="invoice_items", related_type="invoice_item", to_many=True
+                relation_name="recipient",
+                related_type_singular="person",
+                related_type_plural="people",
+                to_many=False,
+            ),
+            RelationType(
+                relation_name="invoice_items",
+                related_type_singular="invoice_item",
+                related_type_plural="invoice_items",
+                to_many=True,
             ),
         ],
         includeable=["group", "recipient", "invoice_items"],
@@ -1255,23 +1341,39 @@ ENTITIES = {
         ],
         relations=[
             RelationType(
-                relation_name="primary_group", related_type="group", to_many=False
+                relation_name="primary_group",
+                related_type_singular="group",
+                related_type_plural="groups",
+                to_many=False,
             ),
             RelationType(
-                relation_name="layer_group", related_type="group", to_many=False
+                relation_name="layer_group",
+                related_type_singular="group",
+                related_type_plural="groups",
+                to_many=False,
             ),
-            RelationType(relation_name="roles", related_type="role", to_many=True),
             RelationType(
-                relation_name="phone_numbers", related_type="phone_number", to_many=True
+                relation_name="roles",
+                related_type_singular="role",
+                related_type_plural="roles",
+                to_many=True,
+            ),
+            RelationType(
+                relation_name="phone_numbers",
+                related_type_singular="phone_number",
+                related_type_plural="phone_numbers",
+                to_many=True,
             ),
             RelationType(
                 relation_name="social_accounts",
-                related_type="social_account",
+                related_type_singular="social_account",
+                related_type_plural="social_accounts",
                 to_many=True,
             ),
             RelationType(
                 relation_name="additional_emails",
-                related_type="additional_email",
+                related_type_singular="additional_email",
+                related_type_plural="additional_emails",
                 to_many=True,
             ),
         ],
@@ -1424,10 +1526,23 @@ ENTITIES = {
             ),
         ],
         relations=[
-            RelationType(relation_name="person", related_type="person", to_many=False),
-            RelationType(relation_name="group", related_type="group", to_many=False),
             RelationType(
-                relation_name="layer_group", related_type="group", to_many=False
+                relation_name="person",
+                related_type_singular="person",
+                related_type_plural="people",
+                to_many=False,
+            ),
+            RelationType(
+                relation_name="group",
+                related_type_singular="group",
+                related_type_plural="groups",
+                to_many=False,
+            ),
+            RelationType(
+                relation_name="layer_group",
+                related_type_singular="group",
+                related_type_plural="groups",
+                to_many=False,
             ),
         ],
         includeable=["person", "group", "layer_group"],

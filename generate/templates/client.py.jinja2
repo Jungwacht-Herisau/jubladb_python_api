@@ -7,15 +7,16 @@ import datetime
 # @formatter:off
 
 {% for entity in entities %}
+{% with class_name=entity.name_singular|snake_case_to_pascal_case %}
 {% if entity.allowed_operations|length > 0 %}
 {% if entity.includeable|length > 0 %}
-_{{ entity.name_singular|snake_case_to_pascal_case }}_Include = typing.Literal[
+_{{ class_name }}_Include = typing.Literal[
 {% for inc in entity.includeable %}
     "{{ inc }}",
 {% endfor %}]
 {% endif %}
 {% if entity|entity_has_sortable_attributes > 0 %}
-_{{ entity.name_singular|snake_case_to_pascal_case }}_Sort = typing.Literal[
+_{{ class_name }}_Sort = typing.Literal[
 {% for attr in entity.attributes %}
 {% if attr.sortable %}
     "{{ attr.name }}_asc",
@@ -29,6 +30,7 @@ _{{ entity.name_singular|snake_case_to_pascal_case }}_Sort = typing.Literal[
 ]
 {% endif %}
 {% endif %}
+{% endwith %}
 {% endfor %}
 
 
@@ -38,21 +40,22 @@ class Client(base_client.BaseClient):
         super().__init__(url, {"{{ api_key_header }}": api_key})
 
     {% for entity in entities %}
+    {% with class_name=entity.name_singular|snake_case_to_pascal_case %}
     {% for op in entity.allowed_operations %}
     {% if op.name == "GetList" %}
     def get_{{ entity.name_plural }}_list(self,
                             {% if entity.includeable|length > 0 %}
-                                          include: list[_{{ entity.name_singular|snake_case_to_pascal_case }}_Include],
+                                          include: list[_{{ class_name }}_Include],
                             {% endif %}
                             {% if entity|entity_has_sortable_attributes %}
-                                          sort: list[_{{ entity.name_singular|snake_case_to_pascal_case }}_Sort],
+                                          sort: list[_{{ class_name }}_Sort],
                             {% endif %}
                             {% for attr in entity.attributes %}
                             {% for ft in attr.filter_types %}
                             filter_{{ attr.name }}_{{ ft }}: {{ attr.type_|attribute_type_to_python_type }},
                             {% endfor %}
                             {% endfor %}
-                            ) -> list[entities.{{ entity.name_singular | snake_case_to_pascal_case }}]:
+                            ) -> list[entities.{{ class_name }}]:
         filters = [
             {% for attr in entity.attributes %}
             {% for ft in attr.filter_types %}
@@ -77,20 +80,21 @@ class Client(base_client.BaseClient):
             {% endif %}
 
             filters)
-        print(json_response)
-        # todo parse json response
+        return [entities.{{ class_name }}.from_json(data_obj) for data_obj in json_response["data"]]
+        # todo return included too
     {% endif %}
     {% if op.name == "GetSingle" %}
     def get_{{ entity.name_singular }}(self,
             id_: int,
             {% if entity.includeable|length > 0 %}
-            include: list[_{{ entity.name_singular|snake_case_to_pascal_case }}_Include],
+            include: list[_{{ class_name }}_Include],
             {% endif %}
-                    ) -> entities.{{ entity.name_singular | snake_case_to_pascal_case }}:
+                    ) -> entities.{{ class_name }}:
         json_response = self._request_single_get("{{ entity.name_singular }}", id_, include)
-        print(json_response)
-        # todo parse json response
+        return entities.{{ class_name }}.from_json(json_response["data"])
+        # todo return included too
     {% endif %}
     {% endfor %}
+    {% endwith %}
     {% endfor %}
 # @formatter:on
