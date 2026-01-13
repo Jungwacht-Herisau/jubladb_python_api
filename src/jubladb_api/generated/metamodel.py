@@ -734,7 +734,7 @@ ENTITIES = {
             Attribute(
                 name="email",
                 type_=AttributeType.STRING,
-                optional=False,
+                optional=True,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -770,7 +770,7 @@ ENTITIES = {
             Attribute(
                 name="zip_code",
                 type_=AttributeType.INTEGER,
-                optional=False,
+                optional=True,
                 sortable=True,
                 filter_types=["eq", "not_eq", "gt", "gte", "lt", "lte"],
             ),
@@ -820,7 +820,7 @@ ENTITIES = {
             Attribute(
                 name="self_registration_url",
                 type_=AttributeType.STRING,
-                optional=False,
+                optional=True,
                 sortable=True,
                 filter_types=[
                     "eq",
@@ -1625,7 +1625,7 @@ ENTITIES = {
             Attribute(
                 name="end_on",
                 type_=AttributeType.DATE,
-                optional=False,
+                optional=True,
                 sortable=True,
                 filter_types=["eq", "not_eq", "gt", "gte", "lt", "lte"],
             ),

@@ -17,7 +17,7 @@ class Role(jubladb_api.core.base_entity.BaseEntity):
         created_at: datetime.datetime,
         updated_at: datetime.datetime,
         start_on: datetime.date,
-        end_on: datetime.date,
+        end_on: datetime.date | None,
         name: str,
         person_id: int,
         group_id: int,
@@ -56,7 +56,7 @@ class Role(jubladb_api.core.base_entity.BaseEntity):
         return self._start_on
 
     @property
-    def end_on(self) -> datetime.date:
+    def end_on(self) -> datetime.date | None:
         return self._end_on
 
     @property
@@ -131,20 +131,53 @@ class Role(jubladb_api.core.base_entity.BaseEntity):
         if json_data.get("type", None) != "roles":
             raise ValueError("Invalid data type")
         return cls(
-            id_=int(json_data["id"]),
-            created_at=datetime.datetime.fromisoformat(
-                json_data["attributes"]["created_at"]
+            id_=cls._access_id(json_data),
+            created_at=cls._access_data_attribute(
+                json_data,
+                "created_at",
+                jubladb_api.core.metamodel_classes.AttributeType.DATETIME,
             ),
-            updated_at=datetime.datetime.fromisoformat(
-                json_data["attributes"]["updated_at"]
+            updated_at=cls._access_data_attribute(
+                json_data,
+                "updated_at",
+                jubladb_api.core.metamodel_classes.AttributeType.DATETIME,
             ),
-            start_on=datetime.date.fromisoformat(json_data["attributes"]["start_on"]),
-            end_on=datetime.date.fromisoformat(json_data["attributes"]["end_on"]),
-            name=str(json_data["attributes"]["name"]),
-            person_id=int(json_data["attributes"]["person_id"]),
-            group_id=int(json_data["attributes"]["group_id"]),
-            type=str(json_data["attributes"]["type"]),
-            label=str(json_data["attributes"]["label"]),
+            start_on=cls._access_data_attribute(
+                json_data,
+                "start_on",
+                jubladb_api.core.metamodel_classes.AttributeType.DATE,
+            ),
+            end_on=cls._access_data_attribute(
+                json_data,
+                "end_on",
+                jubladb_api.core.metamodel_classes.AttributeType.DATE,
+                optional=True,
+            ),
+            name=cls._access_data_attribute(
+                json_data,
+                "name",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+            ),
+            person_id=cls._access_data_attribute(
+                json_data,
+                "person_id",
+                jubladb_api.core.metamodel_classes.AttributeType.INTEGER,
+            ),
+            group_id=cls._access_data_attribute(
+                json_data,
+                "group_id",
+                jubladb_api.core.metamodel_classes.AttributeType.INTEGER,
+            ),
+            type=cls._access_data_attribute(
+                json_data,
+                "type",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+            ),
+            label=cls._access_data_attribute(
+                json_data,
+                "label",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+            ),
             person=cls._create_single_relation_key(
                 json_data,
                 "person",

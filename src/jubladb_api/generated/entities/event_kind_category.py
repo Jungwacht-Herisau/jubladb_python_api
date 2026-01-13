@@ -48,9 +48,17 @@ class EventKindCategory(jubladb_api.core.base_entity.BaseEntity):
         if json_data.get("type", None) != "event_kind_categories":
             raise ValueError("Invalid data type")
         return cls(
-            id_=int(json_data["id"]),
-            label=str(json_data["attributes"]["label"]),
-            order=int(json_data["attributes"]["order"]),
+            id_=cls._access_id(json_data),
+            label=cls._access_data_attribute(
+                json_data,
+                "label",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+            ),
+            order=cls._access_data_attribute(
+                json_data,
+                "order",
+                jubladb_api.core.metamodel_classes.AttributeType.INTEGER,
+            ),
         )
 
 

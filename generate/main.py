@@ -2,7 +2,6 @@
 import pathlib
 import pickle
 import sys
-from html.parser import piclose
 
 from openapi_parser.specification import Specification
 
@@ -111,6 +110,11 @@ RELATION_TYPES: dict[tuple[str, str], str] = {
 OPTIONAL_ATTRIBUTES: set[tuple[str, str]] = {
     ("group", "archived_at"),
     ("group", "deleted_at"),
+    ("group", "logo"),
+    ("role", "end_on"),
+    ("group", "email"),
+    ("group", "zip_code"),
+    ("group", "self_registration_url"),
     ("group", "logo"),
     # this info isn't documented anywhere, so there are probably more
 }
@@ -264,7 +268,7 @@ class CodeGenerator(object):
                     for relation_name in related_schema_items.enum:
                         try:
                             relation_property: openapi_parser.specification.Object = next(p for p in relations_schema_object.properties if p.name == relation_name).schema
-                            relation_property_data = next(p for p in relation_property.properties if p.name=="data")
+                            relation_property_data = next(p for p in relation_property.properties if p.name == "data")
                         except StopIteration:
                             print(f"WARNING: relation {relation_name} not found in {entity_type}_relations")
                             continue
@@ -274,7 +278,7 @@ class CodeGenerator(object):
                             print(f"WARNING: key (\"{entity_type}\", \"{relation_name}\") not found in RELATION_TYPES")
                             continue
                         try:
-                            related_type_plural = next(st for st in spec_types.enum if get_singular_name(st)==related_type_singular)
+                            related_type_plural = next(st for st in spec_types.enum if get_singular_name(st) == related_type_singular)
                         except StopIteration:
                             print(f"WARNING: no plural name for {related_type_singular}")
                             continue

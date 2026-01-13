@@ -75,13 +75,9 @@ class {{ class_name }}(jubladb_api.core.base_entity.BaseEntity):
         if json_data.get("type", None) != "{{ entity.name_plural }}":
             raise ValueError("Invalid data type")
         return cls(
-            id_=int(json_data["id"]),
+            id_=cls._access_id(json_data),
             {% for attr in entity.attributes %}
-            {% if attr.optional %}
-            {{ attr.name }}={{ attr.type_ | attribute_type_python_constructor }}(json_data["attributes"]["{{ attr.name }}"]) if json_data["attributes"].get("{{ attr.name }}", None) is not None else None,
-            {% else %}
-            {{ attr.name }}={{ attr.type_ | attribute_type_python_constructor }}(json_data["attributes"]["{{ attr.name }}"]),
-            {% endif %}
+            {{ attr.name }}=cls._access_data_attribute(json_data, "{{ attr.name }}", jubladb_api.core.metamodel_classes.{{ attr.type_ }}{% if attr.optional %}, optional=True{% endif %}),
             {% endfor %}
             {% for rel in entity.relations %}
             {% if rel.to_many %}

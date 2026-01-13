@@ -22,13 +22,13 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
         parent_id: int,
         layer_group_id: int,
         type: str,
-        email: str,
+        email: str | None,
         address: str,
-        zip_code: int,
+        zip_code: int | None,
         town: str,
         country: str,
         require_person_add_requests: bool,
-        self_registration_url: str,
+        self_registration_url: str | None,
         archived_at: datetime.datetime | None,
         created_at: datetime.datetime,
         updated_at: datetime.datetime,
@@ -114,7 +114,7 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
         return self._type
 
     @property
-    def email(self) -> str:
+    def email(self) -> str | None:
         return self._email
 
     @property
@@ -122,7 +122,7 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
         return self._address
 
     @property
-    def zip_code(self) -> int:
+    def zip_code(self) -> int | None:
         return self._zip_code
 
     @property
@@ -138,7 +138,7 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
         return self._require_person_add_requests
 
     @property
-    def self_registration_url(self) -> str:
+    def self_registration_url(self) -> str | None:
         return self._self_registration_url
 
     @property
@@ -277,44 +277,112 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
         if json_data.get("type", None) != "groups":
             raise ValueError("Invalid data type")
         return cls(
-            id_=int(json_data["id"]),
-            name=str(json_data["attributes"]["name"]),
-            short_name=str(json_data["attributes"]["short_name"]),
-            display_name=str(json_data["attributes"]["display_name"]),
-            description=str(json_data["attributes"]["description"]),
-            layer=bool(json_data["attributes"]["layer"]),
-            parent_id=int(json_data["attributes"]["parent_id"]),
-            layer_group_id=int(json_data["attributes"]["layer_group_id"]),
-            type=str(json_data["attributes"]["type"]),
-            email=str(json_data["attributes"]["email"]),
-            address=str(json_data["attributes"]["address"]),
-            zip_code=int(json_data["attributes"]["zip_code"]),
-            town=str(json_data["attributes"]["town"]),
-            country=str(json_data["attributes"]["country"]),
-            require_person_add_requests=bool(
-                json_data["attributes"]["require_person_add_requests"]
+            id_=cls._access_id(json_data),
+            name=cls._access_data_attribute(
+                json_data,
+                "name",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
             ),
-            self_registration_url=str(json_data["attributes"]["self_registration_url"]),
-            archived_at=(
-                datetime.datetime.fromisoformat(json_data["attributes"]["archived_at"])
-                if json_data["attributes"].get("archived_at", None) is not None
-                else None
+            short_name=cls._access_data_attribute(
+                json_data,
+                "short_name",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
             ),
-            created_at=datetime.datetime.fromisoformat(
-                json_data["attributes"]["created_at"]
+            display_name=cls._access_data_attribute(
+                json_data,
+                "display_name",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
             ),
-            updated_at=datetime.datetime.fromisoformat(
-                json_data["attributes"]["updated_at"]
+            description=cls._access_data_attribute(
+                json_data,
+                "description",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
             ),
-            deleted_at=(
-                datetime.datetime.fromisoformat(json_data["attributes"]["deleted_at"])
-                if json_data["attributes"].get("deleted_at", None) is not None
-                else None
+            layer=cls._access_data_attribute(
+                json_data,
+                "layer",
+                jubladb_api.core.metamodel_classes.AttributeType.BOOLEAN,
             ),
-            logo=(
-                str(json_data["attributes"]["logo"])
-                if json_data["attributes"].get("logo", None) is not None
-                else None
+            parent_id=cls._access_data_attribute(
+                json_data,
+                "parent_id",
+                jubladb_api.core.metamodel_classes.AttributeType.INTEGER,
+            ),
+            layer_group_id=cls._access_data_attribute(
+                json_data,
+                "layer_group_id",
+                jubladb_api.core.metamodel_classes.AttributeType.INTEGER,
+            ),
+            type=cls._access_data_attribute(
+                json_data,
+                "type",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+            ),
+            email=cls._access_data_attribute(
+                json_data,
+                "email",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+                optional=True,
+            ),
+            address=cls._access_data_attribute(
+                json_data,
+                "address",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+            ),
+            zip_code=cls._access_data_attribute(
+                json_data,
+                "zip_code",
+                jubladb_api.core.metamodel_classes.AttributeType.INTEGER,
+                optional=True,
+            ),
+            town=cls._access_data_attribute(
+                json_data,
+                "town",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+            ),
+            country=cls._access_data_attribute(
+                json_data,
+                "country",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+            ),
+            require_person_add_requests=cls._access_data_attribute(
+                json_data,
+                "require_person_add_requests",
+                jubladb_api.core.metamodel_classes.AttributeType.BOOLEAN,
+            ),
+            self_registration_url=cls._access_data_attribute(
+                json_data,
+                "self_registration_url",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+                optional=True,
+            ),
+            archived_at=cls._access_data_attribute(
+                json_data,
+                "archived_at",
+                jubladb_api.core.metamodel_classes.AttributeType.DATETIME,
+                optional=True,
+            ),
+            created_at=cls._access_data_attribute(
+                json_data,
+                "created_at",
+                jubladb_api.core.metamodel_classes.AttributeType.DATETIME,
+            ),
+            updated_at=cls._access_data_attribute(
+                json_data,
+                "updated_at",
+                jubladb_api.core.metamodel_classes.AttributeType.DATETIME,
+            ),
+            deleted_at=cls._access_data_attribute(
+                json_data,
+                "deleted_at",
+                jubladb_api.core.metamodel_classes.AttributeType.DATETIME,
+                optional=True,
+            ),
+            logo=cls._access_data_attribute(
+                json_data,
+                "logo",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+                optional=True,
             ),
             contact=cls._create_single_relation_key(
                 json_data,

@@ -1,5 +1,11 @@
+import datetime
+import typing
+
 import jubladb_api.core.metamodel_classes
 import abc
+
+class EntityJsonParsingError(Exception):
+    pass
 
 class BaseEntity(abc.ABC):
     def __init__(self, id_: int):
@@ -67,6 +73,59 @@ class BaseEntity(abc.ABC):
     def _create_many_relation_keys(cls, json_data: dict, relation_name: str, related_type_name_plural: str, key_class):
         relation_ids = cls._access_json_many_relation_ids(json_data, relation_name, related_type_name_plural)
         return [key_class(rid) for rid in relation_ids] if relation_ids is not None else None
+
+    @classmethod
+    def _access_id(cls, json_data: dict) -> int:
+        try:
+            raw_id = json_data["id"]
+        except KeyError:
+            raise EntityJsonParsingError("no \"id\" attribute in data object")
+        try:
+            return int(raw_id)
+        except TypeError:
+            raise EntityJsonParsingError(f"cannot parse id of data object, value is {repr(raw_id)}")
+
+    @classmethod
+    def _access_data_attribute(cls, json_data: dict, attribute_name: str, attribute_type: jubladb_api.core.metamodel_classes.AttributeType, optional: bool=False) -> typing.Any:
+        try:
+            attributes = json_data["attributes"]
+        except KeyError:
+            raise EntityJsonParsingError("no \"attributes\" attribute in data object")
+        try:
+            raw_value = attributes[attribute_name]
+        except KeyError:
+            if optional:
+                raw_value = None
+            else:
+                raise EntityJsonParsingError(f"no attribute \"{attribute_name}\" found in json_data[\"attributes\"]")
+
+        if raw_value is None:
+            if optional:
+                return None
+            else:
+                raise EntityJsonParsingError(f"value of attribute \"{attribute_name}\" is None, but not marked as optional")
+
+        try:
+            if attribute_type==jubladb_api.core.metamodel_classes.AttributeType.STRING:
+                return str(raw_value)
+            elif attribute_type==jubladb_api.core.metamodel_classes.AttributeType.INTEGER:
+                return int(raw_value)
+            elif attribute_type==jubladb_api.core.metamodel_classes.AttributeType.FLOAT:
+                return float(raw_value)
+            elif attribute_type==jubladb_api.core.metamodel_classes.AttributeType.DATE:
+                return datetime.date.fromisoformat(raw_value)
+            elif attribute_type==jubladb_api.core.metamodel_classes.AttributeType.TIME:
+                return datetime.time.fromisoformat(raw_value)
+            elif attribute_type==jubladb_api.core.metamodel_classes.AttributeType.DATETIME:
+                return datetime.datetime.fromisoformat(raw_value)
+            elif attribute_type==jubladb_api.core.metamodel_classes.AttributeType.BOOLEAN:
+                return str(raw_value).lower()=="true" or str(raw_value).lower()=="1"
+            else:
+                raise EntityJsonParsingError(f"cannot parse attribute {attribute_name}: unsupported attribute type {attribute_type}")
+        except Exception as e:
+            raise EntityJsonParsingError(f"cannot parse or convert attribute {attribute_name}: {e}")
+
+
 
     def __str__(self) -> str:
         return f"{self.__class__.__name__}({self.id})"

@@ -81,15 +81,31 @@ class Date(jubladb_api.core.base_entity.BaseEntity):
         if json_data.get("type", None) != "dates":
             raise ValueError("Invalid data type")
         return cls(
-            id_=int(json_data["id"]),
-            event_id=int(json_data["attributes"]["event_id"]),
-            label=str(json_data["attributes"]["label"]),
-            location=str(json_data["attributes"]["location"]),
-            start_at=datetime.datetime.fromisoformat(
-                json_data["attributes"]["start_at"]
+            id_=cls._access_id(json_data),
+            event_id=cls._access_data_attribute(
+                json_data,
+                "event_id",
+                jubladb_api.core.metamodel_classes.AttributeType.INTEGER,
             ),
-            finish_at=datetime.datetime.fromisoformat(
-                json_data["attributes"]["finish_at"]
+            label=cls._access_data_attribute(
+                json_data,
+                "label",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+            ),
+            location=cls._access_data_attribute(
+                json_data,
+                "location",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+            ),
+            start_at=cls._access_data_attribute(
+                json_data,
+                "start_at",
+                jubladb_api.core.metamodel_classes.AttributeType.DATETIME,
+            ),
+            finish_at=cls._access_data_attribute(
+                json_data,
+                "finish_at",
+                jubladb_api.core.metamodel_classes.AttributeType.DATETIME,
             ),
             event=cls._create_single_relation_key(
                 json_data,

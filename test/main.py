@@ -2,22 +2,21 @@ import os
 import unittest
 
 import jubladb_api.client
+import jubladb_api.const
 import jubladb_api.metamodel
+from test import test_base
+
 
 class TestBasic(unittest.TestCase):
     def setUp(self):
-        self.client = jubladb_api.client.create(url=jubladb_api.metamodel.API_INFO.default_server_url,
-                                                api_key=os.environ["JUBLADB_API_KEY"])
-    def test_request_person(self):
-        person: jubladb_api.client.Person = self.client.get_person(40822, include=["primary_group"])
-        group = self.client.get_group(person.primary_group)
-        print(person.first_name, person.last_name, "is in", group.name)
+        self.client = test_base.test_create_api_client()
 
-        self.assertFalse(person.is_relation_loaded("phone_numbers"))
+    def test_request_schar(self):
+        schar = self.client.get_group(test_base.TEST_SCHAR_ID)
+        self.assertEqual(test_base.TEST_SCHAR_ID, schar.id)
+        self.assertEqual("Testschar jubladb_python_api", schar.name)
 
-        person = self.client.get_person(40822, include=["phone_numbers"])
-
-        self.assertTrue(person.is_relation_loaded("primary_group"))
-        self.assertTrue(person.is_relation_loaded("phone_numbers"))
-
-        self.assertGreater(len(person.phone_numbers), 0)
+    def test_request_roles(self):
+        roles = self.client.get_roles_list(filter_group_id_eq=test_base.TEST_SCHAR_ID)
+        flock_leader_roles = list(filter(lambda ro: ro.type==jubladb_api.const.ROLE_FLOCK_LEADER, roles))
+        self.assertEqual(1, len(flock_leader_roles))

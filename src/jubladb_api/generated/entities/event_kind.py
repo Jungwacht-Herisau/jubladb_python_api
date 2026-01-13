@@ -93,19 +93,41 @@ class EventKind(jubladb_api.core.base_entity.BaseEntity):
         if json_data.get("type", None) != "event_kinds":
             raise ValueError("Invalid data type")
         return cls(
-            id_=int(json_data["id"]),
-            label=str(json_data["attributes"]["label"]),
-            short_name=str(json_data["attributes"]["short_name"]),
-            general_information=str(json_data["attributes"]["general_information"]),
-            application_conditions=str(
-                json_data["attributes"]["application_conditions"]
+            id_=cls._access_id(json_data),
+            label=cls._access_data_attribute(
+                json_data,
+                "label",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
             ),
-            minimum_age=int(json_data["attributes"]["minimum_age"]),
-            created_at=datetime.datetime.fromisoformat(
-                json_data["attributes"]["created_at"]
+            short_name=cls._access_data_attribute(
+                json_data,
+                "short_name",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
             ),
-            updated_at=datetime.datetime.fromisoformat(
-                json_data["attributes"]["updated_at"]
+            general_information=cls._access_data_attribute(
+                json_data,
+                "general_information",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+            ),
+            application_conditions=cls._access_data_attribute(
+                json_data,
+                "application_conditions",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+            ),
+            minimum_age=cls._access_data_attribute(
+                json_data,
+                "minimum_age",
+                jubladb_api.core.metamodel_classes.AttributeType.INTEGER,
+            ),
+            created_at=cls._access_data_attribute(
+                json_data,
+                "created_at",
+                jubladb_api.core.metamodel_classes.AttributeType.DATETIME,
+            ),
+            updated_at=cls._access_data_attribute(
+                json_data,
+                "updated_at",
+                jubladb_api.core.metamodel_classes.AttributeType.DATETIME,
             ),
             kind_category=cls._create_single_relation_key(
                 json_data,

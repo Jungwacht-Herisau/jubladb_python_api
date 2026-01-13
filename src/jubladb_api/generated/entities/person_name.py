@@ -48,9 +48,17 @@ class PersonName(jubladb_api.core.base_entity.BaseEntity):
         if json_data.get("type", None) != "person_name":
             raise ValueError("Invalid data type")
         return cls(
-            id_=int(json_data["id"]),
-            first_name=str(json_data["attributes"]["first_name"]),
-            last_name=str(json_data["attributes"]["last_name"]),
+            id_=cls._access_id(json_data),
+            first_name=cls._access_data_attribute(
+                json_data,
+                "first_name",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+            ),
+            last_name=cls._access_data_attribute(
+                json_data,
+                "last_name",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+            ),
         )
 
 

@@ -173,36 +173,86 @@ class Event(jubladb_api.core.base_entity.BaseEntity):
         if json_data.get("type", None) != "events":
             raise ValueError("Invalid data type")
         return cls(
-            id_=int(json_data["id"]),
-            group_ids=int(json_data["attributes"]["group_ids"]),
-            type=str(json_data["attributes"]["type"]),
-            kind_id=int(json_data["attributes"]["kind_id"]),
-            name=str(json_data["attributes"]["name"]),
-            description=str(json_data["attributes"]["description"]),
-            application_conditions=str(
-                json_data["attributes"]["application_conditions"]
+            id_=cls._access_id(json_data),
+            group_ids=cls._access_data_attribute(
+                json_data,
+                "group_ids",
+                jubladb_api.core.metamodel_classes.AttributeType.INTEGER,
             ),
-            motto=str(json_data["attributes"]["motto"]),
-            cost=str(json_data["attributes"]["cost"]),
-            location=str(json_data["attributes"]["location"]),
-            application_opening_at=datetime.date.fromisoformat(
-                json_data["attributes"]["application_opening_at"]
+            type=cls._access_data_attribute(
+                json_data,
+                "type",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
             ),
-            application_closing_at=datetime.date.fromisoformat(
-                json_data["attributes"]["application_closing_at"]
+            kind_id=cls._access_data_attribute(
+                json_data,
+                "kind_id",
+                jubladb_api.core.metamodel_classes.AttributeType.INTEGER,
             ),
-            application_contact_id=int(
-                json_data["attributes"]["application_contact_id"]
+            name=cls._access_data_attribute(
+                json_data,
+                "name",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
             ),
-            external_application_link=str(
-                json_data["attributes"]["external_application_link"]
+            description=cls._access_data_attribute(
+                json_data,
+                "description",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
             ),
-            maximum_participants=int(json_data["attributes"]["maximum_participants"]),
-            created_at=datetime.datetime.fromisoformat(
-                json_data["attributes"]["created_at"]
+            application_conditions=cls._access_data_attribute(
+                json_data,
+                "application_conditions",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
             ),
-            updated_at=datetime.datetime.fromisoformat(
-                json_data["attributes"]["updated_at"]
+            motto=cls._access_data_attribute(
+                json_data,
+                "motto",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+            ),
+            cost=cls._access_data_attribute(
+                json_data,
+                "cost",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+            ),
+            location=cls._access_data_attribute(
+                json_data,
+                "location",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+            ),
+            application_opening_at=cls._access_data_attribute(
+                json_data,
+                "application_opening_at",
+                jubladb_api.core.metamodel_classes.AttributeType.DATE,
+            ),
+            application_closing_at=cls._access_data_attribute(
+                json_data,
+                "application_closing_at",
+                jubladb_api.core.metamodel_classes.AttributeType.DATE,
+            ),
+            application_contact_id=cls._access_data_attribute(
+                json_data,
+                "application_contact_id",
+                jubladb_api.core.metamodel_classes.AttributeType.INTEGER,
+            ),
+            external_application_link=cls._access_data_attribute(
+                json_data,
+                "external_application_link",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+            ),
+            maximum_participants=cls._access_data_attribute(
+                json_data,
+                "maximum_participants",
+                jubladb_api.core.metamodel_classes.AttributeType.INTEGER,
+            ),
+            created_at=cls._access_data_attribute(
+                json_data,
+                "created_at",
+                jubladb_api.core.metamodel_classes.AttributeType.DATETIME,
+            ),
+            updated_at=cls._access_data_attribute(
+                json_data,
+                "updated_at",
+                jubladb_api.core.metamodel_classes.AttributeType.DATETIME,
             ),
             contact=cls._create_single_relation_key(
                 json_data,

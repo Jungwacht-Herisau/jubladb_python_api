@@ -103,16 +103,52 @@ class InvoiceItem(jubladb_api.core.base_entity.BaseEntity):
         if json_data.get("type", None) != "invoice_items":
             raise ValueError("Invalid data type")
         return cls(
-            id_=int(json_data["id"]),
-            invoice_id=int(json_data["attributes"]["invoice_id"]),
-            name=str(json_data["attributes"]["name"]),
-            description=str(json_data["attributes"]["description"]),
-            unit_cost=float(json_data["attributes"]["unit_cost"]),
-            vat_rate=float(json_data["attributes"]["vat_rate"]),
-            cost=int(json_data["attributes"]["cost"]),
-            count=int(json_data["attributes"]["count"]),
-            cost_center=str(json_data["attributes"]["cost_center"]),
-            account=str(json_data["attributes"]["account"]),
+            id_=cls._access_id(json_data),
+            invoice_id=cls._access_data_attribute(
+                json_data,
+                "invoice_id",
+                jubladb_api.core.metamodel_classes.AttributeType.INTEGER,
+            ),
+            name=cls._access_data_attribute(
+                json_data,
+                "name",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+            ),
+            description=cls._access_data_attribute(
+                json_data,
+                "description",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+            ),
+            unit_cost=cls._access_data_attribute(
+                json_data,
+                "unit_cost",
+                jubladb_api.core.metamodel_classes.AttributeType.FLOAT,
+            ),
+            vat_rate=cls._access_data_attribute(
+                json_data,
+                "vat_rate",
+                jubladb_api.core.metamodel_classes.AttributeType.FLOAT,
+            ),
+            cost=cls._access_data_attribute(
+                json_data,
+                "cost",
+                jubladb_api.core.metamodel_classes.AttributeType.INTEGER,
+            ),
+            count=cls._access_data_attribute(
+                json_data,
+                "count",
+                jubladb_api.core.metamodel_classes.AttributeType.INTEGER,
+            ),
+            cost_center=cls._access_data_attribute(
+                json_data,
+                "cost_center",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+            ),
+            account=cls._access_data_attribute(
+                json_data,
+                "account",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+            ),
             invoice=cls._create_single_relation_key(
                 json_data,
                 "invoice",
