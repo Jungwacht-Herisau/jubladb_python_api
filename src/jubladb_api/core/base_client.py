@@ -12,6 +12,8 @@ class BaseClient(abc.ABC):
     def __init__(self,
                  url: str,
                  headers: dict[str, str]|None=None,):
+        if url.endswith("/"):
+            raise ValueError("URL must not end with a slash, use the format https://db.example.ch")
         self._url = url
         self._headers = headers or {}
         self._cache: dict[jubladb_api.metamodel.EntityName, dict[int, object]] = {}
@@ -22,6 +24,8 @@ class BaseClient(abc.ABC):
                       include: list[str]|None=None,
                       filters: list[tuple[str, str, object]]|None=None):
         meta_type = jubladb_api.metamodel.ENTITIES[type_]
+        if meta_type.url == "":
+            raise ValueError(f"Entity {type_} has no url defined")
         params = []
         if sort:
             params.append(("sort", ",".join(s[:-len("_asc")] if s.endswith("_asc") else "-"+s[:-len("_desc")] for s in sort)))
@@ -32,17 +36,19 @@ class BaseClient(abc.ABC):
             param_value = ",".join(str(fi[2]) for fi in fis)
             params.append((param_name, param_value))
 
-        return self._request_get(f"{self._url}/{meta_type.url}", params)
+        return self._request_get(f"{self._url}{meta_type.url}", params)
 
     def _request_single_get(self,
                             type_: jubladb_api.metamodel.EntityName,
                             id_: int,
                             include: list[str]|None=None):
         meta_type = jubladb_api.metamodel.ENTITIES[type_]
+        if meta_type.url == "":
+            raise ValueError(f"Entity {type_} has no url defined")
         params = []
         if include:
             params.append(("include", ",".join(include)))
-        return self._request_get(f"{self._url}/{meta_type.url}/{id_}", params)
+        return self._request_get(f"{self._url}{meta_type.url}/{id_}", params)
 
     def _request_get(self,
                      url: str,

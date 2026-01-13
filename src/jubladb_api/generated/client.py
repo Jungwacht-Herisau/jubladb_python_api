@@ -299,6 +299,7 @@ class Client(base_client.BaseClient):
         for data_obj in json_response["data"]:
             re = EventKindCategory.from_json(data_obj)
             self._cache_add(re)
+            response_entities.append(re)
 
         return response_entities
 
@@ -349,6 +350,7 @@ class Client(base_client.BaseClient):
         for data_obj in json_response["data"]:
             re = EventKind.from_json(data_obj)
             self._cache_add(re)
+            response_entities.append(re)
 
         self._add_included_of_event_kinds_to_cache(json_response)
 
@@ -453,6 +455,7 @@ class Client(base_client.BaseClient):
         for data_obj in json_response["data"]:
             re = Event.from_json(data_obj)
             self._cache_add(re)
+            response_entities.append(re)
 
         self._add_included_of_events_to_cache(json_response)
 
@@ -848,6 +851,7 @@ class Client(base_client.BaseClient):
         for data_obj in json_response["data"]:
             re = Group.from_json(data_obj)
             self._cache_add(re)
+            response_entities.append(re)
 
         self._add_included_of_groups_to_cache(json_response)
 
@@ -996,6 +1000,7 @@ class Client(base_client.BaseClient):
         for data_obj in json_response["data"]:
             re = Invoice.from_json(data_obj)
             self._cache_add(re)
+            response_entities.append(re)
 
         self._add_included_of_invoices_to_cache(json_response)
 
@@ -1495,6 +1500,7 @@ class Client(base_client.BaseClient):
         for data_obj in json_response["data"]:
             re = Person.from_json(data_obj)
             self._cache_add(re)
+            response_entities.append(re)
 
         self._add_included_of_people_to_cache(json_response)
 
@@ -1738,6 +1744,7 @@ class Client(base_client.BaseClient):
         for data_obj in json_response["data"]:
             re = Role.from_json(data_obj)
             self._cache_add(re)
+            response_entities.append(re)
 
         self._add_included_of_roles_to_cache(json_response)
 

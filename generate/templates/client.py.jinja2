@@ -101,6 +101,7 @@ class Client(base_client.BaseClient):
         for data_obj in json_response["data"]:
             re = {{ class_name }}.from_json(data_obj)
             self._cache_add(re)
+            response_entities.append(re)
         {% if entity.relations|length > 0 %}
         self._add_included_of_{{ entity.name_plural }}_to_cache(json_response)
         {% endif %}
