@@ -34,8 +34,10 @@ class RelationType(object):
 class Attribute:
     name: str
     type_: AttributeType
+    array: bool = False
     optional: bool = False
     sortable: bool = False
+    filter_name: str|None = None
     filter_types: list[str] = dataclasses.field(default_factory=list)
 
 @dataclasses.dataclass

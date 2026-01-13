@@ -116,7 +116,19 @@ OPTIONAL_ATTRIBUTES: set[tuple[str, str]] = {
     ("group", "zip_code"),
     ("group", "self_registration_url"),
     ("group", "logo"),
+    ("event", "type"),
+    ("event", "kind_id"),
+    ("event", "application_opening_at"),
+    ("event", "application_closing_at"),
+    ("event", "application_contact_id"),
+    ("event", "external_application_link"),
+    ("event", "maximum_participants"),
     # this info isn't documented anywhere, so there are probably more
+}
+
+# (entity_name, attribute_name): singular_attribute_name
+ARRAY_ATTRIBUTES: dict[tuple[str, str], str] = {
+    ("event", "group_ids"): "group_id",
 }
 
 README_MD_URL = "https://raw.githubusercontent.com/hitobito/hitobito_jubla/refs/heads/master/README.md"
@@ -249,11 +261,16 @@ class CodeGenerator(object):
                 if type_ is None:
                     print(f"Unknown type {prop.schema.type} for property {entity_type}.{prop.name}")
                     continue
+                array_attr_name = ARRAY_ATTRIBUTES.get((entity.name_singular, prop.name), None)
+                filter_name = array_attr_name if array_attr_name is not None else prop.name
+                filter_types = attr_filters.get(filter_name, list())
                 attr = classes.Attribute(name=prop.name,
                                          type_=type_,
+                                         array=array_attr_name is not None,
                                          optional=(entity.name_singular, prop.name) in OPTIONAL_ATTRIBUTES,
                                          sortable=prop.name in sort_attrs,
-                                         filter_types=attr_filters.get(prop.name, list()),
+                                         filter_name=filter_name if filter_types else None,
+                                         filter_types=filter_types,
                                          )
                 entity.attributes.append(attr)
 

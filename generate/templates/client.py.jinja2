@@ -58,7 +58,7 @@ class Client(base_client.BaseClient):
                             {% endif %}
                             {% for attr in entity.attributes %}
                             {% for ft in attr.filter_types %}
-                            filter_{{ attr.name }}_{{ ft }}: {{ attr.type_|attribute_type_to_python_type }}|None = None,
+                            filter_{{ attr.filter_name }}_{{ ft }}: {{ attr.type_|attribute_type_to_python_type }}|list[{{ attr.type_|attribute_type_to_python_type }}]|None = None,
                             {% endfor %}
                             {% endfor %}
                             ) -> list[{{ class_name }}]:
@@ -75,7 +75,7 @@ class Client(base_client.BaseClient):
         filters = [
             {% for attr in entity.attributes %}
             {% for ft in attr.filter_types %}
-            ("{{ attr.name }}", "{{ ft }}", filter_{{ attr.name }}_{{ ft }}),
+            ("{{ attr.filter_name }}", "{{ ft }}", filter_{{ attr.filter_name }}_{{ ft }}),
             {% endfor %}
             {% endfor %}
         ]

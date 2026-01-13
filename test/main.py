@@ -20,3 +20,7 @@ class TestBasic(unittest.TestCase):
         roles = self.client.get_roles_list(filter_group_id_eq=test_base.TEST_SCHAR_ID)
         flock_leader_roles = list(filter(lambda ro: ro.type==jubladb_api.const.ROLE_FLOCK_LEADER.id, roles))
         self.assertEqual(1, len(flock_leader_roles))
+
+    def test_request_events(self):
+        events = self.client.get_events_list(filter_group_id_eq=test_base.TEST_SCHAR_ID)
+        self.assertEqual(200, len(events))

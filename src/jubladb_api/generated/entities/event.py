@@ -14,20 +14,20 @@ class Event(jubladb_api.core.base_entity.BaseEntity):
     def __init__(
         self,
         id_: int,
-        group_ids: int,
-        type: str,
-        kind_id: int,
+        group_ids: list[int],
+        type: str | None,
+        kind_id: int | None,
         name: str,
         description: str,
         application_conditions: str,
         motto: str,
         cost: str,
         location: str,
-        application_opening_at: datetime.date,
-        application_closing_at: datetime.date,
-        application_contact_id: int,
-        external_application_link: str,
-        maximum_participants: int,
+        application_opening_at: datetime.date | None,
+        application_closing_at: datetime.date | None,
+        application_contact_id: int | None,
+        external_application_link: str | None,
+        maximum_participants: int | None,
         created_at: datetime.datetime,
         updated_at: datetime.datetime,
         contact: jubladb_api.generated.entities.keys.PersonKey | None,
@@ -58,15 +58,15 @@ class Event(jubladb_api.core.base_entity.BaseEntity):
         self._dates = dates
 
     @property
-    def group_ids(self) -> int:
+    def group_ids(self) -> list[int]:
         return self._group_ids
 
     @property
-    def type(self) -> str:
+    def type(self) -> str | None:
         return self._type
 
     @property
-    def kind_id(self) -> int:
+    def kind_id(self) -> int | None:
         return self._kind_id
 
     @property
@@ -94,23 +94,23 @@ class Event(jubladb_api.core.base_entity.BaseEntity):
         return self._location
 
     @property
-    def application_opening_at(self) -> datetime.date:
+    def application_opening_at(self) -> datetime.date | None:
         return self._application_opening_at
 
     @property
-    def application_closing_at(self) -> datetime.date:
+    def application_closing_at(self) -> datetime.date | None:
         return self._application_closing_at
 
     @property
-    def application_contact_id(self) -> int:
+    def application_contact_id(self) -> int | None:
         return self._application_contact_id
 
     @property
-    def external_application_link(self) -> str:
+    def external_application_link(self) -> str | None:
         return self._external_application_link
 
     @property
-    def maximum_participants(self) -> int:
+    def maximum_participants(self) -> int | None:
         return self._maximum_participants
 
     @property
@@ -178,16 +178,19 @@ class Event(jubladb_api.core.base_entity.BaseEntity):
                 json_data,
                 "group_ids",
                 jubladb_api.core.metamodel_classes.AttributeType.INTEGER,
+                array=True,
             ),
             type=cls._access_data_attribute(
                 json_data,
                 "type",
                 jubladb_api.core.metamodel_classes.AttributeType.STRING,
+                optional=True,
             ),
             kind_id=cls._access_data_attribute(
                 json_data,
                 "kind_id",
                 jubladb_api.core.metamodel_classes.AttributeType.INTEGER,
+                optional=True,
             ),
             name=cls._access_data_attribute(
                 json_data,
@@ -223,26 +226,31 @@ class Event(jubladb_api.core.base_entity.BaseEntity):
                 json_data,
                 "application_opening_at",
                 jubladb_api.core.metamodel_classes.AttributeType.DATE,
+                optional=True,
             ),
             application_closing_at=cls._access_data_attribute(
                 json_data,
                 "application_closing_at",
                 jubladb_api.core.metamodel_classes.AttributeType.DATE,
+                optional=True,
             ),
             application_contact_id=cls._access_data_attribute(
                 json_data,
                 "application_contact_id",
                 jubladb_api.core.metamodel_classes.AttributeType.INTEGER,
+                optional=True,
             ),
             external_application_link=cls._access_data_attribute(
                 json_data,
                 "external_application_link",
                 jubladb_api.core.metamodel_classes.AttributeType.STRING,
+                optional=True,
             ),
             maximum_participants=cls._access_data_attribute(
                 json_data,
                 "maximum_participants",
                 jubladb_api.core.metamodel_classes.AttributeType.INTEGER,
+                optional=True,
             ),
             created_at=cls._access_data_attribute(
                 json_data,

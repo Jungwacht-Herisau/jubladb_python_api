@@ -15,7 +15,7 @@ class {{ class_name }}(jubladb_api.core.base_entity.BaseEntity):
     def __init__(self,
                  id_: int,
                  {% for attr in entity.attributes %}
-                 {{ attr.name }}: {{ attr.type_ | attribute_type_to_python_type }}{% if attr.optional %}|None{% endif %},
+                 {{ attr.name }}: {% if attr.array %}list[{% endif %}{{ attr.type_ | attribute_type_to_python_type }}{% if attr.array %}]{% endif %}{% if attr.optional %}|None{% endif %},
                  {% endfor %}
 
                  {% for rel in entity.relations %}
@@ -31,7 +31,7 @@ class {{ class_name }}(jubladb_api.core.base_entity.BaseEntity):
 
     {% for attr in entity.attributes %}
     @property
-    def {{ attr.name }}(self) -> {{ attr.type_ | attribute_type_to_python_type }}{% if attr.optional %}|None{% endif %}:
+    def {{ attr.name }}(self) -> {% if attr.array %}list[{% endif %}{{ attr.type_ | attribute_type_to_python_type }}{% if attr.array %}]{% endif %}{% if attr.optional %}|None{% endif %}:
         return self._{{ attr.name }}
     {% endfor %}
 
@@ -77,7 +77,7 @@ class {{ class_name }}(jubladb_api.core.base_entity.BaseEntity):
         return cls(
             id_=cls._access_id(json_data),
             {% for attr in entity.attributes %}
-            {{ attr.name }}=cls._access_data_attribute(json_data, "{{ attr.name }}", jubladb_api.core.metamodel_classes.{{ attr.type_ }}{% if attr.optional %}, optional=True{% endif %}),
+            {{ attr.name }}=cls._access_data_attribute(json_data, "{{ attr.name }}", jubladb_api.core.metamodel_classes.{{ attr.type_ }}{% if attr.optional %}, optional=True{% endif %}{% if attr.array %}, array=True{% endif %}),
             {% endfor %}
             {% for rel in entity.relations %}
             {% if rel.to_many %}
