@@ -88,6 +88,9 @@ class EventKind(jubladb_api.core.base_entity.BaseEntity):
         else:
             raise ValueError(f"relation {relation_name} does not exist on event_kind")
 
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}({self._id}, label={repr(self._label)})"
+
     @classmethod
     def from_json(cls, json_data: dict):
         if json_data.get("type", None) != "event_kinds":

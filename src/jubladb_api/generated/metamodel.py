@@ -7,6 +7,13 @@ ENTITIES = {
         url="",
         name_singular="additional_address",
         name_plural="additional_addresses",
+        string_representation_attributes=[
+            "contactable_id",
+            "street",
+            "housenumber",
+            "zip_code",
+            "town",
+        ],
         allowed_operations=[],
         attributes=[
             Attribute(
@@ -116,6 +123,7 @@ ENTITIES = {
         url="",
         name_singular="additional_email",
         name_plural="additional_emails",
+        string_representation_attributes=["contactable_id", "email"],
         allowed_operations=[],
         attributes=[
             Attribute(
@@ -171,6 +179,7 @@ ENTITIES = {
         url="",
         name_singular="course",
         name_plural="courses",
+        string_representation_attributes=["name"],
         allowed_operations=[],
         attributes=[
             Attribute(
@@ -413,6 +422,7 @@ ENTITIES = {
         url="",
         name_singular="date",
         name_plural="dates",
+        string_representation_attributes=["event_id", "start_at", "end_at"],
         allowed_operations=[],
         attributes=[
             Attribute(
@@ -475,6 +485,7 @@ ENTITIES = {
         url="/api/event_kind_categories",
         name_singular="event_kind_category",
         name_plural="event_kind_categories",
+        string_representation_attributes=["label"],
         allowed_operations=[Operation.GetList, Operation.GetSingle],
         attributes=[
             Attribute(
@@ -503,6 +514,7 @@ ENTITIES = {
         url="/api/event_kinds",
         name_singular="event_kind",
         name_plural="event_kinds",
+        string_representation_attributes=["label"],
         allowed_operations=[Operation.GetList, Operation.GetSingle],
         attributes=[
             Attribute(
@@ -583,6 +595,7 @@ ENTITIES = {
         url="/api/events",
         name_singular="event",
         name_plural="events",
+        string_representation_attributes=["name"],
         allowed_operations=[Operation.GetList, Operation.GetSingle],
         attributes=[
             Attribute(
@@ -756,6 +769,7 @@ ENTITIES = {
         url="/api/groups",
         name_singular="group",
         name_plural="groups",
+        string_representation_attributes=["name"],
         allowed_operations=[Operation.GetList, Operation.GetSingle],
         attributes=[
             Attribute(
@@ -1146,6 +1160,7 @@ ENTITIES = {
         url="",
         name_singular="invoice_item",
         name_plural="invoice_items",
+        string_representation_attributes=["invoice_id", "name"],
         allowed_operations=[],
         attributes=[
             Attribute(
@@ -1244,6 +1259,7 @@ ENTITIES = {
         url="/api/invoices",
         name_singular="invoice",
         name_plural="invoices",
+        string_representation_attributes=["title"],
         allowed_operations=[
             Operation.GetList,
             Operation.GetSingle,
@@ -1376,6 +1392,7 @@ ENTITIES = {
         url="/api/mailing_lists",
         name_singular="mailing_list",
         name_plural="mailing_lists",
+        string_representation_attributes=["name"],
         allowed_operations=[Operation.GetList, Operation.GetSingle],
         attributes=[
             Attribute(
@@ -1616,6 +1633,7 @@ ENTITIES = {
         url="",
         name_singular="person_name",
         name_plural="person_name",
+        string_representation_attributes=["first_name", "last_name"],
         allowed_operations=[],
         attributes=[
             Attribute(
@@ -1644,6 +1662,7 @@ ENTITIES = {
         url="/api/people",
         name_singular="person",
         name_plural="people",
+        string_representation_attributes=["first_name", "last_name"],
         allowed_operations=[
             Operation.GetList,
             Operation.GetSingle,
@@ -1743,7 +1762,7 @@ ENTITIES = {
                 name="email",
                 type_=AttributeType.STRING,
                 array=False,
-                optional=False,
+                optional=True,
                 sortable=True,
                 filter_name="email",
                 filter_types=[
@@ -2078,6 +2097,7 @@ ENTITIES = {
         url="",
         name_singular="phone_number",
         name_plural="phone_numbers",
+        string_representation_attributes=["contactable_id", "number"],
         allowed_operations=[],
         attributes=[
             Attribute(
@@ -2133,6 +2153,7 @@ ENTITIES = {
         url="/api/roles",
         name_singular="role",
         name_plural="roles",
+        string_representation_attributes=["person_id", "group_id", "type"],
         allowed_operations=[
             Operation.GetList,
             Operation.GetSingle,
@@ -2281,6 +2302,7 @@ ENTITIES = {
         url="",
         name_singular="self_registration",
         name_plural="self_registrations",
+        string_representation_attributes=["first_name", "last_name"],
         allowed_operations=[],
         attributes=[
             Attribute(
@@ -2345,6 +2367,7 @@ ENTITIES = {
         url="",
         name_singular="social_account",
         name_plural="social_accounts",
+        string_representation_attributes=["contactable_id", "name"],
         allowed_operations=[],
         attributes=[
             Attribute(

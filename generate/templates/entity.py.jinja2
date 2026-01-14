@@ -69,6 +69,11 @@ class {{ class_name }}(jubladb_api.core.base_entity.BaseEntity):
         raise ValueError("no relations defined on {{ entity.name_singular }}")
         {% endif %}
 
+{% if entity.string_representation_attributes|length>0 %}
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}({self._id}, {% for attr_name in entity.string_representation_attributes %}{% if not loop.first %}, {% endif %}{{ attr_name }}={repr(self._{{ attr_name }})}{% endfor %})"
+{% endif %}
+
 
     @classmethod
     def from_json(cls, json_data: dict):

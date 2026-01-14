@@ -43,6 +43,9 @@ class EventKindCategory(jubladb_api.core.base_entity.BaseEntity):
 
         raise ValueError("no relations defined on event_kind_category")
 
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}({self._id}, label={repr(self._label)})"
+
     @classmethod
     def from_json(cls, json_data: dict):
         if json_data.get("type", None) != "event_kind_categories":

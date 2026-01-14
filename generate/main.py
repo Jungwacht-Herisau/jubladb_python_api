@@ -130,12 +130,33 @@ OPTIONAL_ATTRIBUTES: set[tuple[str, str]] = {
     ("person", "postbox"),
     ("person", "additional_information"),
     ("person", "nickname"),
+    ("person", "email"),
     # this info isn't documented anywhere, so there are probably more
 }
 
 # (entity_name, attribute_name): singular_attribute_name
 ARRAY_ATTRIBUTES: dict[tuple[str, str], str] = {
     ("event", "group_ids"): "group_id",
+}
+
+STRING_REPRESENTATION_ATTRIBUTES: dict[str, list[str]] = {
+    "additional_address": ["contactable_id", "street", "housenumber", "zip_code", "town"],
+    "additional_email": ["contactable_id", "email"],
+    "course": ["name"],
+    "date": ["event_id", "start_at", "end_at"],
+    "event_kind_category": ["label"],
+    "event_kind": ["label"],
+    "event": ["name"],
+    "group": ["name"],
+    "invoice_item": ["invoice_id", "name"],
+    "invoice": ["title"],
+    "mailing_list": ["name"],
+    "person_name": ["first_name", "last_name"],
+    "person": ["first_name", "last_name"],
+    "phone_number": ["contactable_id", "number"],
+    "role": ["person_id", "group_id", "type"],
+    "self_registration": ["first_name", "last_name"],
+    "social_account": ["contactable_id", "name"],
 }
 
 README_MD_URL = "https://raw.githubusercontent.com/hitobito/hitobito_jubla/refs/heads/master/README.md"
@@ -222,9 +243,11 @@ class CodeGenerator(object):
             attr_filters: dict[str, list[str]] = {}
 
             name = entity_type.replace("-", "_")
+            singular_name = get_singular_name(name)
             entity = classes.Entity(url=base_url if base_url in spec_paths else "",
-                                    name_singular=get_singular_name(name),
+                                    name_singular=singular_name,
                                     name_plural=name,
+                                    string_representation_attributes=STRING_REPRESENTATION_ATTRIBUTES.get(singular_name, []),
                                     )
             entities.append(entity)
 

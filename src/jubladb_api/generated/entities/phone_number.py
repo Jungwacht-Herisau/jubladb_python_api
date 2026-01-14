@@ -61,6 +61,9 @@ class PhoneNumber(jubladb_api.core.base_entity.BaseEntity):
 
         raise ValueError("no relations defined on phone_number")
 
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}({self._id}, contactable_id={repr(self._contactable_id)}, number={repr(self._number)})"
+
     @classmethod
     def from_json(cls, json_data: dict):
         if json_data.get("type", None) != "phone_numbers":

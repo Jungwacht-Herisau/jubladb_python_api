@@ -67,6 +67,9 @@ class SelfRegistration(jubladb_api.core.base_entity.BaseEntity):
 
         raise ValueError("no relations defined on self_registration")
 
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}({self._id}, first_name={repr(self._first_name)}, last_name={repr(self._last_name)})"
+
     @classmethod
     def from_json(cls, json_data: dict):
         if json_data.get("type", None) != "self_registrations":

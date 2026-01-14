@@ -19,7 +19,7 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
         nickname: str | None,
         company_name: str | None,
         company: bool,
-        email: str,
+        email: str | None,
         address: str,
         address_care_of: str | None,
         street: str,
@@ -98,7 +98,7 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
         return self._company
 
     @property
-    def email(self) -> str:
+    def email(self) -> str | None:
         return self._email
 
     @property
@@ -242,6 +242,9 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
         else:
             raise ValueError(f"relation {relation_name} does not exist on person")
 
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}({self._id}, first_name={repr(self._first_name)}, last_name={repr(self._last_name)})"
+
     @classmethod
     def from_json(cls, json_data: dict):
         if json_data.get("type", None) != "people":
@@ -279,6 +282,7 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
                 json_data,
                 "email",
                 jubladb_api.core.metamodel_classes.AttributeType.STRING,
+                optional=True,
             ),
             address=cls._access_data_attribute(
                 json_data,

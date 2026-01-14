@@ -7,6 +7,12 @@ import requests
 import jubladb_api.metamodel
 from jubladb_api.core import base_entity
 
+class JublaDbError(Exception):
+    def __init__(self, status_code: int, message: str, code: str, detail: str, meta: dict):
+        super().__init__(f"JublaDb API returned status code {status_code}: {message}")
+        self.code = code
+        self.detail = detail
+        self.meta = meta
 
 class BaseClient(abc.ABC):
     def __init__(self,
@@ -37,12 +43,14 @@ class BaseClient(abc.ABC):
             params.append((param_name, param_value))
 
         current_response = self._request_get(f"{self._url}{meta_type.url}", params)
+        self._check_for_errors(current_response)
         combined_response = {
             "data": current_response.get("data", []),
             "included": current_response.get("included", []),
         }
         while "next" in current_response.get("links", {}):
             current_response = self._request_get(self._url+current_response["links"]["next"], [])
+            self._check_for_errors(current_response)
             combined_response["data"].extend(current_response.get("data", []))
             combined_response["included"].extend(current_response.get("included", []))
         return combined_response
@@ -57,7 +65,9 @@ class BaseClient(abc.ABC):
         params = []
         if include:
             params.append(("include", ",".join(include)))
-        return self._request_get(f"{self._url}{meta_type.url}/{id_}", params)
+        json_response = self._request_get(f"{self._url}{meta_type.url}/{id_}", params)
+        self._check_for_errors(json_response)
+        return json_response
 
     def _request_get(self,
                      url: str,
@@ -76,3 +86,8 @@ class BaseClient(abc.ABC):
 
     def _cache_get(self, entity_key: base_entity.BaseEntityKey) -> base_entity.BaseEntity | None:
         return self._cache.get(entity_key.type, {}).get(entity_key.id)
+
+    def _check_for_errors(self, json_response: dict) -> None:
+        if "errors" in json_response:
+            error = json_response["errors"][0]
+            raise JublaDbError(int(error["status"]), error["title"], error["code"], error["detail"], error["meta"])

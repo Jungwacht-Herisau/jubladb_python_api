@@ -45,6 +45,7 @@ class Entity:
     url: str
     name_singular: str
     name_plural: str
+    string_representation_attributes: list[str] = dataclasses.field(default_factory=list)
     allowed_operations: list[Operation] = dataclasses.field(default_factory=list)
     attributes: list[Attribute] = dataclasses.field(default_factory=list)
     relations: list[RelationType] = dataclasses.field(default_factory=list)

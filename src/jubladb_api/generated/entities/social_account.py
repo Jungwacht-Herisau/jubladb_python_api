@@ -61,6 +61,9 @@ class SocialAccount(jubladb_api.core.base_entity.BaseEntity):
 
         raise ValueError("no relations defined on social_account")
 
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}({self._id}, contactable_id={repr(self._contactable_id)}, name={repr(self._name)})"
+
     @classmethod
     def from_json(cls, json_data: dict):
         if json_data.get("type", None) != "social_accounts":

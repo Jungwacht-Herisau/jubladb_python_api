@@ -24,3 +24,6 @@ class TestBasic(unittest.TestCase):
     def test_request_events(self):
         events = self.client.get_events_list(filter_group_id_eq=testing_utils.TEST_SCHAR_ID)
         self.assertEqual(200, len(events))
+
+    def test_access_forbidden(self):
+        self.assertRaises(jubladb_api.client.JublaDbError, lambda: self.client.get_group(9))
