@@ -3,7 +3,7 @@ A package with generated code to access the [Jubla DB](https://db.jubla.ch) API 
 
 For more information, please visit [the project page](https://github.com/Jungwacht-Herisau/jubladb_python_api)
 
-## Requirements.
+## Requirements
 
 Python 3.10+
 
