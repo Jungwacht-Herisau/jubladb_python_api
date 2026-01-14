@@ -29,11 +29,13 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
         country: str,
         require_person_add_requests: bool,
         self_registration_url: str | None,
+        self_registration_require_adult_consent: bool,
         archived_at: datetime.datetime | None,
         created_at: datetime.datetime,
         updated_at: datetime.datetime,
         deleted_at: datetime.datetime | None,
         logo: str | None,
+        privacy_policies: list[str],
         contact: jubladb_api.generated.entities.keys.PersonKey | None,
         creator: jubladb_api.generated.entities.keys.PersonKey | None,
         updater: jubladb_api.generated.entities.keys.PersonKey | None,
@@ -65,11 +67,15 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
         self._country = country
         self._require_person_add_requests = require_person_add_requests
         self._self_registration_url = self_registration_url
+        self._self_registration_require_adult_consent = (
+            self_registration_require_adult_consent
+        )
         self._archived_at = archived_at
         self._created_at = created_at
         self._updated_at = updated_at
         self._deleted_at = deleted_at
         self._logo = logo
+        self._privacy_policies = privacy_policies
 
         self._contact = contact
         self._creator = creator
@@ -142,6 +148,10 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
         return self._self_registration_url
 
     @property
+    def self_registration_require_adult_consent(self) -> bool:
+        return self._self_registration_require_adult_consent
+
+    @property
     def archived_at(self) -> datetime.datetime | None:
         return self._archived_at
 
@@ -160,6 +170,10 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
     @property
     def logo(self) -> str | None:
         return self._logo
+
+    @property
+    def privacy_policies(self) -> list[str]:
+        return self._privacy_policies
 
     @property
     def contact(self) -> jubladb_api.generated.entities.keys.PersonKey:
@@ -356,6 +370,11 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
                 jubladb_api.core.metamodel_classes.AttributeType.STRING,
                 optional=True,
             ),
+            self_registration_require_adult_consent=cls._access_data_attribute(
+                json_data,
+                "self_registration_require_adult_consent",
+                jubladb_api.core.metamodel_classes.AttributeType.BOOLEAN,
+            ),
             archived_at=cls._access_data_attribute(
                 json_data,
                 "archived_at",
@@ -383,6 +402,12 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
                 "logo",
                 jubladb_api.core.metamodel_classes.AttributeType.STRING,
                 optional=True,
+            ),
+            privacy_policies=cls._access_data_attribute(
+                json_data,
+                "privacy_policies",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
+                array=True,
             ),
             contact=cls._create_single_relation_key(
                 json_data,

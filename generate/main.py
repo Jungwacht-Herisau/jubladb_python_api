@@ -18,9 +18,7 @@ import tqdm
 import templates
 import jubladb_api.core.metamodel_classes as classes
 
-# PACKAGE_VERSION = "0.1.1"
-
-SPEC_FILE_NAME = "../spec.yaml"
+SPEC_FILE_NAME = pathlib.Path(__file__).parent.parent / "spec.yaml"
 MODULE_NAME = "jubladb_api"
 
 
@@ -105,6 +103,8 @@ RELATION_TYPES: dict[tuple[str, str], str] = {
     ("role", "person"): "person",
     ("role", "group"): "group",
     ("role", "layer_group"): "group",
+    ("groups", "mailing_lists"): "mailing_list",
+    ("mailing_lists", "group"): "group",
 }
 
 OPTIONAL_ATTRIBUTES: set[tuple[str, str]] = {
@@ -255,7 +255,12 @@ class CodeGenerator(object):
                         attr_filters.setdefault(attr_name, list()).append(filter_type)
 
             for prop in schema.properties:
-                type_ = DATA_TYPE_MAP.get((prop.schema.type, getattr(prop.schema, "format", None)), None)
+                if prop.schema.type == openapi_parser.specification.DataType.ARRAY:
+                    type_ = classes.AttributeType.STRING  # TODO find item type (doesn't seem to be included in spec)
+                    is_array = True
+                else:
+                    type_ = DATA_TYPE_MAP.get((prop.schema.type, getattr(prop.schema, "format", None)), None)
+                    is_array = False
                 if type_ is None:
                     type_ = DATA_TYPE_MAP.get((prop.schema.type, None), None)
                 if type_ is None:
@@ -266,7 +271,7 @@ class CodeGenerator(object):
                 filter_types = attr_filters.get(filter_name, list())
                 attr = classes.Attribute(name=prop.name,
                                          type_=type_,
-                                         array=array_attr_name is not None,
+                                         array=array_attr_name is not None or is_array,
                                          optional=(entity.name_singular, prop.name) in OPTIONAL_ATTRIBUTES,
                                          sortable=prop.name in sort_attrs,
                                          filter_name=filter_name if filter_types else None,
@@ -441,22 +446,23 @@ class CodeGenerator(object):
         self._generate_groups_roles()
 
 
-PARSE_SPEC = False
-
 if __name__ == '__main__':
+    _spec_file_name = pathlib.Path(__file__).parent / "spec.pickle"
+
     patch_openapi_parser()
-    if PARSE_SPEC:
+    if _spec_file_name.exists():
+        print(f"using cached spec from {_spec_file_name}")
+        with open(_spec_file_name, "rb") as f:
+            _spec = pickle.load(f)
+    else:
         download_spec()
 
         print("Parsing OpenAPI spec... ")
         _spec = openapi_parser.parse(SPEC_FILE_NAME)
         print("Parsed OpenAPI spec successfully.")
 
-        with open(f"spec.pickle", "wb") as f:
+        with open(_spec_file_name, "wb") as f:
             pickle.dump(_spec, f)
-    else:
-        with open(f"spec.pickle", "rb") as f:
-            _spec = pickle.load(f)
 
     generator = CodeGenerator(_spec)
     generator.cleanup()

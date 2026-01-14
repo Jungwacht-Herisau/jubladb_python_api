@@ -27,6 +27,8 @@ from jubladb_api.generated.entities.invoice_item import InvoiceItem
 
 from jubladb_api.generated.entities.invoice import Invoice
 
+from jubladb_api.generated.entities.mailing_list import MailingList
+
 from jubladb_api.generated.entities.person_name import PersonName
 
 from jubladb_api.generated.entities.person import Person
@@ -34,6 +36,8 @@ from jubladb_api.generated.entities.person import Person
 from jubladb_api.generated.entities.phone_number import PhoneNumber
 
 from jubladb_api.generated.entities.role import Role
+
+from jubladb_api.generated.entities.self_registration import SelfRegistration
 
 from jubladb_api.generated.entities.social_account import SocialAccount
 
@@ -61,6 +65,7 @@ _Group_Include = typing.Literal[
     "phone_numbers",
     "social_accounts",
     "additional_emails",
+    "mailing_lists",
 ]
 
 
@@ -80,6 +85,7 @@ _Group_Sort = typing.Literal[
     "country_asc",
     "require_person_add_requests_asc",
     "self_registration_url_asc",
+    "self_registration_require_adult_consent_asc",
     "archived_at_asc",
     "created_at_asc",
     "updated_at_asc",
@@ -99,6 +105,7 @@ _Group_Sort = typing.Literal[
     "country_desc",
     "require_person_add_requests_desc",
     "self_registration_url_desc",
+    "self_registration_require_adult_consent_desc",
     "archived_at_desc",
     "created_at_desc",
     "updated_at_desc",
@@ -110,6 +117,41 @@ _Invoice_Include = typing.Literal[
     "group",
     "recipient",
     "invoice_items",
+]
+
+
+_MailingList_Include = typing.Literal["group",]
+
+
+_MailingList_Sort = typing.Literal[
+    "name_asc",
+    "group_id_asc",
+    "description_asc",
+    "publisher_asc",
+    "mail_name_asc",
+    "additional_sender_asc",
+    "subscribable_for_asc",
+    "subscribable_mode_asc",
+    "subscribers_may_post_asc",
+    "anyone_may_post_asc",
+    "preferred_labels_asc",
+    "delivery_report_asc",
+    "main_email_asc",
+    "subscribable_asc",
+    "name_desc",
+    "group_id_desc",
+    "description_desc",
+    "publisher_desc",
+    "mail_name_desc",
+    "additional_sender_desc",
+    "subscribable_for_desc",
+    "subscribable_mode_desc",
+    "subscribers_may_post_desc",
+    "anyone_may_post_desc",
+    "preferred_labels_desc",
+    "delivery_report_desc",
+    "main_email_desc",
+    "subscribable_desc",
 ]
 
 
@@ -651,6 +693,9 @@ class Client(base_client.BaseClient):
         filter_self_registration_url_not_suffix: str | list[str] | None = None,
         filter_self_registration_url_match: str | list[str] | None = None,
         filter_self_registration_url_not_match: str | list[str] | None = None,
+        filter_self_registration_require_adult_consent_eq: (
+            bool | list[bool] | None
+        ) = None,
         filter_archived_at_eq: (
             datetime.datetime | list[datetime.datetime] | None
         ) = None,
@@ -858,6 +903,11 @@ class Client(base_client.BaseClient):
                 "self_registration_url",
                 "not_match",
                 filter_self_registration_url_not_match,
+            ),
+            (
+                "self_registration_require_adult_consent",
+                "eq",
+                filter_self_registration_require_adult_consent_eq,
             ),
             ("archived_at", "eq", filter_archived_at_eq),
             ("archived_at", "not_eq", filter_archived_at_not_eq),
@@ -1101,6 +1151,253 @@ class Client(base_client.BaseClient):
                 self._cache_add(Person.from_json(incl_data))
             elif incl_data["type"] == "invoice_items":
                 self._cache_add(InvoiceItem.from_json(incl_data))
+
+    def get_mailing_lists_list(
+        self,
+        include: list[_MailingList_Include] | typing.Literal["*"] | None = None,
+        sort: list[_MailingList_Sort] | None = None,
+        filter_name_eq: str | list[str] | None = None,
+        filter_name_not_eq: str | list[str] | None = None,
+        filter_name_eql: str | list[str] | None = None,
+        filter_name_not_eql: str | list[str] | None = None,
+        filter_name_prefix: str | list[str] | None = None,
+        filter_name_not_prefix: str | list[str] | None = None,
+        filter_name_suffix: str | list[str] | None = None,
+        filter_name_not_suffix: str | list[str] | None = None,
+        filter_name_match: str | list[str] | None = None,
+        filter_name_not_match: str | list[str] | None = None,
+        filter_group_id_eq: int | list[int] | None = None,
+        filter_group_id_not_eq: int | list[int] | None = None,
+        filter_group_id_gt: int | list[int] | None = None,
+        filter_group_id_gte: int | list[int] | None = None,
+        filter_group_id_lt: int | list[int] | None = None,
+        filter_group_id_lte: int | list[int] | None = None,
+        filter_description_eq: str | list[str] | None = None,
+        filter_description_not_eq: str | list[str] | None = None,
+        filter_description_eql: str | list[str] | None = None,
+        filter_description_not_eql: str | list[str] | None = None,
+        filter_description_prefix: str | list[str] | None = None,
+        filter_description_not_prefix: str | list[str] | None = None,
+        filter_description_suffix: str | list[str] | None = None,
+        filter_description_not_suffix: str | list[str] | None = None,
+        filter_description_match: str | list[str] | None = None,
+        filter_description_not_match: str | list[str] | None = None,
+        filter_publisher_eq: str | list[str] | None = None,
+        filter_publisher_not_eq: str | list[str] | None = None,
+        filter_publisher_eql: str | list[str] | None = None,
+        filter_publisher_not_eql: str | list[str] | None = None,
+        filter_publisher_prefix: str | list[str] | None = None,
+        filter_publisher_not_prefix: str | list[str] | None = None,
+        filter_publisher_suffix: str | list[str] | None = None,
+        filter_publisher_not_suffix: str | list[str] | None = None,
+        filter_publisher_match: str | list[str] | None = None,
+        filter_publisher_not_match: str | list[str] | None = None,
+        filter_mail_name_eq: str | list[str] | None = None,
+        filter_mail_name_not_eq: str | list[str] | None = None,
+        filter_mail_name_eql: str | list[str] | None = None,
+        filter_mail_name_not_eql: str | list[str] | None = None,
+        filter_mail_name_prefix: str | list[str] | None = None,
+        filter_mail_name_not_prefix: str | list[str] | None = None,
+        filter_mail_name_suffix: str | list[str] | None = None,
+        filter_mail_name_not_suffix: str | list[str] | None = None,
+        filter_mail_name_match: str | list[str] | None = None,
+        filter_mail_name_not_match: str | list[str] | None = None,
+        filter_additional_sender_eq: str | list[str] | None = None,
+        filter_additional_sender_not_eq: str | list[str] | None = None,
+        filter_additional_sender_eql: str | list[str] | None = None,
+        filter_additional_sender_not_eql: str | list[str] | None = None,
+        filter_additional_sender_prefix: str | list[str] | None = None,
+        filter_additional_sender_not_prefix: str | list[str] | None = None,
+        filter_additional_sender_suffix: str | list[str] | None = None,
+        filter_additional_sender_not_suffix: str | list[str] | None = None,
+        filter_additional_sender_match: str | list[str] | None = None,
+        filter_additional_sender_not_match: str | list[str] | None = None,
+        filter_subscribable_for_eq: str | list[str] | None = None,
+        filter_subscribable_for_not_eq: str | list[str] | None = None,
+        filter_subscribable_for_eql: str | list[str] | None = None,
+        filter_subscribable_for_not_eql: str | list[str] | None = None,
+        filter_subscribable_for_prefix: str | list[str] | None = None,
+        filter_subscribable_for_not_prefix: str | list[str] | None = None,
+        filter_subscribable_for_suffix: str | list[str] | None = None,
+        filter_subscribable_for_not_suffix: str | list[str] | None = None,
+        filter_subscribable_for_match: str | list[str] | None = None,
+        filter_subscribable_for_not_match: str | list[str] | None = None,
+        filter_subscribable_mode_eq: str | list[str] | None = None,
+        filter_subscribable_mode_not_eq: str | list[str] | None = None,
+        filter_subscribable_mode_eql: str | list[str] | None = None,
+        filter_subscribable_mode_not_eql: str | list[str] | None = None,
+        filter_subscribable_mode_prefix: str | list[str] | None = None,
+        filter_subscribable_mode_not_prefix: str | list[str] | None = None,
+        filter_subscribable_mode_suffix: str | list[str] | None = None,
+        filter_subscribable_mode_not_suffix: str | list[str] | None = None,
+        filter_subscribable_mode_match: str | list[str] | None = None,
+        filter_subscribable_mode_not_match: str | list[str] | None = None,
+        filter_subscribers_may_post_eq: bool | list[bool] | None = None,
+        filter_anyone_may_post_eq: bool | list[bool] | None = None,
+        filter_preferred_labels_eq: str | list[str] | None = None,
+        filter_delivery_report_eq: bool | list[bool] | None = None,
+        filter_main_email_eq: str | list[str] | None = None,
+        filter_main_email_not_eq: str | list[str] | None = None,
+        filter_main_email_eql: str | list[str] | None = None,
+        filter_main_email_not_eql: str | list[str] | None = None,
+        filter_main_email_prefix: str | list[str] | None = None,
+        filter_main_email_not_prefix: str | list[str] | None = None,
+        filter_main_email_suffix: str | list[str] | None = None,
+        filter_main_email_not_suffix: str | list[str] | None = None,
+        filter_main_email_match: str | list[str] | None = None,
+        filter_main_email_not_match: str | list[str] | None = None,
+        filter_subscribable_eq: bool | list[bool] | None = None,
+    ) -> list[MailingList]:
+
+        if include is None:
+            include = []
+        if include == "*":
+            include = []
+
+        filters = [
+            ("name", "eq", filter_name_eq),
+            ("name", "not_eq", filter_name_not_eq),
+            ("name", "eql", filter_name_eql),
+            ("name", "not_eql", filter_name_not_eql),
+            ("name", "prefix", filter_name_prefix),
+            ("name", "not_prefix", filter_name_not_prefix),
+            ("name", "suffix", filter_name_suffix),
+            ("name", "not_suffix", filter_name_not_suffix),
+            ("name", "match", filter_name_match),
+            ("name", "not_match", filter_name_not_match),
+            ("group_id", "eq", filter_group_id_eq),
+            ("group_id", "not_eq", filter_group_id_not_eq),
+            ("group_id", "gt", filter_group_id_gt),
+            ("group_id", "gte", filter_group_id_gte),
+            ("group_id", "lt", filter_group_id_lt),
+            ("group_id", "lte", filter_group_id_lte),
+            ("description", "eq", filter_description_eq),
+            ("description", "not_eq", filter_description_not_eq),
+            ("description", "eql", filter_description_eql),
+            ("description", "not_eql", filter_description_not_eql),
+            ("description", "prefix", filter_description_prefix),
+            ("description", "not_prefix", filter_description_not_prefix),
+            ("description", "suffix", filter_description_suffix),
+            ("description", "not_suffix", filter_description_not_suffix),
+            ("description", "match", filter_description_match),
+            ("description", "not_match", filter_description_not_match),
+            ("publisher", "eq", filter_publisher_eq),
+            ("publisher", "not_eq", filter_publisher_not_eq),
+            ("publisher", "eql", filter_publisher_eql),
+            ("publisher", "not_eql", filter_publisher_not_eql),
+            ("publisher", "prefix", filter_publisher_prefix),
+            ("publisher", "not_prefix", filter_publisher_not_prefix),
+            ("publisher", "suffix", filter_publisher_suffix),
+            ("publisher", "not_suffix", filter_publisher_not_suffix),
+            ("publisher", "match", filter_publisher_match),
+            ("publisher", "not_match", filter_publisher_not_match),
+            ("mail_name", "eq", filter_mail_name_eq),
+            ("mail_name", "not_eq", filter_mail_name_not_eq),
+            ("mail_name", "eql", filter_mail_name_eql),
+            ("mail_name", "not_eql", filter_mail_name_not_eql),
+            ("mail_name", "prefix", filter_mail_name_prefix),
+            ("mail_name", "not_prefix", filter_mail_name_not_prefix),
+            ("mail_name", "suffix", filter_mail_name_suffix),
+            ("mail_name", "not_suffix", filter_mail_name_not_suffix),
+            ("mail_name", "match", filter_mail_name_match),
+            ("mail_name", "not_match", filter_mail_name_not_match),
+            ("additional_sender", "eq", filter_additional_sender_eq),
+            ("additional_sender", "not_eq", filter_additional_sender_not_eq),
+            ("additional_sender", "eql", filter_additional_sender_eql),
+            ("additional_sender", "not_eql", filter_additional_sender_not_eql),
+            ("additional_sender", "prefix", filter_additional_sender_prefix),
+            ("additional_sender", "not_prefix", filter_additional_sender_not_prefix),
+            ("additional_sender", "suffix", filter_additional_sender_suffix),
+            ("additional_sender", "not_suffix", filter_additional_sender_not_suffix),
+            ("additional_sender", "match", filter_additional_sender_match),
+            ("additional_sender", "not_match", filter_additional_sender_not_match),
+            ("subscribable_for", "eq", filter_subscribable_for_eq),
+            ("subscribable_for", "not_eq", filter_subscribable_for_not_eq),
+            ("subscribable_for", "eql", filter_subscribable_for_eql),
+            ("subscribable_for", "not_eql", filter_subscribable_for_not_eql),
+            ("subscribable_for", "prefix", filter_subscribable_for_prefix),
+            ("subscribable_for", "not_prefix", filter_subscribable_for_not_prefix),
+            ("subscribable_for", "suffix", filter_subscribable_for_suffix),
+            ("subscribable_for", "not_suffix", filter_subscribable_for_not_suffix),
+            ("subscribable_for", "match", filter_subscribable_for_match),
+            ("subscribable_for", "not_match", filter_subscribable_for_not_match),
+            ("subscribable_mode", "eq", filter_subscribable_mode_eq),
+            ("subscribable_mode", "not_eq", filter_subscribable_mode_not_eq),
+            ("subscribable_mode", "eql", filter_subscribable_mode_eql),
+            ("subscribable_mode", "not_eql", filter_subscribable_mode_not_eql),
+            ("subscribable_mode", "prefix", filter_subscribable_mode_prefix),
+            ("subscribable_mode", "not_prefix", filter_subscribable_mode_not_prefix),
+            ("subscribable_mode", "suffix", filter_subscribable_mode_suffix),
+            ("subscribable_mode", "not_suffix", filter_subscribable_mode_not_suffix),
+            ("subscribable_mode", "match", filter_subscribable_mode_match),
+            ("subscribable_mode", "not_match", filter_subscribable_mode_not_match),
+            ("subscribers_may_post", "eq", filter_subscribers_may_post_eq),
+            ("anyone_may_post", "eq", filter_anyone_may_post_eq),
+            ("preferred_labels", "eq", filter_preferred_labels_eq),
+            ("delivery_report", "eq", filter_delivery_report_eq),
+            ("main_email", "eq", filter_main_email_eq),
+            ("main_email", "not_eq", filter_main_email_not_eq),
+            ("main_email", "eql", filter_main_email_eql),
+            ("main_email", "not_eql", filter_main_email_not_eql),
+            ("main_email", "prefix", filter_main_email_prefix),
+            ("main_email", "not_prefix", filter_main_email_not_prefix),
+            ("main_email", "suffix", filter_main_email_suffix),
+            ("main_email", "not_suffix", filter_main_email_not_suffix),
+            ("main_email", "match", filter_main_email_match),
+            ("main_email", "not_match", filter_main_email_not_match),
+            ("subscribable", "eq", filter_subscribable_eq),
+        ]
+        filters = [f for f in filters if f[2] is not None]
+        json_response = self._request_list("mailing_list", sort, include, filters)
+
+        response_entities = []
+        for data_obj in json_response["data"]:
+            re = MailingList.from_json(data_obj)
+            self._cache_add(re)
+            response_entities.append(re)
+
+        return response_entities
+
+    def get_mailing_list(
+        self,
+        id_or_key: int | MailingListKey,
+        include: list[_MailingList_Include] | typing.Literal["*"] | None = None,
+    ) -> MailingList:
+        if isinstance(id_or_key, int):
+            id_ = id_or_key
+            entity_key = MailingListKey(id_)
+        else:
+            id_ = id_or_key.id
+            entity_key = id_or_key
+
+        all_includes = []
+        if include is None:
+            include = []
+        if include == "*":
+            include = all_includes
+
+        cached_entity = self._cache_get(entity_key)
+        if cached_entity is not None:
+
+            cached_relations = [
+                rel for rel in all_includes if cached_entity.is_relation_loaded(rel)
+            ]
+            if all(rel in cached_relations for rel in include):
+                return cached_entity
+            else:
+                include.extend(cached_relations)
+
+        json_response = self._request_single_get(
+            "mailing_list",
+            id_,
+            include,
+        )
+        response_entity = MailingList.from_json(json_response["data"])
+        if response_entity.key != entity_key:
+            raise ValueError("Entity key mismatch")
+        self._cache_add(response_entity)
+
+        return response_entity
 
     def get_person_name(
         self,
@@ -1863,6 +2160,23 @@ class Client(base_client.BaseClient):
                 self._cache_add(Group.from_json(incl_data))
             elif incl_data["type"] == "groups":
                 self._cache_add(Group.from_json(incl_data))
+
+    def get_self_registration(
+        self,
+        id_or_key: int | SelfRegistrationKey,
+    ) -> SelfRegistration:
+        if isinstance(id_or_key, int):
+            id_ = id_or_key
+            entity_key = SelfRegistrationKey(id_)
+        else:
+            id_ = id_or_key.id
+            entity_key = id_or_key
+        cached_entity = self._cache_get(entity_key)
+        if cached_entity is not None:
+            return cached_entity
+        raise ValueError(
+            f"no object known for {entity_key}. Entities of type self_registration can only be retrieved by including them while requesting other entities."
+        )
 
     def get_social_account(
         self,

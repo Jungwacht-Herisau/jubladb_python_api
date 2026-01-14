@@ -27,5 +27,6 @@ jobs:
           pip install -r requirements.txt
           pip install -r test-requirements.txt
       - name: Test with pytest
-        run: |
-          pytest --cov=jubladb_api
+        run: PYTHONPATH=src python -m unittest discover test/
+        env:
+          JUBLADB_API_KEY: ${{ secrets.JUBLADB_API_KEY }}

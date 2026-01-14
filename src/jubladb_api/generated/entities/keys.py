@@ -92,6 +92,15 @@ class InvoiceKey(jubladb_api.core.base_entity.BaseEntityKey):
         return "invoice"
 
 
+class MailingListKey(jubladb_api.core.base_entity.BaseEntityKey):
+    def __init__(self, id_: int):
+        super().__init__(id_)
+
+    @property
+    def type(self) -> str:
+        return "mailing_list"
+
+
 class PersonNameKey(jubladb_api.core.base_entity.BaseEntityKey):
     def __init__(self, id_: int):
         super().__init__(id_)
@@ -126,6 +135,15 @@ class RoleKey(jubladb_api.core.base_entity.BaseEntityKey):
     @property
     def type(self) -> str:
         return "role"
+
+
+class SelfRegistrationKey(jubladb_api.core.base_entity.BaseEntityKey):
+    def __init__(self, id_: int):
+        super().__init__(id_)
+
+    @property
+    def type(self) -> str:
+        return "self_registration"
 
 
 class SocialAccountKey(jubladb_api.core.base_entity.BaseEntityKey):
