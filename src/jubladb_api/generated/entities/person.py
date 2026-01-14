@@ -16,7 +16,7 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
         id_: int,
         first_name: str,
         last_name: str,
-        nickname: str,
+        nickname: str | None,
         company_name: str | None,
         company: bool,
         email: str,
@@ -86,7 +86,7 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
         return self._last_name
 
     @property
-    def nickname(self) -> str:
+    def nickname(self) -> str | None:
         return self._nickname
 
     @property
@@ -262,6 +262,7 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
                 json_data,
                 "nickname",
                 jubladb_api.core.metamodel_classes.AttributeType.STRING,
+                optional=True,
             ),
             company_name=cls._access_data_attribute(
                 json_data,

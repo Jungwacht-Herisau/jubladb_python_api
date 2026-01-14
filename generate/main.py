@@ -129,6 +129,7 @@ OPTIONAL_ATTRIBUTES: set[tuple[str, str]] = {
     ("person", "address_care_of"),
     ("person", "postbox"),
     ("person", "additional_information"),
+    ("person", "nickname"),
     # this info isn't documented anywhere, so there are probably more
 }
 

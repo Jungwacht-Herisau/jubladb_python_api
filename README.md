@@ -27,7 +27,8 @@ pip install git+https://github.com/Jungwacht-Herisau/jubladb_python_api.git
 import jubladb_api.client
 import jubladb_api.metamodel
 
-client = jubladb_api.client.create(url=jubladb_api.metamodel.API_INFO.default_server_url, api_key="xyz")
+client = jubladb_api.client.create(url=jubladb_api.metamodel.API_INFO.default_server_url,
+                                   api_key="xyz")
 
 person = client.get_person(1234, include=["roles"])
 print(f"Roles of {person.first_name} {person.last_name}:")
