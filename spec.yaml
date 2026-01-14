@@ -3,9 +3,9 @@ info:
   title: Hitobito JSON:API
   version: v1
   contact:
-    email: oss@basilbader.com
-    name: Basil Bader
-    url: https://github.com/Jungwacht-Herisau/jubladb_python_api
+    email: info@hitobito.com
+    name: Hitobito AG
+    url: https://hitobito.com/
 components:
   securitySchemes:
     ServiceTokenAuthHeader:
@@ -67,6 +67,38 @@ components:
         application/vnd.api+json:
           schema:
             "$ref": "#/components/schemas/jsonapi_failure"
+    additional_addresses_200:
+      description: 'OK: Additional address resource'
+      content:
+        application/vnd.api+json:
+          schema:
+            "$ref": "#/components/schemas/additional_addresses_single"
+      links:
+        getAdditionalAddressId:
+          "$ref": "#/components/links/getAdditionalAddressId"
+        updateAdditionalAddressId:
+          "$ref": "#/components/links/updateAdditionalAddressId"
+        deleteAdditionalAddressId:
+          "$ref": "#/components/links/deleteAdditionalAddressId"
+    additional_addresses_200_collection:
+      description: 'OK: Additional addresses collection'
+      content:
+        application/vnd.api+json:
+          schema:
+            "$ref": "#/components/schemas/additional_addresses_collection"
+    additional_addresses_201:
+      description: Created
+      content:
+        application/vnd.api+json:
+          schema:
+            "$ref": "#/components/schemas/additional_addresses_single"
+      links:
+        getAdditionalAddressId:
+          "$ref": "#/components/links/getAdditionalAddressId"
+        updateAdditionalAddressId:
+          "$ref": "#/components/links/updateAdditionalAddressId"
+        deleteAdditionalAddressId:
+          "$ref": "#/components/links/deleteAdditionalAddressId"
     additional_emails_200:
       description: 'OK: Additional email resource'
       content:
@@ -519,6 +551,7 @@ components:
     types:
       type: string
       enum:
+      - additional_addresses
       - additional_emails
       - courses
       - dates
@@ -533,6 +566,159 @@ components:
       - phone_numbers
       - roles
       - social_accounts
+    additional_addresses:
+      type: object
+      description: Additional address attributes
+      properties:
+        label:
+          type: string
+        public:
+          type: boolean
+        contactable_id:
+          type: integer
+        contactable_type:
+          type: string
+        address_care_of:
+          type: string
+        street:
+          type: string
+        housenumber:
+          type: string
+        postbox:
+          type: string
+        zip_code:
+          type: string
+        town:
+          type: string
+        country:
+          type: string
+      additionalProperties: false
+    additional_addresses_relationships:
+      "$ref": "#/components/schemas/jsonapi_relationships"
+    additional_addresses_resource:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '83'
+        type:
+          type: string
+          enum:
+          - additional_addresses
+        attributes:
+          "$ref": "#/components/schemas/additional_addresses"
+        relationships:
+          "$ref": "#/components/schemas/additional_addresses_relationships"
+        links:
+          "$ref": "#/components/schemas/jsonapi_links"
+      additionalProperties: false
+    additional_addresses_single:
+      type: object
+      properties:
+        data:
+          "$ref": "#/components/schemas/additional_addresses_resource"
+        included:
+          description: To reduce the number of HTTP requests, servers **MAY** allow
+            responses that include related resources along with the requested primary
+            resources. Such responses are called "compound documents".
+          type: array
+          items:
+            "$ref": "#/components/schemas/jsonapi_resource"
+          uniqueItems: true
+        meta:
+          "$ref": "#/components/schemas/jsonapi_meta"
+        links:
+          description: Link members related to the primary data.
+          allOf:
+          - "$ref": "#/components/schemas/jsonapi_links"
+          - "$ref": "#/components/schemas/jsonapi_pagination"
+        jsonapi:
+          "$ref": "#/components/schemas/jsonapi_jsonapi"
+      additionalProperties: false
+    additional_addresses_collection:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            "$ref": "#/components/schemas/additional_addresses_resource"
+        included:
+          description: To reduce the number of HTTP requests, servers **MAY** allow
+            responses that include related resources along with the requested primary
+            resources. Such responses are called "compound documents".
+          type: array
+          items:
+            "$ref": "#/components/schemas/jsonapi_resource"
+          uniqueItems: true
+        meta:
+          "$ref": "#/components/schemas/jsonapi_meta"
+        links:
+          description: Link members related to the primary data.
+          allOf:
+          - "$ref": "#/components/schemas/jsonapi_links"
+          - "$ref": "#/components/schemas/jsonapi_pagination"
+        jsonapi:
+          "$ref": "#/components/schemas/jsonapi_jsonapi"
+      additionalProperties: false
+    additional_addresses_request:
+      type: object
+      properties:
+        data:
+          "$ref": "#/components/schemas/additional_addresses_resource"
+    additional_addresses_readable_attribute:
+      description: Additional address readable attributes
+      type: string
+      enum:
+      - id
+      - label
+      - public
+      - contactable_id
+      - contactable_type
+      - address_care_of
+      - street
+      - housenumber
+      - postbox
+      - zip_code
+      - town
+      - country
+    additional_addresses_sortable_attributes_list:
+      description: Additional address sortable attributes
+      type: array
+      items:
+        type: string
+        enum:
+        - id
+        - "-id"
+        - label
+        - "-label"
+        - public
+        - "-public"
+        - contactable_id
+        - "-contactable_id"
+        - contactable_type
+        - "-contactable_type"
+        - address_care_of
+        - "-address_care_of"
+        - street
+        - "-street"
+        - housenumber
+        - "-housenumber"
+        - postbox
+        - "-postbox"
+        - zip_code
+        - "-zip_code"
+        - town
+        - "-town"
+        - country
+        - "-country"
+      uniqueItems: true
+    additional_addresses_related:
+      description: Additional address relationships available for inclusion
+      type: array
+      items:
+        type: string
+      uniqueItems: true
+      nullable: true
     additional_emails:
       type: object
       description: Additional email attributes
@@ -555,7 +741,7 @@ components:
       properties:
         id:
           type: string
-          example: '46'
+          example: '96'
         type:
           type: string
           enum:
@@ -780,7 +966,7 @@ components:
       properties:
         id:
           type: string
-          example: '77'
+          example: '23'
         type:
           type: string
           enum:
@@ -933,7 +1119,7 @@ components:
       properties:
         id:
           type: string
-          example: '46'
+          example: '42'
         type:
           type: string
           enum:
@@ -1043,7 +1229,7 @@ components:
       properties:
         id:
           type: string
-          example: '33'
+          example: '29'
         type:
           type: string
           enum:
@@ -1177,7 +1363,7 @@ components:
       properties:
         id:
           type: string
-          example: '44'
+          example: '56'
         type:
           type: string
           enum:
@@ -1364,7 +1550,7 @@ components:
       properties:
         id:
           type: string
-          example: '5'
+          example: '55'
         type:
           type: string
           enum:
@@ -1631,7 +1817,7 @@ components:
       properties:
         id:
           type: string
-          example: '45'
+          example: '54'
         type:
           type: string
           enum:
@@ -1831,7 +2017,7 @@ components:
       properties:
         id:
           type: string
-          example: '52'
+          example: '77'
         type:
           type: string
           enum:
@@ -1992,7 +2178,7 @@ components:
       properties:
         id:
           type: string
-          example: '44'
+          example: '74'
         type:
           type: string
           enum:
@@ -2110,7 +2296,7 @@ components:
       properties:
         id:
           type: string
-          example: '87'
+          example: '13'
         type:
           type: string
           enum:
@@ -2216,6 +2402,15 @@ components:
           type: string
         address:
           type: string
+          readOnly: true
+        address_care_of:
+          type: string
+        street:
+          type: string
+        housenumber:
+          type: string
+        postbox:
+          type: string
         zip_code:
           type: string
         town:
@@ -2230,6 +2425,13 @@ components:
         birthday:
           type: string
           format: date
+        picture:
+          type: string
+        updated_at:
+          type: string
+          format: date-time
+        additional_information:
+          type: string
         language:
           type: string
       additionalProperties: false
@@ -2296,7 +2498,7 @@ components:
       properties:
         id:
           type: string
-          example: '33'
+          example: '75'
         type:
           type: string
           enum:
@@ -2373,12 +2575,19 @@ components:
       - company
       - email
       - address
+      - address_care_of
+      - street
+      - housenumber
+      - postbox
       - zip_code
       - town
       - country
       - primary_group_id
       - gender
       - birthday
+      - picture
+      - updated_at
+      - additional_information
       - language
     people_sortable_attributes_list:
       description: Person sortable attributes
@@ -2402,6 +2611,14 @@ components:
         - "-email"
         - address
         - "-address"
+        - address_care_of
+        - "-address_care_of"
+        - street
+        - "-street"
+        - housenumber
+        - "-housenumber"
+        - postbox
+        - "-postbox"
         - zip_code
         - "-zip_code"
         - town
@@ -2414,6 +2631,12 @@ components:
         - "-gender"
         - birthday
         - "-birthday"
+        - picture
+        - "-picture"
+        - updated_at
+        - "-updated_at"
+        - additional_information
+        - "-additional_information"
         - language
         - "-language"
       uniqueItems: true
@@ -2452,7 +2675,7 @@ components:
       properties:
         id:
           type: string
-          example: '70'
+          example: '55'
         type:
           type: string
           enum:
@@ -2573,6 +2796,9 @@ components:
           type: string
           format: date
           readOnly: true
+        name:
+          type: string
+          readOnly: true
         person_id:
           type: integer
         group_id:
@@ -2618,7 +2844,7 @@ components:
       properties:
         id:
           type: string
-          example: '10'
+          example: '87'
         type:
           type: string
           enum:
@@ -2692,6 +2918,7 @@ components:
       - updated_at
       - start_on
       - end_on
+      - name
       - person_id
       - group_id
       - type
@@ -2712,6 +2939,8 @@ components:
         - "-start_on"
         - end_on
         - "-end_on"
+        - name
+        - "-name"
         - person_id
         - "-person_id"
         - group_id
@@ -2753,7 +2982,7 @@ components:
       properties:
         id:
           type: string
-          example: '83'
+          example: '16'
         type:
           type: string
           enum:
@@ -2925,6 +3154,7 @@ components:
     jsonapi_resource:
       type: object
       oneOf:
+      - "$ref": "#/components/schemas/additional_addresses_resource"
       - "$ref": "#/components/schemas/additional_emails_resource"
       - "$ref": "#/components/schemas/courses_resource"
       - "$ref": "#/components/schemas/dates_resource"
@@ -2989,7 +3219,7 @@ components:
           "$ref": "#/components/schemas/jsonapi_meta"
         id:
           type: string
-          example: '12'
+          example: '21'
       additionalProperties: false
     jsonapi_pagination:
       type: object
@@ -3086,6 +3316,966 @@ components:
             "$ref": "#/components/schemas/jsonapi_link"
         additionalProperties: true
   parameters:
+    additional_addresses_id:
+      in: path
+      required: true
+      schema:
+        type: string
+      name: id
+      description: ID of the resource
+    additional_addresses_fields:
+      in: query
+      schema:
+        description: Additional address readable attributes list
+        type: array
+        items:
+          "$ref": "#/components/schemas/additional_addresses_readable_attribute"
+        uniqueItems: true
+      explode: false
+      name: fields[additional_addresses]
+      description: "[Include only specified fields of Additional address in response](https://jsonapi.org/format/#fetching-sparse-fieldsets)"
+    additional_addresses_sort:
+      in: query
+      schema:
+        "$ref": "#/components/schemas/additional_addresses_sortable_attributes_list"
+      explode: false
+      name: sort
+      description: |+
+        [Sort additional_addresses according to one or more criteria](https://jsonapi.org/format/#fetching-sorting)
+
+        You should not include both ascending `id` and descending `-id` fields the same time
+
+    additional_addresses_filter_id_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: integer
+      explode: false
+      name: filter[id][eq]
+      description: "[Filter Additional address by id using eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_id_not_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: integer
+      explode: false
+      name: filter[id][not_eq]
+      description: "[Filter Additional address by id using not_eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_id_gt:
+      in: query
+      schema:
+        type: array
+        items:
+          type: integer
+      explode: false
+      name: filter[id][gt]
+      description: "[Filter Additional address by id using gt operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_id_gte:
+      in: query
+      schema:
+        type: array
+        items:
+          type: integer
+      explode: false
+      name: filter[id][gte]
+      description: "[Filter Additional address by id using gte operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_id_lt:
+      in: query
+      schema:
+        type: array
+        items:
+          type: integer
+      explode: false
+      name: filter[id][lt]
+      description: "[Filter Additional address by id using lt operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_id_lte:
+      in: query
+      schema:
+        type: array
+        items:
+          type: integer
+      explode: false
+      name: filter[id][lte]
+      description: "[Filter Additional address by id using lte operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_label_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[label][eq]
+      description: "[Filter Additional address by label using eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_label_not_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[label][not_eq]
+      description: "[Filter Additional address by label using not_eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_label_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[label][eql]
+      description: "[Filter Additional address by label using eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_label_not_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[label][not_eql]
+      description: "[Filter Additional address by label using not_eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_label_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[label][prefix]
+      description: "[Filter Additional address by label using prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_label_not_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[label][not_prefix]
+      description: "[Filter Additional address by label using not_prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_label_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[label][suffix]
+      description: "[Filter Additional address by label using suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_label_not_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[label][not_suffix]
+      description: "[Filter Additional address by label using not_suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_label_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[label][match]
+      description: "[Filter Additional address by label using match operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_label_not_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[label][not_match]
+      description: "[Filter Additional address by label using not_match operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_public_eq:
+      in: query
+      schema:
+        type: boolean
+      explode: false
+      name: filter[public][eq]
+      description: "[Filter Additional address by public using eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_contactable_id_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: integer
+      explode: false
+      name: filter[contactable_id][eq]
+      description: "[Filter Additional address by contactable_id using eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_contactable_id_not_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: integer
+      explode: false
+      name: filter[contactable_id][not_eq]
+      description: "[Filter Additional address by contactable_id using not_eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_contactable_id_gt:
+      in: query
+      schema:
+        type: array
+        items:
+          type: integer
+      explode: false
+      name: filter[contactable_id][gt]
+      description: "[Filter Additional address by contactable_id using gt operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_contactable_id_gte:
+      in: query
+      schema:
+        type: array
+        items:
+          type: integer
+      explode: false
+      name: filter[contactable_id][gte]
+      description: "[Filter Additional address by contactable_id using gte operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_contactable_id_lt:
+      in: query
+      schema:
+        type: array
+        items:
+          type: integer
+      explode: false
+      name: filter[contactable_id][lt]
+      description: "[Filter Additional address by contactable_id using lt operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_contactable_id_lte:
+      in: query
+      schema:
+        type: array
+        items:
+          type: integer
+      explode: false
+      name: filter[contactable_id][lte]
+      description: "[Filter Additional address by contactable_id using lte operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_contactable_type_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[contactable_type][eq]
+      description: "[Filter Additional address by contactable_type using eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_contactable_type_not_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[contactable_type][not_eq]
+      description: "[Filter Additional address by contactable_type using not_eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_contactable_type_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[contactable_type][eql]
+      description: "[Filter Additional address by contactable_type using eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_contactable_type_not_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[contactable_type][not_eql]
+      description: "[Filter Additional address by contactable_type using not_eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_contactable_type_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[contactable_type][prefix]
+      description: "[Filter Additional address by contactable_type using prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_contactable_type_not_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[contactable_type][not_prefix]
+      description: "[Filter Additional address by contactable_type using not_prefix
+        operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_contactable_type_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[contactable_type][suffix]
+      description: "[Filter Additional address by contactable_type using suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_contactable_type_not_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[contactable_type][not_suffix]
+      description: "[Filter Additional address by contactable_type using not_suffix
+        operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_contactable_type_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[contactable_type][match]
+      description: "[Filter Additional address by contactable_type using match operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_contactable_type_not_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[contactable_type][not_match]
+      description: "[Filter Additional address by contactable_type using not_match
+        operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_address_care_of_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[address_care_of][eq]
+      description: "[Filter Additional address by address_care_of using eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_address_care_of_not_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[address_care_of][not_eq]
+      description: "[Filter Additional address by address_care_of using not_eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_address_care_of_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[address_care_of][eql]
+      description: "[Filter Additional address by address_care_of using eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_address_care_of_not_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[address_care_of][not_eql]
+      description: "[Filter Additional address by address_care_of using not_eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_address_care_of_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[address_care_of][prefix]
+      description: "[Filter Additional address by address_care_of using prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_address_care_of_not_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[address_care_of][not_prefix]
+      description: "[Filter Additional address by address_care_of using not_prefix
+        operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_address_care_of_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[address_care_of][suffix]
+      description: "[Filter Additional address by address_care_of using suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_address_care_of_not_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[address_care_of][not_suffix]
+      description: "[Filter Additional address by address_care_of using not_suffix
+        operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_address_care_of_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[address_care_of][match]
+      description: "[Filter Additional address by address_care_of using match operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_address_care_of_not_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[address_care_of][not_match]
+      description: "[Filter Additional address by address_care_of using not_match
+        operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_street_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[street][eq]
+      description: "[Filter Additional address by street using eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_street_not_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[street][not_eq]
+      description: "[Filter Additional address by street using not_eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_street_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[street][eql]
+      description: "[Filter Additional address by street using eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_street_not_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[street][not_eql]
+      description: "[Filter Additional address by street using not_eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_street_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[street][prefix]
+      description: "[Filter Additional address by street using prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_street_not_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[street][not_prefix]
+      description: "[Filter Additional address by street using not_prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_street_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[street][suffix]
+      description: "[Filter Additional address by street using suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_street_not_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[street][not_suffix]
+      description: "[Filter Additional address by street using not_suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_street_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[street][match]
+      description: "[Filter Additional address by street using match operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_street_not_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[street][not_match]
+      description: "[Filter Additional address by street using not_match operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_housenumber_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[housenumber][eq]
+      description: "[Filter Additional address by housenumber using eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_housenumber_not_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[housenumber][not_eq]
+      description: "[Filter Additional address by housenumber using not_eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_housenumber_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[housenumber][eql]
+      description: "[Filter Additional address by housenumber using eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_housenumber_not_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[housenumber][not_eql]
+      description: "[Filter Additional address by housenumber using not_eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_housenumber_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[housenumber][prefix]
+      description: "[Filter Additional address by housenumber using prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_housenumber_not_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[housenumber][not_prefix]
+      description: "[Filter Additional address by housenumber using not_prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_housenumber_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[housenumber][suffix]
+      description: "[Filter Additional address by housenumber using suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_housenumber_not_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[housenumber][not_suffix]
+      description: "[Filter Additional address by housenumber using not_suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_housenumber_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[housenumber][match]
+      description: "[Filter Additional address by housenumber using match operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_housenumber_not_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[housenumber][not_match]
+      description: "[Filter Additional address by housenumber using not_match operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_postbox_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[postbox][eq]
+      description: "[Filter Additional address by postbox using eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_postbox_not_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[postbox][not_eq]
+      description: "[Filter Additional address by postbox using not_eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_postbox_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[postbox][eql]
+      description: "[Filter Additional address by postbox using eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_postbox_not_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[postbox][not_eql]
+      description: "[Filter Additional address by postbox using not_eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_postbox_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[postbox][prefix]
+      description: "[Filter Additional address by postbox using prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_postbox_not_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[postbox][not_prefix]
+      description: "[Filter Additional address by postbox using not_prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_postbox_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[postbox][suffix]
+      description: "[Filter Additional address by postbox using suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_postbox_not_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[postbox][not_suffix]
+      description: "[Filter Additional address by postbox using not_suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_postbox_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[postbox][match]
+      description: "[Filter Additional address by postbox using match operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_postbox_not_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[postbox][not_match]
+      description: "[Filter Additional address by postbox using not_match operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_zip_code_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[zip_code][eq]
+      description: "[Filter Additional address by zip_code using eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_zip_code_not_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[zip_code][not_eq]
+      description: "[Filter Additional address by zip_code using not_eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_zip_code_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[zip_code][eql]
+      description: "[Filter Additional address by zip_code using eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_zip_code_not_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[zip_code][not_eql]
+      description: "[Filter Additional address by zip_code using not_eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_zip_code_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[zip_code][prefix]
+      description: "[Filter Additional address by zip_code using prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_zip_code_not_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[zip_code][not_prefix]
+      description: "[Filter Additional address by zip_code using not_prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_zip_code_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[zip_code][suffix]
+      description: "[Filter Additional address by zip_code using suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_zip_code_not_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[zip_code][not_suffix]
+      description: "[Filter Additional address by zip_code using not_suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_zip_code_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[zip_code][match]
+      description: "[Filter Additional address by zip_code using match operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_zip_code_not_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[zip_code][not_match]
+      description: "[Filter Additional address by zip_code using not_match operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_town_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[town][eq]
+      description: "[Filter Additional address by town using eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_town_not_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[town][not_eq]
+      description: "[Filter Additional address by town using not_eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_town_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[town][eql]
+      description: "[Filter Additional address by town using eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_town_not_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[town][not_eql]
+      description: "[Filter Additional address by town using not_eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_town_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[town][prefix]
+      description: "[Filter Additional address by town using prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_town_not_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[town][not_prefix]
+      description: "[Filter Additional address by town using not_prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_town_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[town][suffix]
+      description: "[Filter Additional address by town using suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_town_not_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[town][not_suffix]
+      description: "[Filter Additional address by town using not_suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_town_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[town][match]
+      description: "[Filter Additional address by town using match operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_town_not_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[town][not_match]
+      description: "[Filter Additional address by town using not_match operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_country_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[country][eq]
+      description: "[Filter Additional address by country using eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_country_not_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[country][not_eq]
+      description: "[Filter Additional address by country using not_eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_country_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[country][eql]
+      description: "[Filter Additional address by country using eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_country_not_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[country][not_eql]
+      description: "[Filter Additional address by country using not_eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_country_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[country][prefix]
+      description: "[Filter Additional address by country using prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_country_not_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[country][not_prefix]
+      description: "[Filter Additional address by country using not_prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_country_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[country][suffix]
+      description: "[Filter Additional address by country using suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_country_not_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[country][not_suffix]
+      description: "[Filter Additional address by country using not_suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_country_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[country][match]
+      description: "[Filter Additional address by country using match operator](https://jsonapi.org/format/#fetching-filtering)"
+    additional_addresses_filter_country_not_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[country][not_match]
+      description: "[Filter Additional address by country using not_match operator](https://jsonapi.org/format/#fetching-filtering)"
     additional_emails_id:
       in: path
       required: true
@@ -7013,6 +8203,366 @@ components:
       explode: false
       name: filter[address][not_match]
       description: "[Filter Person by address using not_match operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_address_care_of_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[address_care_of][eq]
+      description: "[Filter Person by address_care_of using eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_address_care_of_not_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[address_care_of][not_eq]
+      description: "[Filter Person by address_care_of using not_eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_address_care_of_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[address_care_of][eql]
+      description: "[Filter Person by address_care_of using eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_address_care_of_not_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[address_care_of][not_eql]
+      description: "[Filter Person by address_care_of using not_eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_address_care_of_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[address_care_of][prefix]
+      description: "[Filter Person by address_care_of using prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_address_care_of_not_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[address_care_of][not_prefix]
+      description: "[Filter Person by address_care_of using not_prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_address_care_of_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[address_care_of][suffix]
+      description: "[Filter Person by address_care_of using suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_address_care_of_not_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[address_care_of][not_suffix]
+      description: "[Filter Person by address_care_of using not_suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_address_care_of_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[address_care_of][match]
+      description: "[Filter Person by address_care_of using match operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_address_care_of_not_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[address_care_of][not_match]
+      description: "[Filter Person by address_care_of using not_match operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_street_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[street][eq]
+      description: "[Filter Person by street using eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_street_not_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[street][not_eq]
+      description: "[Filter Person by street using not_eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_street_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[street][eql]
+      description: "[Filter Person by street using eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_street_not_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[street][not_eql]
+      description: "[Filter Person by street using not_eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_street_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[street][prefix]
+      description: "[Filter Person by street using prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_street_not_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[street][not_prefix]
+      description: "[Filter Person by street using not_prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_street_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[street][suffix]
+      description: "[Filter Person by street using suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_street_not_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[street][not_suffix]
+      description: "[Filter Person by street using not_suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_street_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[street][match]
+      description: "[Filter Person by street using match operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_street_not_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[street][not_match]
+      description: "[Filter Person by street using not_match operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_housenumber_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[housenumber][eq]
+      description: "[Filter Person by housenumber using eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_housenumber_not_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[housenumber][not_eq]
+      description: "[Filter Person by housenumber using not_eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_housenumber_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[housenumber][eql]
+      description: "[Filter Person by housenumber using eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_housenumber_not_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[housenumber][not_eql]
+      description: "[Filter Person by housenumber using not_eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_housenumber_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[housenumber][prefix]
+      description: "[Filter Person by housenumber using prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_housenumber_not_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[housenumber][not_prefix]
+      description: "[Filter Person by housenumber using not_prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_housenumber_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[housenumber][suffix]
+      description: "[Filter Person by housenumber using suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_housenumber_not_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[housenumber][not_suffix]
+      description: "[Filter Person by housenumber using not_suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_housenumber_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[housenumber][match]
+      description: "[Filter Person by housenumber using match operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_housenumber_not_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[housenumber][not_match]
+      description: "[Filter Person by housenumber using not_match operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_postbox_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[postbox][eq]
+      description: "[Filter Person by postbox using eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_postbox_not_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[postbox][not_eq]
+      description: "[Filter Person by postbox using not_eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_postbox_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[postbox][eql]
+      description: "[Filter Person by postbox using eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_postbox_not_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[postbox][not_eql]
+      description: "[Filter Person by postbox using not_eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_postbox_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[postbox][prefix]
+      description: "[Filter Person by postbox using prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_postbox_not_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[postbox][not_prefix]
+      description: "[Filter Person by postbox using not_prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_postbox_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[postbox][suffix]
+      description: "[Filter Person by postbox using suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_postbox_not_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[postbox][not_suffix]
+      description: "[Filter Person by postbox using not_suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_postbox_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[postbox][match]
+      description: "[Filter Person by postbox using match operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_postbox_not_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[postbox][not_match]
+      description: "[Filter Person by postbox using not_match operator](https://jsonapi.org/format/#fetching-filtering)"
     people_filter_zip_code_eq:
       in: query
       schema:
@@ -7487,6 +9037,246 @@ components:
       explode: false
       name: filter[birthday][lte]
       description: "[Filter Person by birthday using lte operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_picture_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[picture][eq]
+      description: "[Filter Person by picture using eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_picture_not_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[picture][not_eq]
+      description: "[Filter Person by picture using not_eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_picture_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[picture][eql]
+      description: "[Filter Person by picture using eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_picture_not_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[picture][not_eql]
+      description: "[Filter Person by picture using not_eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_picture_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[picture][prefix]
+      description: "[Filter Person by picture using prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_picture_not_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[picture][not_prefix]
+      description: "[Filter Person by picture using not_prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_picture_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[picture][suffix]
+      description: "[Filter Person by picture using suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_picture_not_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[picture][not_suffix]
+      description: "[Filter Person by picture using not_suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_picture_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[picture][match]
+      description: "[Filter Person by picture using match operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_picture_not_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[picture][not_match]
+      description: "[Filter Person by picture using not_match operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_updated_at_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+          format: date-time
+      explode: false
+      name: filter[updated_at][eq]
+      description: "[Filter Person by updated_at using eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_updated_at_not_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+          format: date-time
+      explode: false
+      name: filter[updated_at][not_eq]
+      description: "[Filter Person by updated_at using not_eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_updated_at_gt:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+          format: date-time
+      explode: false
+      name: filter[updated_at][gt]
+      description: "[Filter Person by updated_at using gt operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_updated_at_gte:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+          format: date-time
+      explode: false
+      name: filter[updated_at][gte]
+      description: "[Filter Person by updated_at using gte operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_updated_at_lt:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+          format: date-time
+      explode: false
+      name: filter[updated_at][lt]
+      description: "[Filter Person by updated_at using lt operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_updated_at_lte:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+          format: date-time
+      explode: false
+      name: filter[updated_at][lte]
+      description: "[Filter Person by updated_at using lte operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_additional_information_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[additional_information][eq]
+      description: "[Filter Person by additional_information using eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_additional_information_not_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[additional_information][not_eq]
+      description: "[Filter Person by additional_information using not_eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_additional_information_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[additional_information][eql]
+      description: "[Filter Person by additional_information using eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_additional_information_not_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[additional_information][not_eql]
+      description: "[Filter Person by additional_information using not_eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_additional_information_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[additional_information][prefix]
+      description: "[Filter Person by additional_information using prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_additional_information_not_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[additional_information][not_prefix]
+      description: "[Filter Person by additional_information using not_prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_additional_information_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[additional_information][suffix]
+      description: "[Filter Person by additional_information using suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_additional_information_not_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[additional_information][not_suffix]
+      description: "[Filter Person by additional_information using not_suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_additional_information_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[additional_information][match]
+      description: "[Filter Person by additional_information using match operator](https://jsonapi.org/format/#fetching-filtering)"
+    people_filter_additional_information_not_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[additional_information][not_match]
+      description: "[Filter Person by additional_information using not_match operator](https://jsonapi.org/format/#fetching-filtering)"
     people_filter_language_eq:
       in: query
       schema:
@@ -7577,66 +9367,6 @@ components:
       explode: false
       name: filter[language][not_match]
       description: "[Filter Person by language using not_match operator](https://jsonapi.org/format/#fetching-filtering)"
-    people_filter_updated_at_eq:
-      in: query
-      schema:
-        type: array
-        items:
-          type: string
-          format: date-time
-      explode: false
-      name: filter[updated_at][eq]
-      description: "[Filter Person by updated_at using eq operator](https://jsonapi.org/format/#fetching-filtering)"
-    people_filter_updated_at_not_eq:
-      in: query
-      schema:
-        type: array
-        items:
-          type: string
-          format: date-time
-      explode: false
-      name: filter[updated_at][not_eq]
-      description: "[Filter Person by updated_at using not_eq operator](https://jsonapi.org/format/#fetching-filtering)"
-    people_filter_updated_at_gt:
-      in: query
-      schema:
-        type: array
-        items:
-          type: string
-          format: date-time
-      explode: false
-      name: filter[updated_at][gt]
-      description: "[Filter Person by updated_at using gt operator](https://jsonapi.org/format/#fetching-filtering)"
-    people_filter_updated_at_gte:
-      in: query
-      schema:
-        type: array
-        items:
-          type: string
-          format: date-time
-      explode: false
-      name: filter[updated_at][gte]
-      description: "[Filter Person by updated_at using gte operator](https://jsonapi.org/format/#fetching-filtering)"
-    people_filter_updated_at_lt:
-      in: query
-      schema:
-        type: array
-        items:
-          type: string
-          format: date-time
-      explode: false
-      name: filter[updated_at][lt]
-      description: "[Filter Person by updated_at using lt operator](https://jsonapi.org/format/#fetching-filtering)"
-    people_filter_updated_at_lte:
-      in: query
-      schema:
-        type: array
-        items:
-          type: string
-          format: date-time
-      explode: false
-      name: filter[updated_at][lte]
-      description: "[Filter Person by updated_at using lte operator](https://jsonapi.org/format/#fetching-filtering)"
     phone_numbers_id:
       in: path
       required: true
@@ -8381,6 +10111,96 @@ components:
       explode: false
       name: filter[end_on][lte]
       description: "[Filter Role by end_on using lte operator](https://jsonapi.org/format/#fetching-filtering)"
+    roles_filter_name_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[name][eq]
+      description: "[Filter Role by name using eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    roles_filter_name_not_eq:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[name][not_eq]
+      description: "[Filter Role by name using not_eq operator](https://jsonapi.org/format/#fetching-filtering)"
+    roles_filter_name_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[name][eql]
+      description: "[Filter Role by name using eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    roles_filter_name_not_eql:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[name][not_eql]
+      description: "[Filter Role by name using not_eql operator](https://jsonapi.org/format/#fetching-filtering)"
+    roles_filter_name_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[name][prefix]
+      description: "[Filter Role by name using prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    roles_filter_name_not_prefix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[name][not_prefix]
+      description: "[Filter Role by name using not_prefix operator](https://jsonapi.org/format/#fetching-filtering)"
+    roles_filter_name_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[name][suffix]
+      description: "[Filter Role by name using suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    roles_filter_name_not_suffix:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[name][not_suffix]
+      description: "[Filter Role by name using not_suffix operator](https://jsonapi.org/format/#fetching-filtering)"
+    roles_filter_name_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[name][match]
+      description: "[Filter Role by name using match operator](https://jsonapi.org/format/#fetching-filtering)"
+    roles_filter_name_not_match:
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+      name: filter[name][not_match]
+      description: "[Filter Role by name using not_match operator](https://jsonapi.org/format/#fetching-filtering)"
     roles_filter_person_id_eq:
       in: query
       schema:
@@ -9084,6 +10904,12 @@ components:
       name: filter[name][not_match]
       description: "[Filter Social account by name using not_match operator](https://jsonapi.org/format/#fetching-filtering)"
   requestBodies:
+    additional_addresses:
+      required: true
+      content:
+        application/vnd.api+json:
+          schema:
+            "$ref": "#/components/schemas/additional_addresses_request"
     additional_emails:
       required: true
       content:
@@ -9169,6 +10995,18 @@ components:
           schema:
             "$ref": "#/components/schemas/social_accounts_request"
   links:
+    getAdditionalAddressId:
+      operationId: getAdditionalAddress
+      parameters:
+        id: "$response.body#/data/id"
+    updateAdditionalAddressId:
+      operationId: updateAdditionalAddress
+      parameters:
+        id: "$response.body#/data/id"
+    deleteAdditionalAddressId:
+      operationId: deleteAdditionalAddress
+      parameters:
+        id: "$response.body#/data/id"
     getAdditionalEmailId:
       operationId: getAdditionalEmail
       parameters:
@@ -9340,7 +11178,12 @@ components:
 security:
 - ServiceTokenAuthHeader: []
   ServiceTokenAuthParam: []
+servers:
+- url: https://db.jubla.ch
+  description: API Server
 tags:
+- name: additional_addresses
+  description: Additional address operations
 - name: additional_emails
   description: Additional email operations
 - name: courses
@@ -10083,6 +11926,46 @@ paths:
     - "$ref": "#/components/parameters/people_filter_address_not_suffix"
     - "$ref": "#/components/parameters/people_filter_address_match"
     - "$ref": "#/components/parameters/people_filter_address_not_match"
+    - "$ref": "#/components/parameters/people_filter_address_care_of_eq"
+    - "$ref": "#/components/parameters/people_filter_address_care_of_not_eq"
+    - "$ref": "#/components/parameters/people_filter_address_care_of_eql"
+    - "$ref": "#/components/parameters/people_filter_address_care_of_not_eql"
+    - "$ref": "#/components/parameters/people_filter_address_care_of_prefix"
+    - "$ref": "#/components/parameters/people_filter_address_care_of_not_prefix"
+    - "$ref": "#/components/parameters/people_filter_address_care_of_suffix"
+    - "$ref": "#/components/parameters/people_filter_address_care_of_not_suffix"
+    - "$ref": "#/components/parameters/people_filter_address_care_of_match"
+    - "$ref": "#/components/parameters/people_filter_address_care_of_not_match"
+    - "$ref": "#/components/parameters/people_filter_street_eq"
+    - "$ref": "#/components/parameters/people_filter_street_not_eq"
+    - "$ref": "#/components/parameters/people_filter_street_eql"
+    - "$ref": "#/components/parameters/people_filter_street_not_eql"
+    - "$ref": "#/components/parameters/people_filter_street_prefix"
+    - "$ref": "#/components/parameters/people_filter_street_not_prefix"
+    - "$ref": "#/components/parameters/people_filter_street_suffix"
+    - "$ref": "#/components/parameters/people_filter_street_not_suffix"
+    - "$ref": "#/components/parameters/people_filter_street_match"
+    - "$ref": "#/components/parameters/people_filter_street_not_match"
+    - "$ref": "#/components/parameters/people_filter_housenumber_eq"
+    - "$ref": "#/components/parameters/people_filter_housenumber_not_eq"
+    - "$ref": "#/components/parameters/people_filter_housenumber_eql"
+    - "$ref": "#/components/parameters/people_filter_housenumber_not_eql"
+    - "$ref": "#/components/parameters/people_filter_housenumber_prefix"
+    - "$ref": "#/components/parameters/people_filter_housenumber_not_prefix"
+    - "$ref": "#/components/parameters/people_filter_housenumber_suffix"
+    - "$ref": "#/components/parameters/people_filter_housenumber_not_suffix"
+    - "$ref": "#/components/parameters/people_filter_housenumber_match"
+    - "$ref": "#/components/parameters/people_filter_housenumber_not_match"
+    - "$ref": "#/components/parameters/people_filter_postbox_eq"
+    - "$ref": "#/components/parameters/people_filter_postbox_not_eq"
+    - "$ref": "#/components/parameters/people_filter_postbox_eql"
+    - "$ref": "#/components/parameters/people_filter_postbox_not_eql"
+    - "$ref": "#/components/parameters/people_filter_postbox_prefix"
+    - "$ref": "#/components/parameters/people_filter_postbox_not_prefix"
+    - "$ref": "#/components/parameters/people_filter_postbox_suffix"
+    - "$ref": "#/components/parameters/people_filter_postbox_not_suffix"
+    - "$ref": "#/components/parameters/people_filter_postbox_match"
+    - "$ref": "#/components/parameters/people_filter_postbox_not_match"
     - "$ref": "#/components/parameters/people_filter_zip_code_eq"
     - "$ref": "#/components/parameters/people_filter_zip_code_not_eq"
     - "$ref": "#/components/parameters/people_filter_zip_code_eql"
@@ -10135,6 +12018,32 @@ paths:
     - "$ref": "#/components/parameters/people_filter_birthday_gte"
     - "$ref": "#/components/parameters/people_filter_birthday_lt"
     - "$ref": "#/components/parameters/people_filter_birthday_lte"
+    - "$ref": "#/components/parameters/people_filter_picture_eq"
+    - "$ref": "#/components/parameters/people_filter_picture_not_eq"
+    - "$ref": "#/components/parameters/people_filter_picture_eql"
+    - "$ref": "#/components/parameters/people_filter_picture_not_eql"
+    - "$ref": "#/components/parameters/people_filter_picture_prefix"
+    - "$ref": "#/components/parameters/people_filter_picture_not_prefix"
+    - "$ref": "#/components/parameters/people_filter_picture_suffix"
+    - "$ref": "#/components/parameters/people_filter_picture_not_suffix"
+    - "$ref": "#/components/parameters/people_filter_picture_match"
+    - "$ref": "#/components/parameters/people_filter_picture_not_match"
+    - "$ref": "#/components/parameters/people_filter_updated_at_eq"
+    - "$ref": "#/components/parameters/people_filter_updated_at_not_eq"
+    - "$ref": "#/components/parameters/people_filter_updated_at_gt"
+    - "$ref": "#/components/parameters/people_filter_updated_at_gte"
+    - "$ref": "#/components/parameters/people_filter_updated_at_lt"
+    - "$ref": "#/components/parameters/people_filter_updated_at_lte"
+    - "$ref": "#/components/parameters/people_filter_additional_information_eq"
+    - "$ref": "#/components/parameters/people_filter_additional_information_not_eq"
+    - "$ref": "#/components/parameters/people_filter_additional_information_eql"
+    - "$ref": "#/components/parameters/people_filter_additional_information_not_eql"
+    - "$ref": "#/components/parameters/people_filter_additional_information_prefix"
+    - "$ref": "#/components/parameters/people_filter_additional_information_not_prefix"
+    - "$ref": "#/components/parameters/people_filter_additional_information_suffix"
+    - "$ref": "#/components/parameters/people_filter_additional_information_not_suffix"
+    - "$ref": "#/components/parameters/people_filter_additional_information_match"
+    - "$ref": "#/components/parameters/people_filter_additional_information_not_match"
     - "$ref": "#/components/parameters/people_filter_language_eq"
     - "$ref": "#/components/parameters/people_filter_language_not_eq"
     - "$ref": "#/components/parameters/people_filter_language_eql"
@@ -10145,12 +12054,6 @@ paths:
     - "$ref": "#/components/parameters/people_filter_language_not_suffix"
     - "$ref": "#/components/parameters/people_filter_language_match"
     - "$ref": "#/components/parameters/people_filter_language_not_match"
-    - "$ref": "#/components/parameters/people_filter_updated_at_eq"
-    - "$ref": "#/components/parameters/people_filter_updated_at_not_eq"
-    - "$ref": "#/components/parameters/people_filter_updated_at_gt"
-    - "$ref": "#/components/parameters/people_filter_updated_at_gte"
-    - "$ref": "#/components/parameters/people_filter_updated_at_lt"
-    - "$ref": "#/components/parameters/people_filter_updated_at_lte"
     - "$ref": "#/components/parameters/groups_fields"
     - "$ref": "#/components/parameters/roles_fields"
     - "$ref": "#/components/parameters/phone_numbers_fields"
@@ -10241,6 +12144,46 @@ paths:
     - "$ref": "#/components/parameters/people_filter_address_not_suffix"
     - "$ref": "#/components/parameters/people_filter_address_match"
     - "$ref": "#/components/parameters/people_filter_address_not_match"
+    - "$ref": "#/components/parameters/people_filter_address_care_of_eq"
+    - "$ref": "#/components/parameters/people_filter_address_care_of_not_eq"
+    - "$ref": "#/components/parameters/people_filter_address_care_of_eql"
+    - "$ref": "#/components/parameters/people_filter_address_care_of_not_eql"
+    - "$ref": "#/components/parameters/people_filter_address_care_of_prefix"
+    - "$ref": "#/components/parameters/people_filter_address_care_of_not_prefix"
+    - "$ref": "#/components/parameters/people_filter_address_care_of_suffix"
+    - "$ref": "#/components/parameters/people_filter_address_care_of_not_suffix"
+    - "$ref": "#/components/parameters/people_filter_address_care_of_match"
+    - "$ref": "#/components/parameters/people_filter_address_care_of_not_match"
+    - "$ref": "#/components/parameters/people_filter_street_eq"
+    - "$ref": "#/components/parameters/people_filter_street_not_eq"
+    - "$ref": "#/components/parameters/people_filter_street_eql"
+    - "$ref": "#/components/parameters/people_filter_street_not_eql"
+    - "$ref": "#/components/parameters/people_filter_street_prefix"
+    - "$ref": "#/components/parameters/people_filter_street_not_prefix"
+    - "$ref": "#/components/parameters/people_filter_street_suffix"
+    - "$ref": "#/components/parameters/people_filter_street_not_suffix"
+    - "$ref": "#/components/parameters/people_filter_street_match"
+    - "$ref": "#/components/parameters/people_filter_street_not_match"
+    - "$ref": "#/components/parameters/people_filter_housenumber_eq"
+    - "$ref": "#/components/parameters/people_filter_housenumber_not_eq"
+    - "$ref": "#/components/parameters/people_filter_housenumber_eql"
+    - "$ref": "#/components/parameters/people_filter_housenumber_not_eql"
+    - "$ref": "#/components/parameters/people_filter_housenumber_prefix"
+    - "$ref": "#/components/parameters/people_filter_housenumber_not_prefix"
+    - "$ref": "#/components/parameters/people_filter_housenumber_suffix"
+    - "$ref": "#/components/parameters/people_filter_housenumber_not_suffix"
+    - "$ref": "#/components/parameters/people_filter_housenumber_match"
+    - "$ref": "#/components/parameters/people_filter_housenumber_not_match"
+    - "$ref": "#/components/parameters/people_filter_postbox_eq"
+    - "$ref": "#/components/parameters/people_filter_postbox_not_eq"
+    - "$ref": "#/components/parameters/people_filter_postbox_eql"
+    - "$ref": "#/components/parameters/people_filter_postbox_not_eql"
+    - "$ref": "#/components/parameters/people_filter_postbox_prefix"
+    - "$ref": "#/components/parameters/people_filter_postbox_not_prefix"
+    - "$ref": "#/components/parameters/people_filter_postbox_suffix"
+    - "$ref": "#/components/parameters/people_filter_postbox_not_suffix"
+    - "$ref": "#/components/parameters/people_filter_postbox_match"
+    - "$ref": "#/components/parameters/people_filter_postbox_not_match"
     - "$ref": "#/components/parameters/people_filter_zip_code_eq"
     - "$ref": "#/components/parameters/people_filter_zip_code_not_eq"
     - "$ref": "#/components/parameters/people_filter_zip_code_eql"
@@ -10293,6 +12236,32 @@ paths:
     - "$ref": "#/components/parameters/people_filter_birthday_gte"
     - "$ref": "#/components/parameters/people_filter_birthday_lt"
     - "$ref": "#/components/parameters/people_filter_birthday_lte"
+    - "$ref": "#/components/parameters/people_filter_picture_eq"
+    - "$ref": "#/components/parameters/people_filter_picture_not_eq"
+    - "$ref": "#/components/parameters/people_filter_picture_eql"
+    - "$ref": "#/components/parameters/people_filter_picture_not_eql"
+    - "$ref": "#/components/parameters/people_filter_picture_prefix"
+    - "$ref": "#/components/parameters/people_filter_picture_not_prefix"
+    - "$ref": "#/components/parameters/people_filter_picture_suffix"
+    - "$ref": "#/components/parameters/people_filter_picture_not_suffix"
+    - "$ref": "#/components/parameters/people_filter_picture_match"
+    - "$ref": "#/components/parameters/people_filter_picture_not_match"
+    - "$ref": "#/components/parameters/people_filter_updated_at_eq"
+    - "$ref": "#/components/parameters/people_filter_updated_at_not_eq"
+    - "$ref": "#/components/parameters/people_filter_updated_at_gt"
+    - "$ref": "#/components/parameters/people_filter_updated_at_gte"
+    - "$ref": "#/components/parameters/people_filter_updated_at_lt"
+    - "$ref": "#/components/parameters/people_filter_updated_at_lte"
+    - "$ref": "#/components/parameters/people_filter_additional_information_eq"
+    - "$ref": "#/components/parameters/people_filter_additional_information_not_eq"
+    - "$ref": "#/components/parameters/people_filter_additional_information_eql"
+    - "$ref": "#/components/parameters/people_filter_additional_information_not_eql"
+    - "$ref": "#/components/parameters/people_filter_additional_information_prefix"
+    - "$ref": "#/components/parameters/people_filter_additional_information_not_prefix"
+    - "$ref": "#/components/parameters/people_filter_additional_information_suffix"
+    - "$ref": "#/components/parameters/people_filter_additional_information_not_suffix"
+    - "$ref": "#/components/parameters/people_filter_additional_information_match"
+    - "$ref": "#/components/parameters/people_filter_additional_information_not_match"
     - "$ref": "#/components/parameters/people_filter_language_eq"
     - "$ref": "#/components/parameters/people_filter_language_not_eq"
     - "$ref": "#/components/parameters/people_filter_language_eql"
@@ -10303,12 +12272,6 @@ paths:
     - "$ref": "#/components/parameters/people_filter_language_not_suffix"
     - "$ref": "#/components/parameters/people_filter_language_match"
     - "$ref": "#/components/parameters/people_filter_language_not_match"
-    - "$ref": "#/components/parameters/people_filter_updated_at_eq"
-    - "$ref": "#/components/parameters/people_filter_updated_at_not_eq"
-    - "$ref": "#/components/parameters/people_filter_updated_at_gt"
-    - "$ref": "#/components/parameters/people_filter_updated_at_gte"
-    - "$ref": "#/components/parameters/people_filter_updated_at_lt"
-    - "$ref": "#/components/parameters/people_filter_updated_at_lte"
     - "$ref": "#/components/parameters/groups_fields"
     - "$ref": "#/components/parameters/roles_fields"
     - "$ref": "#/components/parameters/phone_numbers_fields"
@@ -10385,6 +12348,16 @@ paths:
     - "$ref": "#/components/parameters/roles_filter_end_on_gte"
     - "$ref": "#/components/parameters/roles_filter_end_on_lt"
     - "$ref": "#/components/parameters/roles_filter_end_on_lte"
+    - "$ref": "#/components/parameters/roles_filter_name_eq"
+    - "$ref": "#/components/parameters/roles_filter_name_not_eq"
+    - "$ref": "#/components/parameters/roles_filter_name_eql"
+    - "$ref": "#/components/parameters/roles_filter_name_not_eql"
+    - "$ref": "#/components/parameters/roles_filter_name_prefix"
+    - "$ref": "#/components/parameters/roles_filter_name_not_prefix"
+    - "$ref": "#/components/parameters/roles_filter_name_suffix"
+    - "$ref": "#/components/parameters/roles_filter_name_not_suffix"
+    - "$ref": "#/components/parameters/roles_filter_name_match"
+    - "$ref": "#/components/parameters/roles_filter_name_not_match"
     - "$ref": "#/components/parameters/roles_filter_person_id_eq"
     - "$ref": "#/components/parameters/roles_filter_person_id_not_eq"
     - "$ref": "#/components/parameters/roles_filter_person_id_gt"
@@ -10487,6 +12460,16 @@ paths:
     - "$ref": "#/components/parameters/roles_filter_end_on_gte"
     - "$ref": "#/components/parameters/roles_filter_end_on_lt"
     - "$ref": "#/components/parameters/roles_filter_end_on_lte"
+    - "$ref": "#/components/parameters/roles_filter_name_eq"
+    - "$ref": "#/components/parameters/roles_filter_name_not_eq"
+    - "$ref": "#/components/parameters/roles_filter_name_eql"
+    - "$ref": "#/components/parameters/roles_filter_name_not_eql"
+    - "$ref": "#/components/parameters/roles_filter_name_prefix"
+    - "$ref": "#/components/parameters/roles_filter_name_not_prefix"
+    - "$ref": "#/components/parameters/roles_filter_name_suffix"
+    - "$ref": "#/components/parameters/roles_filter_name_not_suffix"
+    - "$ref": "#/components/parameters/roles_filter_name_match"
+    - "$ref": "#/components/parameters/roles_filter_name_not_match"
     - "$ref": "#/components/parameters/roles_filter_person_id_eq"
     - "$ref": "#/components/parameters/roles_filter_person_id_not_eq"
     - "$ref": "#/components/parameters/roles_filter_person_id_gt"
