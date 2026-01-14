@@ -7,31 +7,31 @@ For more information, please visit [the project page](https://github.com/Jungwac
 
 Python 3.10+
 
-## Installation & Usage
+## Installation
 ### pip install
 
-If the python package is hosted on a repository, you can install it directly using:
+Install the latest release from PyPI:
+```sh
+pip install jubladb_api
+```
+
+Alternatively, you can install the development version directly from GitHub:
 
 ```sh
 pip install git+https://github.com/Jungwacht-Herisau/jubladb_python_api.git
 ```
-(you may need to run `pip` with root permission: `sudo pip install git+https://github.com/Jungwacht-Herisau/jubladb_python_api.git`)
 
-Then import the package:
+## Getting started
+
 ```python
-import jubladb_api
-```
+import jubladb_api.client
+import jubladb_api.metamodel
 
-### Setuptools
+client = jubladb_api.client.create(url=jubladb_api.metamodel.API_INFO.default_server_url, api_key="xyz")
 
-Install via [Setuptools](http://pypi.python.org/pypi/setuptools).
-
-```sh
-python setup.py install --user
-```
-(or `sudo python setup.py install` to install the package for all users)
-
-Then import the package:
-```python
-import jubladb_api
+person = client.get_person(1234, include=["roles"])
+print(f"Roles of {person.first_name} {person.last_name}:")
+for role_key in person.roles:
+    role = client.get_role(role_key)
+    print(f" - {role.name}")
 ```
