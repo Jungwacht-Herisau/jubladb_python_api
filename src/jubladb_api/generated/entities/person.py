@@ -17,14 +17,14 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
         first_name: str,
         last_name: str,
         nickname: str,
-        company_name: str,
+        company_name: str | None,
         company: bool,
         email: str,
         address: str,
-        address_care_of: str,
+        address_care_of: str | None,
         street: str,
         housenumber: str,
-        postbox: str,
+        postbox: str | None,
         zip_code: str,
         town: str,
         country: str,
@@ -33,7 +33,7 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
         birthday: datetime.date,
         picture: str,
         updated_at: datetime.datetime,
-        additional_information: str,
+        additional_information: str | None,
         language: str,
         primary_group: jubladb_api.generated.entities.keys.GroupKey | None,
         layer_group: jubladb_api.generated.entities.keys.GroupKey | None,
@@ -90,7 +90,7 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
         return self._nickname
 
     @property
-    def company_name(self) -> str:
+    def company_name(self) -> str | None:
         return self._company_name
 
     @property
@@ -106,7 +106,7 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
         return self._address
 
     @property
-    def address_care_of(self) -> str:
+    def address_care_of(self) -> str | None:
         return self._address_care_of
 
     @property
@@ -118,7 +118,7 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
         return self._housenumber
 
     @property
-    def postbox(self) -> str:
+    def postbox(self) -> str | None:
         return self._postbox
 
     @property
@@ -154,7 +154,7 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
         return self._updated_at
 
     @property
-    def additional_information(self) -> str:
+    def additional_information(self) -> str | None:
         return self._additional_information
 
     @property
@@ -267,6 +267,7 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
                 json_data,
                 "company_name",
                 jubladb_api.core.metamodel_classes.AttributeType.STRING,
+                optional=True,
             ),
             company=cls._access_data_attribute(
                 json_data,
@@ -287,6 +288,7 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
                 json_data,
                 "address_care_of",
                 jubladb_api.core.metamodel_classes.AttributeType.STRING,
+                optional=True,
             ),
             street=cls._access_data_attribute(
                 json_data,
@@ -302,6 +304,7 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
                 json_data,
                 "postbox",
                 jubladb_api.core.metamodel_classes.AttributeType.STRING,
+                optional=True,
             ),
             zip_code=cls._access_data_attribute(
                 json_data,
@@ -347,6 +350,7 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
                 json_data,
                 "additional_information",
                 jubladb_api.core.metamodel_classes.AttributeType.STRING,
+                optional=True,
             ),
             language=cls._access_data_attribute(
                 json_data,

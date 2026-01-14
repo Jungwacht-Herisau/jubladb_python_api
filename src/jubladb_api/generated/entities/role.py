@@ -22,7 +22,7 @@ class Role(jubladb_api.core.base_entity.BaseEntity):
         person_id: int,
         group_id: int,
         type: str,
-        label: str,
+        label: str | None,
         person: jubladb_api.generated.entities.keys.PersonKey | None,
         group: jubladb_api.generated.entities.keys.GroupKey | None,
         layer_group: jubladb_api.generated.entities.keys.GroupKey | None,
@@ -76,7 +76,7 @@ class Role(jubladb_api.core.base_entity.BaseEntity):
         return self._type
 
     @property
-    def label(self) -> str:
+    def label(self) -> str | None:
         return self._label
 
     @property
@@ -177,6 +177,7 @@ class Role(jubladb_api.core.base_entity.BaseEntity):
                 json_data,
                 "label",
                 jubladb_api.core.metamodel_classes.AttributeType.STRING,
+                optional=True,
             ),
             person=cls._create_single_relation_key(
                 json_data,

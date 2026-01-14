@@ -111,6 +111,7 @@ OPTIONAL_ATTRIBUTES: set[tuple[str, str]] = {
     ("group", "archived_at"),
     ("group", "deleted_at"),
     ("group", "logo"),
+    ("role", "label"),
     ("role", "end_on"),
     ("group", "email"),
     ("group", "zip_code"),
@@ -124,6 +125,10 @@ OPTIONAL_ATTRIBUTES: set[tuple[str, str]] = {
     ("event", "application_contact_id"),
     ("event", "external_application_link"),
     ("event", "maximum_participants"),
+    ("person", "company_name"),
+    ("person", "address_care_of"),
+    ("person", "postbox"),
+    ("person", "additional_information"),
     # this info isn't documented anywhere, so there are probably more
 }
 
