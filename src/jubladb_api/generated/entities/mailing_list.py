@@ -27,6 +27,7 @@ class MailingList(jubladb_api.core.base_entity.BaseEntity):
         main_email: str,
         subscribable: bool,
         subscribers: list[str],
+        group: jubladb_api.generated.entities.keys.GroupKey | None,
     ):
         super().__init__(id_)
 
@@ -45,6 +46,8 @@ class MailingList(jubladb_api.core.base_entity.BaseEntity):
         self._main_email = main_email
         self._subscribable = subscribable
         self._subscribers = subscribers
+
+        self._group = group
 
     @property
     def name(self) -> str:
@@ -107,6 +110,12 @@ class MailingList(jubladb_api.core.base_entity.BaseEntity):
         return self._subscribers
 
     @property
+    def group(self) -> jubladb_api.generated.entities.keys.GroupKey:
+        if self._group is None:
+            raise ValueError("Relation group is not included")
+        return self._group
+
+    @property
     def key(self) -> jubladb_api.generated.entities.keys.MailingListKey:
         return jubladb_api.generated.entities.keys.MailingListKey(self._id)
 
@@ -116,10 +125,14 @@ class MailingList(jubladb_api.core.base_entity.BaseEntity):
 
     def is_relation_loaded(
         self,
-        relation_name: typing.Literal[""],
+        relation_name: typing.Literal["group",],
     ) -> bool:
 
-        raise ValueError("no relations defined on mailing_list")
+        if relation_name == "group":
+            return self._group is not None
+
+        else:
+            raise ValueError(f"relation {relation_name} does not exist on mailing_list")
 
     @classmethod
     def from_json(cls, json_data: dict):
@@ -203,6 +216,12 @@ class MailingList(jubladb_api.core.base_entity.BaseEntity):
                 "subscribers",
                 jubladb_api.core.metamodel_classes.AttributeType.STRING,
                 array=True,
+            ),
+            group=cls._create_single_relation_key(
+                json_data,
+                "group",
+                "groups",
+                jubladb_api.generated.entities.keys.GroupKey,
             ),
         )
 

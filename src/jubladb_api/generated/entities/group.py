@@ -35,7 +35,7 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
         updated_at: datetime.datetime,
         deleted_at: datetime.datetime | None,
         logo: str | None,
-        privacy_policies: list[str],
+        privacy_policies: list[str] | None,
         contact: jubladb_api.generated.entities.keys.PersonKey | None,
         creator: jubladb_api.generated.entities.keys.PersonKey | None,
         updater: jubladb_api.generated.entities.keys.PersonKey | None,
@@ -49,6 +49,7 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
         additional_emails: (
             list[jubladb_api.generated.entities.keys.AdditionalEmailKey] | None
         ),
+        mailing_lists: list[jubladb_api.generated.entities.keys.MailingListKey] | None,
     ):
         super().__init__(id_)
 
@@ -86,6 +87,7 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
         self._phone_numbers = phone_numbers
         self._social_accounts = social_accounts
         self._additional_emails = additional_emails
+        self._mailing_lists = mailing_lists
 
     @property
     def name(self) -> str:
@@ -172,7 +174,7 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
         return self._logo
 
     @property
-    def privacy_policies(self) -> list[str]:
+    def privacy_policies(self) -> list[str] | None:
         return self._privacy_policies
 
     @property
@@ -234,6 +236,12 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
         return self._additional_emails
 
     @property
+    def mailing_lists(self) -> list[jubladb_api.generated.entities.keys.MailingListKey]:
+        if self._mailing_lists is None:
+            raise ValueError("Relation mailing_lists is not included")
+        return self._mailing_lists
+
+    @property
     def key(self) -> jubladb_api.generated.entities.keys.GroupKey:
         return jubladb_api.generated.entities.keys.GroupKey(self._id)
 
@@ -253,6 +261,7 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
             "phone_numbers",
             "social_accounts",
             "additional_emails",
+            "mailing_lists",
         ],
     ) -> bool:
 
@@ -282,6 +291,9 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
 
         elif relation_name == "additional_emails":
             return self._additional_emails is not None
+
+        elif relation_name == "mailing_lists":
+            return self._mailing_lists is not None
 
         else:
             raise ValueError(f"relation {relation_name} does not exist on group")
@@ -407,6 +419,7 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
                 json_data,
                 "privacy_policies",
                 jubladb_api.core.metamodel_classes.AttributeType.STRING,
+                optional=True,
                 array=True,
             ),
             contact=cls._create_single_relation_key(
@@ -462,6 +475,12 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
                 "additional_emails",
                 "additional_emails",
                 jubladb_api.generated.entities.keys.AdditionalEmailKey,
+            ),
+            mailing_lists=cls._create_many_relation_keys(
+                json_data,
+                "mailing_lists",
+                "mailing_lists",
+                jubladb_api.generated.entities.keys.MailingListKey,
             ),
         )
 

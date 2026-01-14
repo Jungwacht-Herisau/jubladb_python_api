@@ -1061,7 +1061,7 @@ ENTITIES = {
                 name="privacy_policies",
                 type_=AttributeType.STRING,
                 array=True,
-                optional=False,
+                optional=True,
                 sortable=False,
                 filter_name=None,
                 filter_types=[],
@@ -1120,6 +1120,12 @@ ENTITIES = {
                 relation_name="additional_emails",
                 related_type_singular="additional_email",
                 related_type_plural="additional_emails",
+                to_many=True,
+            ),
+            RelationType(
+                relation_name="mailing_lists",
+                related_type_singular="mailing_list",
+                related_type_plural="mailing_lists",
                 to_many=True,
             ),
         ],
@@ -1596,7 +1602,14 @@ ENTITIES = {
                 filter_types=[],
             ),
         ],
-        relations=[],
+        relations=[
+            RelationType(
+                relation_name="group",
+                related_type_singular="group",
+                related_type_plural="groups",
+                to_many=False,
+            )
+        ],
         includeable=["group"],
     ),
     "person_name": Entity(

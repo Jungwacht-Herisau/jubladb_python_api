@@ -103,8 +103,8 @@ RELATION_TYPES: dict[tuple[str, str], str] = {
     ("role", "person"): "person",
     ("role", "group"): "group",
     ("role", "layer_group"): "group",
-    ("groups", "mailing_lists"): "mailing_list",
-    ("mailing_lists", "group"): "group",
+    ("group", "mailing_lists"): "mailing_list",
+    ("mailing_list", "group"): "group",
 }
 
 OPTIONAL_ATTRIBUTES: set[tuple[str, str]] = {
@@ -116,6 +116,7 @@ OPTIONAL_ATTRIBUTES: set[tuple[str, str]] = {
     ("group", "zip_code"),
     ("group", "self_registration_url"),
     ("group", "logo"),
+    ("group", "privacy_policies"),
     ("event", "type"),
     ("event", "kind_id"),
     ("event", "application_opening_at"),
@@ -297,7 +298,7 @@ class CodeGenerator(object):
                         try:
                             related_type_singular = RELATION_TYPES[(entity.name_singular, relation_name)]
                         except KeyError:
-                            print(f"WARNING: key (\"{entity_type}\", \"{relation_name}\") not found in RELATION_TYPES")
+                            print(f"WARNING: key (\"{entity.name_singular}\", \"{relation_name}\") not found in RELATION_TYPES")
                             continue
                         try:
                             related_type_plural = next(st for st in spec_types.enum if get_singular_name(st) == related_type_singular)

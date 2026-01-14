@@ -765,6 +765,7 @@ class Client(base_client.BaseClient):
                 "phone_numbers",
                 "social_accounts",
                 "additional_emails",
+                "mailing_lists",
             ]
 
         filters = [
@@ -969,6 +970,7 @@ class Client(base_client.BaseClient):
             "phone_numbers",
             "social_accounts",
             "additional_emails",
+            "mailing_lists",
         ]
         if include is None:
             include = []
@@ -1020,6 +1022,8 @@ class Client(base_client.BaseClient):
                 self._cache_add(SocialAccount.from_json(incl_data))
             elif incl_data["type"] == "additional_emails":
                 self._cache_add(AdditionalEmail.from_json(incl_data))
+            elif incl_data["type"] == "mailing_lists":
+                self._cache_add(MailingList.from_json(incl_data))
 
     def get_invoice_item(
         self,
@@ -1252,7 +1256,9 @@ class Client(base_client.BaseClient):
         if include is None:
             include = []
         if include == "*":
-            include = []
+            include = [
+                "group",
+            ]
 
         filters = [
             ("name", "eq", filter_name_eq),
@@ -1356,6 +1362,8 @@ class Client(base_client.BaseClient):
             self._cache_add(re)
             response_entities.append(re)
 
+        self._add_included_of_mailing_lists_to_cache(json_response)
+
         return response_entities
 
     def get_mailing_list(
@@ -1370,7 +1378,9 @@ class Client(base_client.BaseClient):
             id_ = id_or_key.id
             entity_key = id_or_key
 
-        all_includes = []
+        all_includes = [
+            "group",
+        ]
         if include is None:
             include = []
         if include == "*":
@@ -1397,7 +1407,14 @@ class Client(base_client.BaseClient):
             raise ValueError("Entity key mismatch")
         self._cache_add(response_entity)
 
+        self._add_included_of_mailing_lists_to_cache(json_response)
+
         return response_entity
+
+    def _add_included_of_mailing_lists_to_cache(self, json_response: dict) -> None:
+        for incl_data in json_response.get("included", []):
+            if incl_data["type"] == "groups":
+                self._cache_add(Group.from_json(incl_data))
 
     def get_person_name(
         self,
