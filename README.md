@@ -10,7 +10,7 @@ Python 3.10+
 ## Installation
 ### pip install
 
-Install the latest release from PyPI:
+Install the latest release from [PyPI](https://pypi.org/project/jubladb-api):
 ```sh
 pip install jubladb_api
 ```
