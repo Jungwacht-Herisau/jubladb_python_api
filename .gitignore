@@ -68,4 +68,5 @@ target/
 
 /.idea/shelf/
 /.idea/workspace.xml
-/spec.pickle
+/.idea/httpRequests
+spec.pickle

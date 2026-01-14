@@ -56,7 +56,7 @@ class PhoneNumber(jubladb_api.core.base_entity.BaseEntity):
 
     def is_relation_loaded(
         self,
-        relation_name: typing.Never,
+        relation_name: typing.Literal[""],
     ) -> bool:
 
         raise ValueError("no relations defined on phone_number")

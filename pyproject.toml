@@ -8,7 +8,7 @@ version = "0.2.0"
 dependencies = [
   "requests>=2.32.2",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 
 description = "Hitobito JSON:API"
 authors = [

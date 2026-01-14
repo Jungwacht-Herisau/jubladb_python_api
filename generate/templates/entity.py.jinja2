@@ -55,7 +55,7 @@ class {{ class_name }}(jubladb_api.core.base_entity.BaseEntity):
                            {% if entity.relations|length > 0 %}
                            relation_name: typing.Literal[{% for rel in entity.relations %}"{{ rel.relation_name }}", {% endfor %}],
                            {% else %}
-                           relation_name: typing.Never,
+                           relation_name: typing.Literal[""], {# change this to typing.Never once support for python<3.11 drops #}
                            {% endif %}
                            ) -> bool:
         {% if entity.relations|length > 0 %}

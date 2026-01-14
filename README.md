@@ -5,7 +5,7 @@ For more information, please visit [the project page](https://github.com/Jungwac
 
 ## Requirements.
 
-Python 3.8+
+Python 3.10+
 
 ## Installation & Usage
 ### pip install
