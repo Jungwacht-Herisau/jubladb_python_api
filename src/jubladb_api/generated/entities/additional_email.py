@@ -17,6 +17,8 @@ class AdditionalEmail(jubladb_api.core.base_entity.BaseEntity):
         contactable_id: int,
         contactable_type: str,
         email: str,
+        mailings: bool,
+        invoices: bool,
     ):
         super().__init__(id_)
 
@@ -25,6 +27,8 @@ class AdditionalEmail(jubladb_api.core.base_entity.BaseEntity):
         self._contactable_id = contactable_id
         self._contactable_type = contactable_type
         self._email = email
+        self._mailings = mailings
+        self._invoices = invoices
 
     @property
     def label(self) -> str:
@@ -45,6 +49,14 @@ class AdditionalEmail(jubladb_api.core.base_entity.BaseEntity):
     @property
     def email(self) -> str:
         return self._email
+
+    @property
+    def mailings(self) -> bool:
+        return self._mailings
+
+    @property
+    def invoices(self) -> bool:
+        return self._invoices
 
     @property
     def key(self) -> jubladb_api.generated.entities.keys.AdditionalEmailKey:
@@ -94,6 +106,16 @@ class AdditionalEmail(jubladb_api.core.base_entity.BaseEntity):
                 json_data,
                 "email",
                 jubladb_api.core.metamodel_classes.AttributeType.STRING,
+            ),
+            mailings=cls._access_data_attribute(
+                json_data,
+                "mailings",
+                jubladb_api.core.metamodel_classes.AttributeType.BOOLEAN,
+            ),
+            invoices=cls._access_data_attribute(
+                json_data,
+                "invoices",
+                jubladb_api.core.metamodel_classes.AttributeType.BOOLEAN,
             ),
         )
 

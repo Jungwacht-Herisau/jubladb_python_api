@@ -63,6 +63,8 @@ OPERATIONS_MAP: dict[tuple[bool, openapi_parser.specification.OperationMethod], 
 """
 PLURAL_SINGULAR_CONVERSION: list[tuple[str, str]] = [
     ("people", "person"),
+    ("person_name", "person_name"),
+    ("person-name", "person-name"), # not sure why they are deviating from their naming schema here
     ("addresses", "address"),
     ("ies", "y"),
     ("s", ""),
@@ -76,11 +78,17 @@ RELATION_TYPES: dict[tuple[str, str], str] = {
     ("course", "kind"): "event_kind",  # unsure if this is correct, because with the current API I don't see a way how to retrieve any course
     ("course", "dates"): "date",
     ("course", "leaders"): "person",
+    ("course", "participations"): "event_participation",
     ("date", "event"): "event",
     ("event_kind", "kind_category"): "event_kind_category",
     ("event", "contact"): "person",
     ("event", "kind"): "event_kind",
     ("event", "dates"): "date",
+    ("event", "participations"): "event_participation",
+    ("event_participation", "event"): "event",
+    ("event_participation", "participant"): "person",
+    ("event_participation", "roles"): "role",
+    ("event_role", "participation"): "event_participation",
     ("group", "contact"): "person",
     ("group", "creator"): "person",
     ("group", "updater"): "person",
@@ -100,21 +108,29 @@ RELATION_TYPES: dict[tuple[str, str], str] = {
     ("person", "phone_numbers"): "phone_number",
     ("person", "social_accounts"): "social_account",
     ("person", "additional_emails"): "additional_email",
+    ("person", "qualifications"): "qualification",
+    ("person", "event_participations"): "event_participation",
     ("role", "person"): "person",
     ("role", "group"): "group",
     ("role", "layer_group"): "group",
     ("group", "mailing_lists"): "mailing_list",
     ("mailing_list", "group"): "group",
+    ("qualification", "person"): "person",
+    ("qualification", "qualification_kind"): "qualification_kind",
 }
 
 OPTIONAL_ATTRIBUTES: set[tuple[str, str]] = {
     ("group", "archived_at"),
     ("group", "deleted_at"),
     ("group", "logo"),
+    ("group", "address"),
+    ("group", "description"),
     ("role", "label"),
+    ("role", "start_on"),
     ("role", "end_on"),
     ("group", "email"),
     ("group", "zip_code"),
+    ("group", "town"),
     ("group", "self_registration_url"),
     ("group", "logo"),
     ("group", "privacy_policies"),
@@ -125,12 +141,15 @@ OPTIONAL_ATTRIBUTES: set[tuple[str, str]] = {
     ("event", "application_contact_id"),
     ("event", "external_application_link"),
     ("event", "maximum_participants"),
+    ("event", "description"),
+    ("event", "application_conditions"),
     ("person", "company_name"),
     ("person", "address_care_of"),
     ("person", "postbox"),
     ("person", "additional_information"),
     ("person", "nickname"),
     ("person", "email"),
+    ("person", "country"),
     # this info isn't documented anywhere, so there are probably more
 }
 
@@ -488,7 +507,7 @@ if __name__ == '__main__':
         download_spec()
 
         print("Parsing OpenAPI spec... ")
-        _spec = openapi_parser.parse(SPEC_FILE_NAME)
+        _spec = openapi_parser.parse(str(SPEC_FILE_NAME))
         print("Parsed OpenAPI spec successfully.")
 
         with open(_spec_file_name, "wb") as f:

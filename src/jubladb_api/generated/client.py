@@ -15,9 +15,15 @@ from jubladb_api.generated.entities.course import Course
 
 from jubladb_api.generated.entities.date import Date
 
+from jubladb_api.generated.entities.event_guest import EventGuest
+
 from jubladb_api.generated.entities.event_kind_category import EventKindCategory
 
 from jubladb_api.generated.entities.event_kind import EventKind
+
+from jubladb_api.generated.entities.event_participation import EventParticipation
+
+from jubladb_api.generated.entities.event_role import EventRole
 
 from jubladb_api.generated.entities.event import Event
 
@@ -35,6 +41,10 @@ from jubladb_api.generated.entities.person import Person
 
 from jubladb_api.generated.entities.phone_number import PhoneNumber
 
+from jubladb_api.generated.entities.qualification_kind import QualificationKind
+
+from jubladb_api.generated.entities.qualification import Qualification
+
 from jubladb_api.generated.entities.role import Role
 
 from jubladb_api.generated.entities.self_registration import SelfRegistration
@@ -48,10 +58,18 @@ from jubladb_api.generated.entities.social_account import SocialAccount
 _EventKind_Include = typing.Literal["kind_category",]
 
 
+_EventParticipation_Include = typing.Literal[
+    "event",
+    "participant",
+    "roles",
+]
+
+
 _Event_Include = typing.Literal[
     "contact",
     "kind",
     "dates",
+    "participations",
 ]
 
 
@@ -159,9 +177,11 @@ _Person_Include = typing.Literal[
     "primary_group",
     "layer_group",
     "roles",
+    "qualifications",
     "phone_numbers",
     "social_accounts",
     "additional_emails",
+    "event_participations",
 ]
 
 
@@ -180,13 +200,14 @@ _Person_Sort = typing.Literal[
     "zip_code_asc",
     "town_asc",
     "country_asc",
+    "household_key_asc",
     "primary_group_id_asc",
     "gender_asc",
     "birthday_asc",
+    "language_asc",
     "picture_asc",
     "updated_at_asc",
     "additional_information_asc",
-    "language_asc",
     "first_name_desc",
     "last_name_desc",
     "nickname_desc",
@@ -201,13 +222,20 @@ _Person_Sort = typing.Literal[
     "zip_code_desc",
     "town_desc",
     "country_desc",
+    "household_key_desc",
     "primary_group_id_desc",
     "gender_desc",
     "birthday_desc",
+    "language_desc",
     "picture_desc",
     "updated_at_desc",
     "additional_information_desc",
-    "language_desc",
+]
+
+
+_Qualification_Include = typing.Literal[
+    "person",
+    "qualification_kind",
 ]
 
 
@@ -304,6 +332,8 @@ class Client(base_client.BaseClient):
                 self._cache_add(EventKind.from_json(incl_data))
             elif incl_data["type"] == "dates":
                 self._cache_add(Date.from_json(incl_data))
+            elif incl_data["type"] == "event_participations":
+                self._cache_add(EventParticipation.from_json(incl_data))
             elif incl_data["type"] == "people":
                 self._cache_add(Person.from_json(incl_data))
 
@@ -328,6 +358,23 @@ class Client(base_client.BaseClient):
         for incl_data in json_response.get("included", []):
             if incl_data["type"] == "events":
                 self._cache_add(Event.from_json(incl_data))
+
+    def get_event_guest(
+        self,
+        id_or_key: int | EventGuestKey,
+    ) -> EventGuest:
+        if isinstance(id_or_key, int):
+            id_ = id_or_key
+            entity_key = EventGuestKey(id_)
+        else:
+            id_ = id_or_key.id
+            entity_key = id_or_key
+        cached_entity = self._cache_get(entity_key)
+        if cached_entity is not None:
+            return cached_entity
+        raise ValueError(
+            f"no object known for {entity_key}. Entities of type event_guest can only be retrieved by including them while requesting other entities."
+        )
 
     def get_event_kind_categories_list(
         self,
@@ -448,6 +495,159 @@ class Client(base_client.BaseClient):
             if incl_data["type"] == "event_kind_categories":
                 self._cache_add(EventKindCategory.from_json(incl_data))
 
+    def get_event_participations_list(
+        self,
+        include: list[_EventParticipation_Include] | typing.Literal["*"] | None = None,
+        filter_event_id_eq: int | list[int] | None = None,
+        filter_event_id_not_eq: int | list[int] | None = None,
+        filter_event_id_gt: int | list[int] | None = None,
+        filter_event_id_gte: int | list[int] | None = None,
+        filter_event_id_lt: int | list[int] | None = None,
+        filter_event_id_lte: int | list[int] | None = None,
+        filter_participant_id_eq: int | list[int] | None = None,
+        filter_participant_id_not_eq: int | list[int] | None = None,
+        filter_participant_id_gt: int | list[int] | None = None,
+        filter_participant_id_gte: int | list[int] | None = None,
+        filter_participant_id_lt: int | list[int] | None = None,
+        filter_participant_id_lte: int | list[int] | None = None,
+        filter_participant_type_eq: str | list[str] | None = None,
+        filter_participant_type_not_eq: str | list[str] | None = None,
+        filter_participant_type_eql: str | list[str] | None = None,
+        filter_participant_type_not_eql: str | list[str] | None = None,
+        filter_participant_type_prefix: str | list[str] | None = None,
+        filter_participant_type_not_prefix: str | list[str] | None = None,
+        filter_participant_type_suffix: str | list[str] | None = None,
+        filter_participant_type_not_suffix: str | list[str] | None = None,
+        filter_participant_type_match: str | list[str] | None = None,
+        filter_participant_type_not_match: str | list[str] | None = None,
+    ) -> list[EventParticipation]:
+
+        if include is None:
+            include = []
+        if include == "*":
+            include = [
+                "event",
+                "participant",
+                "roles",
+            ]
+
+        filters = [
+            ("event_id", "eq", filter_event_id_eq),
+            ("event_id", "not_eq", filter_event_id_not_eq),
+            ("event_id", "gt", filter_event_id_gt),
+            ("event_id", "gte", filter_event_id_gte),
+            ("event_id", "lt", filter_event_id_lt),
+            ("event_id", "lte", filter_event_id_lte),
+            ("participant_id", "eq", filter_participant_id_eq),
+            ("participant_id", "not_eq", filter_participant_id_not_eq),
+            ("participant_id", "gt", filter_participant_id_gt),
+            ("participant_id", "gte", filter_participant_id_gte),
+            ("participant_id", "lt", filter_participant_id_lt),
+            ("participant_id", "lte", filter_participant_id_lte),
+            ("participant_type", "eq", filter_participant_type_eq),
+            ("participant_type", "not_eq", filter_participant_type_not_eq),
+            ("participant_type", "eql", filter_participant_type_eql),
+            ("participant_type", "not_eql", filter_participant_type_not_eql),
+            ("participant_type", "prefix", filter_participant_type_prefix),
+            ("participant_type", "not_prefix", filter_participant_type_not_prefix),
+            ("participant_type", "suffix", filter_participant_type_suffix),
+            ("participant_type", "not_suffix", filter_participant_type_not_suffix),
+            ("participant_type", "match", filter_participant_type_match),
+            ("participant_type", "not_match", filter_participant_type_not_match),
+        ]
+        filters = [f for f in filters if f[2] is not None]
+        json_response = self._request_list("event_participation", [], include, filters)
+
+        response_entities = []
+        for data_obj in json_response["data"]:
+            re = EventParticipation.from_json(data_obj)
+            self._cache_add(re)
+            response_entities.append(re)
+
+        self._add_included_of_event_participations_to_cache(json_response)
+
+        return response_entities
+
+    def get_event_participation(
+        self,
+        id_or_key: int | EventParticipationKey,
+        include: list[_EventParticipation_Include] | typing.Literal["*"] | None = None,
+    ) -> EventParticipation:
+        if isinstance(id_or_key, int):
+            id_ = id_or_key
+            entity_key = EventParticipationKey(id_)
+        else:
+            id_ = id_or_key.id
+            entity_key = id_or_key
+
+        all_includes = [
+            "event",
+            "participant",
+            "roles",
+        ]
+        if include is None:
+            include = []
+        if include == "*":
+            include = all_includes
+
+        cached_entity = self._cache_get(entity_key)
+        if cached_entity is not None:
+
+            cached_relations = [
+                rel for rel in all_includes if cached_entity.is_relation_loaded(rel)
+            ]
+            if all(rel in cached_relations for rel in include):
+                return cached_entity
+            else:
+                include.extend(cached_relations)
+
+        json_response = self._request_single_get(
+            "event_participation",
+            id_,
+            include,
+        )
+        response_entity = EventParticipation.from_json(json_response["data"])
+        if response_entity.key != entity_key:
+            raise ValueError("Entity key mismatch")
+        self._cache_add(response_entity)
+
+        self._add_included_of_event_participations_to_cache(json_response)
+
+        return response_entity
+
+    def _add_included_of_event_participations_to_cache(
+        self, json_response: dict
+    ) -> None:
+        for incl_data in json_response.get("included", []):
+            if incl_data["type"] == "events":
+                self._cache_add(Event.from_json(incl_data))
+            elif incl_data["type"] == "people":
+                self._cache_add(Person.from_json(incl_data))
+            elif incl_data["type"] == "roles":
+                self._cache_add(Role.from_json(incl_data))
+
+    def get_event_role(
+        self,
+        id_or_key: int | EventRoleKey,
+    ) -> EventRole:
+        if isinstance(id_or_key, int):
+            id_ = id_or_key
+            entity_key = EventRoleKey(id_)
+        else:
+            id_ = id_or_key.id
+            entity_key = id_or_key
+        cached_entity = self._cache_get(entity_key)
+        if cached_entity is not None:
+            return cached_entity
+        raise ValueError(
+            f"no object known for {entity_key}. Entities of type event_role can only be retrieved by including them while requesting other entities."
+        )
+
+    def _add_included_of_event_roles_to_cache(self, json_response: dict) -> None:
+        for incl_data in json_response.get("included", []):
+            if incl_data["type"] == "event_participations":
+                self._cache_add(EventParticipation.from_json(incl_data))
+
     def get_events_list(
         self,
         include: list[_Event_Include] | typing.Literal["*"] | None = None,
@@ -481,6 +681,7 @@ class Client(base_client.BaseClient):
                 "contact",
                 "kind",
                 "dates",
+                "participations",
             ]
 
         filters = [
@@ -529,6 +730,7 @@ class Client(base_client.BaseClient):
             "contact",
             "kind",
             "dates",
+            "participations",
         ]
         if include is None:
             include = []
@@ -568,6 +770,8 @@ class Client(base_client.BaseClient):
                 self._cache_add(EventKind.from_json(incl_data))
             elif incl_data["type"] == "dates":
                 self._cache_add(Date.from_json(incl_data))
+            elif incl_data["type"] == "event_participations":
+                self._cache_add(EventParticipation.from_json(incl_data))
 
     def get_groups_list(
         self,
@@ -1568,6 +1772,16 @@ class Client(base_client.BaseClient):
         filter_country_not_suffix: str | list[str] | None = None,
         filter_country_match: str | list[str] | None = None,
         filter_country_not_match: str | list[str] | None = None,
+        filter_household_key_eq: str | list[str] | None = None,
+        filter_household_key_not_eq: str | list[str] | None = None,
+        filter_household_key_eql: str | list[str] | None = None,
+        filter_household_key_not_eql: str | list[str] | None = None,
+        filter_household_key_prefix: str | list[str] | None = None,
+        filter_household_key_not_prefix: str | list[str] | None = None,
+        filter_household_key_suffix: str | list[str] | None = None,
+        filter_household_key_not_suffix: str | list[str] | None = None,
+        filter_household_key_match: str | list[str] | None = None,
+        filter_household_key_not_match: str | list[str] | None = None,
         filter_primary_group_id_eq: int | list[int] | None = None,
         filter_primary_group_id_not_eq: int | list[int] | None = None,
         filter_primary_group_id_gt: int | list[int] | None = None,
@@ -1590,6 +1804,16 @@ class Client(base_client.BaseClient):
         filter_birthday_gte: datetime.date | list[datetime.date] | None = None,
         filter_birthday_lt: datetime.date | list[datetime.date] | None = None,
         filter_birthday_lte: datetime.date | list[datetime.date] | None = None,
+        filter_language_eq: str | list[str] | None = None,
+        filter_language_not_eq: str | list[str] | None = None,
+        filter_language_eql: str | list[str] | None = None,
+        filter_language_not_eql: str | list[str] | None = None,
+        filter_language_prefix: str | list[str] | None = None,
+        filter_language_not_prefix: str | list[str] | None = None,
+        filter_language_suffix: str | list[str] | None = None,
+        filter_language_not_suffix: str | list[str] | None = None,
+        filter_language_match: str | list[str] | None = None,
+        filter_language_not_match: str | list[str] | None = None,
         filter_picture_eq: str | list[str] | None = None,
         filter_picture_not_eq: str | list[str] | None = None,
         filter_picture_eql: str | list[str] | None = None,
@@ -1622,16 +1846,6 @@ class Client(base_client.BaseClient):
         filter_additional_information_not_suffix: str | list[str] | None = None,
         filter_additional_information_match: str | list[str] | None = None,
         filter_additional_information_not_match: str | list[str] | None = None,
-        filter_language_eq: str | list[str] | None = None,
-        filter_language_not_eq: str | list[str] | None = None,
-        filter_language_eql: str | list[str] | None = None,
-        filter_language_not_eql: str | list[str] | None = None,
-        filter_language_prefix: str | list[str] | None = None,
-        filter_language_not_prefix: str | list[str] | None = None,
-        filter_language_suffix: str | list[str] | None = None,
-        filter_language_not_suffix: str | list[str] | None = None,
-        filter_language_match: str | list[str] | None = None,
-        filter_language_not_match: str | list[str] | None = None,
     ) -> list[Person]:
 
         if include is None:
@@ -1641,9 +1855,11 @@ class Client(base_client.BaseClient):
                 "primary_group",
                 "layer_group",
                 "roles",
+                "qualifications",
                 "phone_numbers",
                 "social_accounts",
                 "additional_emails",
+                "event_participations",
             ]
 
         filters = [
@@ -1778,6 +1994,16 @@ class Client(base_client.BaseClient):
             ("country", "not_suffix", filter_country_not_suffix),
             ("country", "match", filter_country_match),
             ("country", "not_match", filter_country_not_match),
+            ("household_key", "eq", filter_household_key_eq),
+            ("household_key", "not_eq", filter_household_key_not_eq),
+            ("household_key", "eql", filter_household_key_eql),
+            ("household_key", "not_eql", filter_household_key_not_eql),
+            ("household_key", "prefix", filter_household_key_prefix),
+            ("household_key", "not_prefix", filter_household_key_not_prefix),
+            ("household_key", "suffix", filter_household_key_suffix),
+            ("household_key", "not_suffix", filter_household_key_not_suffix),
+            ("household_key", "match", filter_household_key_match),
+            ("household_key", "not_match", filter_household_key_not_match),
             ("primary_group_id", "eq", filter_primary_group_id_eq),
             ("primary_group_id", "not_eq", filter_primary_group_id_not_eq),
             ("primary_group_id", "gt", filter_primary_group_id_gt),
@@ -1800,6 +2026,16 @@ class Client(base_client.BaseClient):
             ("birthday", "gte", filter_birthday_gte),
             ("birthday", "lt", filter_birthday_lt),
             ("birthday", "lte", filter_birthday_lte),
+            ("language", "eq", filter_language_eq),
+            ("language", "not_eq", filter_language_not_eq),
+            ("language", "eql", filter_language_eql),
+            ("language", "not_eql", filter_language_not_eql),
+            ("language", "prefix", filter_language_prefix),
+            ("language", "not_prefix", filter_language_not_prefix),
+            ("language", "suffix", filter_language_suffix),
+            ("language", "not_suffix", filter_language_not_suffix),
+            ("language", "match", filter_language_match),
+            ("language", "not_match", filter_language_not_match),
             ("picture", "eq", filter_picture_eq),
             ("picture", "not_eq", filter_picture_not_eq),
             ("picture", "eql", filter_picture_eql),
@@ -1842,16 +2078,6 @@ class Client(base_client.BaseClient):
                 "not_match",
                 filter_additional_information_not_match,
             ),
-            ("language", "eq", filter_language_eq),
-            ("language", "not_eq", filter_language_not_eq),
-            ("language", "eql", filter_language_eql),
-            ("language", "not_eql", filter_language_not_eql),
-            ("language", "prefix", filter_language_prefix),
-            ("language", "not_prefix", filter_language_not_prefix),
-            ("language", "suffix", filter_language_suffix),
-            ("language", "not_suffix", filter_language_not_suffix),
-            ("language", "match", filter_language_match),
-            ("language", "not_match", filter_language_not_match),
         ]
         filters = [f for f in filters if f[2] is not None]
         json_response = self._request_list("person", sort, include, filters)
@@ -1882,9 +2108,11 @@ class Client(base_client.BaseClient):
             "primary_group",
             "layer_group",
             "roles",
+            "qualifications",
             "phone_numbers",
             "social_accounts",
             "additional_emails",
+            "event_participations",
         ]
         if include is None:
             include = []
@@ -1924,12 +2152,16 @@ class Client(base_client.BaseClient):
                 self._cache_add(Group.from_json(incl_data))
             elif incl_data["type"] == "roles":
                 self._cache_add(Role.from_json(incl_data))
+            elif incl_data["type"] == "qualifications":
+                self._cache_add(Qualification.from_json(incl_data))
             elif incl_data["type"] == "phone_numbers":
                 self._cache_add(PhoneNumber.from_json(incl_data))
             elif incl_data["type"] == "social_accounts":
                 self._cache_add(SocialAccount.from_json(incl_data))
             elif incl_data["type"] == "additional_emails":
                 self._cache_add(AdditionalEmail.from_json(incl_data))
+            elif incl_data["type"] == "event_participations":
+                self._cache_add(EventParticipation.from_json(incl_data))
 
     def get_phone_number(
         self,
@@ -1947,6 +2179,128 @@ class Client(base_client.BaseClient):
         raise ValueError(
             f"no object known for {entity_key}. Entities of type phone_number can only be retrieved by including them while requesting other entities."
         )
+
+    def get_qualification_kind(
+        self,
+        id_or_key: int | QualificationKindKey,
+    ) -> QualificationKind:
+        if isinstance(id_or_key, int):
+            id_ = id_or_key
+            entity_key = QualificationKindKey(id_)
+        else:
+            id_ = id_or_key.id
+            entity_key = id_or_key
+        cached_entity = self._cache_get(entity_key)
+        if cached_entity is not None:
+            return cached_entity
+        raise ValueError(
+            f"no object known for {entity_key}. Entities of type qualification_kind can only be retrieved by including them while requesting other entities."
+        )
+
+    def get_qualifications_list(
+        self,
+        include: list[_Qualification_Include] | typing.Literal["*"] | None = None,
+        filter_person_id_eq: int | list[int] | None = None,
+        filter_person_id_not_eq: int | list[int] | None = None,
+        filter_person_id_gt: int | list[int] | None = None,
+        filter_person_id_gte: int | list[int] | None = None,
+        filter_person_id_lt: int | list[int] | None = None,
+        filter_person_id_lte: int | list[int] | None = None,
+        filter_qualification_kind_id_eq: int | list[int] | None = None,
+        filter_qualification_kind_id_not_eq: int | list[int] | None = None,
+        filter_qualification_kind_id_gt: int | list[int] | None = None,
+        filter_qualification_kind_id_gte: int | list[int] | None = None,
+        filter_qualification_kind_id_lt: int | list[int] | None = None,
+        filter_qualification_kind_id_lte: int | list[int] | None = None,
+    ) -> list[Qualification]:
+
+        if include is None:
+            include = []
+        if include == "*":
+            include = [
+                "person",
+                "qualification_kind",
+            ]
+
+        filters = [
+            ("person_id", "eq", filter_person_id_eq),
+            ("person_id", "not_eq", filter_person_id_not_eq),
+            ("person_id", "gt", filter_person_id_gt),
+            ("person_id", "gte", filter_person_id_gte),
+            ("person_id", "lt", filter_person_id_lt),
+            ("person_id", "lte", filter_person_id_lte),
+            ("qualification_kind_id", "eq", filter_qualification_kind_id_eq),
+            ("qualification_kind_id", "not_eq", filter_qualification_kind_id_not_eq),
+            ("qualification_kind_id", "gt", filter_qualification_kind_id_gt),
+            ("qualification_kind_id", "gte", filter_qualification_kind_id_gte),
+            ("qualification_kind_id", "lt", filter_qualification_kind_id_lt),
+            ("qualification_kind_id", "lte", filter_qualification_kind_id_lte),
+        ]
+        filters = [f for f in filters if f[2] is not None]
+        json_response = self._request_list("qualification", [], include, filters)
+
+        response_entities = []
+        for data_obj in json_response["data"]:
+            re = Qualification.from_json(data_obj)
+            self._cache_add(re)
+            response_entities.append(re)
+
+        self._add_included_of_qualifications_to_cache(json_response)
+
+        return response_entities
+
+    def get_qualification(
+        self,
+        id_or_key: int | QualificationKey,
+        include: list[_Qualification_Include] | typing.Literal["*"] | None = None,
+    ) -> Qualification:
+        if isinstance(id_or_key, int):
+            id_ = id_or_key
+            entity_key = QualificationKey(id_)
+        else:
+            id_ = id_or_key.id
+            entity_key = id_or_key
+
+        all_includes = [
+            "person",
+            "qualification_kind",
+        ]
+        if include is None:
+            include = []
+        if include == "*":
+            include = all_includes
+
+        cached_entity = self._cache_get(entity_key)
+        if cached_entity is not None:
+
+            cached_relations = [
+                rel for rel in all_includes if cached_entity.is_relation_loaded(rel)
+            ]
+            if all(rel in cached_relations for rel in include):
+                return cached_entity
+            else:
+                include.extend(cached_relations)
+
+        json_response = self._request_single_get(
+            "qualification",
+            id_,
+            include,
+        )
+        response_entity = Qualification.from_json(json_response["data"])
+        if response_entity.key != entity_key:
+            raise ValueError("Entity key mismatch")
+        self._cache_add(response_entity)
+
+        self._add_included_of_qualifications_to_cache(json_response)
+
+        return response_entity
+
+    def _add_included_of_qualifications_to_cache(self, json_response: dict) -> None:
+        for incl_data in json_response.get("included", []):
+            if incl_data["type"] == "people":
+                self._cache_add(Person.from_json(incl_data))
+            elif incl_data["type"] == "qualification_kinds":
+                self._cache_add(QualificationKind.from_json(incl_data))
 
     def get_roles_list(
         self,

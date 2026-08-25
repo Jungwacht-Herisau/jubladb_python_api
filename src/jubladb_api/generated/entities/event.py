@@ -18,8 +18,8 @@ class Event(jubladb_api.core.base_entity.BaseEntity):
         type: str | None,
         kind_id: int | None,
         name: str,
-        description: str,
-        application_conditions: str,
+        description: str | None,
+        application_conditions: str | None,
         motto: str,
         cost: str,
         location: str,
@@ -33,6 +33,9 @@ class Event(jubladb_api.core.base_entity.BaseEntity):
         contact: jubladb_api.generated.entities.keys.PersonKey | None,
         kind: jubladb_api.generated.entities.keys.EventKindKey | None,
         dates: list[jubladb_api.generated.entities.keys.DateKey] | None,
+        participations: (
+            list[jubladb_api.generated.entities.keys.EventParticipationKey] | None
+        ),
     ):
         super().__init__(id_)
 
@@ -56,6 +59,7 @@ class Event(jubladb_api.core.base_entity.BaseEntity):
         self._contact = contact
         self._kind = kind
         self._dates = dates
+        self._participations = participations
 
     @property
     def group_ids(self) -> list[int]:
@@ -74,11 +78,11 @@ class Event(jubladb_api.core.base_entity.BaseEntity):
         return self._name
 
     @property
-    def description(self) -> str:
+    def description(self) -> str | None:
         return self._description
 
     @property
-    def application_conditions(self) -> str:
+    def application_conditions(self) -> str | None:
         return self._application_conditions
 
     @property
@@ -140,6 +144,14 @@ class Event(jubladb_api.core.base_entity.BaseEntity):
         return self._dates
 
     @property
+    def participations(
+        self,
+    ) -> list[jubladb_api.generated.entities.keys.EventParticipationKey]:
+        if self._participations is None:
+            raise ValueError("Relation participations is not included")
+        return self._participations
+
+    @property
     def key(self) -> jubladb_api.generated.entities.keys.EventKey:
         return jubladb_api.generated.entities.keys.EventKey(self._id)
 
@@ -153,6 +165,7 @@ class Event(jubladb_api.core.base_entity.BaseEntity):
             "contact",
             "kind",
             "dates",
+            "participations",
         ],
     ) -> bool:
 
@@ -164,6 +177,9 @@ class Event(jubladb_api.core.base_entity.BaseEntity):
 
         elif relation_name == "dates":
             return self._dates is not None
+
+        elif relation_name == "participations":
+            return self._participations is not None
 
         else:
             raise ValueError(f"relation {relation_name} does not exist on event")
@@ -204,11 +220,13 @@ class Event(jubladb_api.core.base_entity.BaseEntity):
                 json_data,
                 "description",
                 jubladb_api.core.metamodel_classes.AttributeType.STRING,
+                optional=True,
             ),
             application_conditions=cls._access_data_attribute(
                 json_data,
                 "application_conditions",
                 jubladb_api.core.metamodel_classes.AttributeType.STRING,
+                optional=True,
             ),
             motto=cls._access_data_attribute(
                 json_data,
@@ -279,6 +297,12 @@ class Event(jubladb_api.core.base_entity.BaseEntity):
             ),
             dates=cls._create_many_relation_keys(
                 json_data, "dates", "dates", jubladb_api.generated.entities.keys.DateKey
+            ),
+            participations=cls._create_many_relation_keys(
+                json_data,
+                "participations",
+                "event_participations",
+                jubladb_api.generated.entities.keys.EventParticipationKey,
             ),
         )
 
