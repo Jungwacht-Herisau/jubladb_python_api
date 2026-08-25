@@ -150,6 +150,7 @@ OPTIONAL_ATTRIBUTES: set[tuple[str, str]] = {
     ("person", "nickname"),
     ("person", "email"),
     ("person", "country"),
+    ("person", "household_key"),
     # this info isn't documented anywhere, so there are probably more
 }
 
