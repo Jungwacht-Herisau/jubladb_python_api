@@ -16,7 +16,7 @@ class Role(jubladb_api.core.base_entity.BaseEntity):
         id_: int,
         created_at: datetime.datetime,
         updated_at: datetime.datetime,
-        start_on: datetime.date,
+        start_on: datetime.date | None,
         end_on: datetime.date | None,
         name: str,
         person_id: int,
@@ -52,7 +52,7 @@ class Role(jubladb_api.core.base_entity.BaseEntity):
         return self._updated_at
 
     @property
-    def start_on(self) -> datetime.date:
+    def start_on(self) -> datetime.date | None:
         return self._start_on
 
     @property
@@ -149,6 +149,7 @@ class Role(jubladb_api.core.base_entity.BaseEntity):
                 json_data,
                 "start_on",
                 jubladb_api.core.metamodel_classes.AttributeType.DATE,
+                optional=True,
             ),
             end_on=cls._access_data_attribute(
                 json_data,

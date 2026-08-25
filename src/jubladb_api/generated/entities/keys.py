@@ -38,6 +38,15 @@ class DateKey(jubladb_api.core.base_entity.BaseEntityKey):
         return "date"
 
 
+class EventGuestKey(jubladb_api.core.base_entity.BaseEntityKey):
+    def __init__(self, id_: int):
+        super().__init__(id_)
+
+    @property
+    def type(self) -> str:
+        return "event_guest"
+
+
 class EventKindCategoryKey(jubladb_api.core.base_entity.BaseEntityKey):
     def __init__(self, id_: int):
         super().__init__(id_)
@@ -54,6 +63,24 @@ class EventKindKey(jubladb_api.core.base_entity.BaseEntityKey):
     @property
     def type(self) -> str:
         return "event_kind"
+
+
+class EventParticipationKey(jubladb_api.core.base_entity.BaseEntityKey):
+    def __init__(self, id_: int):
+        super().__init__(id_)
+
+    @property
+    def type(self) -> str:
+        return "event_participation"
+
+
+class EventRoleKey(jubladb_api.core.base_entity.BaseEntityKey):
+    def __init__(self, id_: int):
+        super().__init__(id_)
+
+    @property
+    def type(self) -> str:
+        return "event_role"
 
 
 class EventKey(jubladb_api.core.base_entity.BaseEntityKey):
@@ -126,6 +153,24 @@ class PhoneNumberKey(jubladb_api.core.base_entity.BaseEntityKey):
     @property
     def type(self) -> str:
         return "phone_number"
+
+
+class QualificationKindKey(jubladb_api.core.base_entity.BaseEntityKey):
+    def __init__(self, id_: int):
+        super().__init__(id_)
+
+    @property
+    def type(self) -> str:
+        return "qualification_kind"
+
+
+class QualificationKey(jubladb_api.core.base_entity.BaseEntityKey):
+    def __init__(self, id_: int):
+        super().__init__(id_)
+
+    @property
+    def type(self) -> str:
+        return "qualification"
 
 
 class RoleKey(jubladb_api.core.base_entity.BaseEntityKey):

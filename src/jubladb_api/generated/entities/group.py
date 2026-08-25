@@ -17,15 +17,15 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
         name: str,
         short_name: str,
         display_name: str,
-        description: str,
+        description: str | None,
         layer: bool,
         parent_id: int,
         layer_group_id: int,
         type: str,
         email: str | None,
-        address: str,
+        address: str | None,
         zip_code: int | None,
-        town: str,
+        town: str | None,
         country: str,
         require_person_add_requests: bool,
         self_registration_url: str | None,
@@ -102,7 +102,7 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
         return self._display_name
 
     @property
-    def description(self) -> str:
+    def description(self) -> str | None:
         return self._description
 
     @property
@@ -126,7 +126,7 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
         return self._email
 
     @property
-    def address(self) -> str:
+    def address(self) -> str | None:
         return self._address
 
     @property
@@ -134,7 +134,7 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
         return self._zip_code
 
     @property
-    def town(self) -> str:
+    def town(self) -> str | None:
         return self._town
 
     @property
@@ -326,6 +326,7 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
                 json_data,
                 "description",
                 jubladb_api.core.metamodel_classes.AttributeType.STRING,
+                optional=True,
             ),
             layer=cls._access_data_attribute(
                 json_data,
@@ -357,6 +358,7 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
                 json_data,
                 "address",
                 jubladb_api.core.metamodel_classes.AttributeType.STRING,
+                optional=True,
             ),
             zip_code=cls._access_data_attribute(
                 json_data,
@@ -368,6 +370,7 @@ class Group(jubladb_api.core.base_entity.BaseEntity):
                 json_data,
                 "town",
                 jubladb_api.core.metamodel_classes.AttributeType.STRING,
+                optional=True,
             ),
             country=cls._access_data_attribute(
                 json_data,

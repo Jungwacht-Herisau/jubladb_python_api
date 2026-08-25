@@ -27,23 +27,30 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
         postbox: str | None,
         zip_code: str,
         town: str,
-        country: str,
+        country: str | None,
+        household_key: str,
         primary_group_id: int,
         gender: str,
         birthday: datetime.date,
+        language: str,
         picture: str,
         updated_at: datetime.datetime,
         additional_information: str | None,
-        language: str,
         primary_group: jubladb_api.generated.entities.keys.GroupKey | None,
         layer_group: jubladb_api.generated.entities.keys.GroupKey | None,
         roles: list[jubladb_api.generated.entities.keys.RoleKey] | None,
+        qualifications: (
+            list[jubladb_api.generated.entities.keys.QualificationKey] | None
+        ),
         phone_numbers: list[jubladb_api.generated.entities.keys.PhoneNumberKey] | None,
         social_accounts: (
             list[jubladb_api.generated.entities.keys.SocialAccountKey] | None
         ),
         additional_emails: (
             list[jubladb_api.generated.entities.keys.AdditionalEmailKey] | None
+        ),
+        event_participations: (
+            list[jubladb_api.generated.entities.keys.EventParticipationKey] | None
         ),
     ):
         super().__init__(id_)
@@ -62,20 +69,23 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
         self._zip_code = zip_code
         self._town = town
         self._country = country
+        self._household_key = household_key
         self._primary_group_id = primary_group_id
         self._gender = gender
         self._birthday = birthday
+        self._language = language
         self._picture = picture
         self._updated_at = updated_at
         self._additional_information = additional_information
-        self._language = language
 
         self._primary_group = primary_group
         self._layer_group = layer_group
         self._roles = roles
+        self._qualifications = qualifications
         self._phone_numbers = phone_numbers
         self._social_accounts = social_accounts
         self._additional_emails = additional_emails
+        self._event_participations = event_participations
 
     @property
     def first_name(self) -> str:
@@ -130,8 +140,12 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
         return self._town
 
     @property
-    def country(self) -> str:
+    def country(self) -> str | None:
         return self._country
+
+    @property
+    def household_key(self) -> str:
+        return self._household_key
 
     @property
     def primary_group_id(self) -> int:
@@ -146,6 +160,10 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
         return self._birthday
 
     @property
+    def language(self) -> str:
+        return self._language
+
+    @property
     def picture(self) -> str:
         return self._picture
 
@@ -156,10 +174,6 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
     @property
     def additional_information(self) -> str | None:
         return self._additional_information
-
-    @property
-    def language(self) -> str:
-        return self._language
 
     @property
     def primary_group(self) -> jubladb_api.generated.entities.keys.GroupKey:
@@ -178,6 +192,14 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
         if self._roles is None:
             raise ValueError("Relation roles is not included")
         return self._roles
+
+    @property
+    def qualifications(
+        self,
+    ) -> list[jubladb_api.generated.entities.keys.QualificationKey]:
+        if self._qualifications is None:
+            raise ValueError("Relation qualifications is not included")
+        return self._qualifications
 
     @property
     def phone_numbers(self) -> list[jubladb_api.generated.entities.keys.PhoneNumberKey]:
@@ -202,6 +224,14 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
         return self._additional_emails
 
     @property
+    def event_participations(
+        self,
+    ) -> list[jubladb_api.generated.entities.keys.EventParticipationKey]:
+        if self._event_participations is None:
+            raise ValueError("Relation event_participations is not included")
+        return self._event_participations
+
+    @property
     def key(self) -> jubladb_api.generated.entities.keys.PersonKey:
         return jubladb_api.generated.entities.keys.PersonKey(self._id)
 
@@ -215,9 +245,11 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
             "primary_group",
             "layer_group",
             "roles",
+            "qualifications",
             "phone_numbers",
             "social_accounts",
             "additional_emails",
+            "event_participations",
         ],
     ) -> bool:
 
@@ -230,6 +262,9 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
         elif relation_name == "roles":
             return self._roles is not None
 
+        elif relation_name == "qualifications":
+            return self._qualifications is not None
+
         elif relation_name == "phone_numbers":
             return self._phone_numbers is not None
 
@@ -238,6 +273,9 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
 
         elif relation_name == "additional_emails":
             return self._additional_emails is not None
+
+        elif relation_name == "event_participations":
+            return self._event_participations is not None
 
         else:
             raise ValueError(f"relation {relation_name} does not exist on person")
@@ -325,6 +363,12 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
                 json_data,
                 "country",
                 jubladb_api.core.metamodel_classes.AttributeType.STRING,
+                optional=True,
+            ),
+            household_key=cls._access_data_attribute(
+                json_data,
+                "household_key",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
             ),
             primary_group_id=cls._access_data_attribute(
                 json_data,
@@ -340,6 +384,11 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
                 json_data,
                 "birthday",
                 jubladb_api.core.metamodel_classes.AttributeType.DATE,
+            ),
+            language=cls._access_data_attribute(
+                json_data,
+                "language",
+                jubladb_api.core.metamodel_classes.AttributeType.STRING,
             ),
             picture=cls._access_data_attribute(
                 json_data,
@@ -357,11 +406,6 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
                 jubladb_api.core.metamodel_classes.AttributeType.STRING,
                 optional=True,
             ),
-            language=cls._access_data_attribute(
-                json_data,
-                "language",
-                jubladb_api.core.metamodel_classes.AttributeType.STRING,
-            ),
             primary_group=cls._create_single_relation_key(
                 json_data,
                 "primary_group",
@@ -376,6 +420,12 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
             ),
             roles=cls._create_many_relation_keys(
                 json_data, "roles", "roles", jubladb_api.generated.entities.keys.RoleKey
+            ),
+            qualifications=cls._create_many_relation_keys(
+                json_data,
+                "qualifications",
+                "qualifications",
+                jubladb_api.generated.entities.keys.QualificationKey,
             ),
             phone_numbers=cls._create_many_relation_keys(
                 json_data,
@@ -394,6 +444,12 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
                 "additional_emails",
                 "additional_emails",
                 jubladb_api.generated.entities.keys.AdditionalEmailKey,
+            ),
+            event_participations=cls._create_many_relation_keys(
+                json_data,
+                "event_participations",
+                "event_participations",
+                jubladb_api.generated.entities.keys.EventParticipationKey,
             ),
         )
 

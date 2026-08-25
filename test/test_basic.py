@@ -26,4 +26,4 @@ class TestBasic(unittest.TestCase):
         self.assertEqual(200, len(events))
 
     def test_access_forbidden(self):
-        self.assertRaises(jubladb_api.client.JublaDbError, lambda: self.client.get_group(9))
+        self.assertRaises(jubladb_api.client.JublaDbError, lambda: self.client.get_group(89654))

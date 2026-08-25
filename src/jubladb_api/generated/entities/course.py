@@ -40,6 +40,9 @@ class Course(jubladb_api.core.base_entity.BaseEntity):
         contact: jubladb_api.generated.entities.keys.PersonKey | None,
         kind: jubladb_api.generated.entities.keys.EventKindKey | None,
         dates: list[jubladb_api.generated.entities.keys.DateKey] | None,
+        participations: (
+            list[jubladb_api.generated.entities.keys.EventParticipationKey] | None
+        ),
         leaders: list[jubladb_api.generated.entities.keys.PersonKey] | None,
     ):
         super().__init__(id_)
@@ -71,6 +74,7 @@ class Course(jubladb_api.core.base_entity.BaseEntity):
         self._contact = contact
         self._kind = kind
         self._dates = dates
+        self._participations = participations
         self._leaders = leaders
 
     @property
@@ -184,6 +188,14 @@ class Course(jubladb_api.core.base_entity.BaseEntity):
         return self._dates
 
     @property
+    def participations(
+        self,
+    ) -> list[jubladb_api.generated.entities.keys.EventParticipationKey]:
+        if self._participations is None:
+            raise ValueError("Relation participations is not included")
+        return self._participations
+
+    @property
     def leaders(self) -> list[jubladb_api.generated.entities.keys.PersonKey]:
         if self._leaders is None:
             raise ValueError("Relation leaders is not included")
@@ -203,6 +215,7 @@ class Course(jubladb_api.core.base_entity.BaseEntity):
             "contact",
             "kind",
             "dates",
+            "participations",
             "leaders",
         ],
     ) -> bool:
@@ -215,6 +228,9 @@ class Course(jubladb_api.core.base_entity.BaseEntity):
 
         elif relation_name == "dates":
             return self._dates is not None
+
+        elif relation_name == "participations":
+            return self._participations is not None
 
         elif relation_name == "leaders":
             return self._leaders is not None
@@ -360,6 +376,12 @@ class Course(jubladb_api.core.base_entity.BaseEntity):
             ),
             dates=cls._create_many_relation_keys(
                 json_data, "dates", "dates", jubladb_api.generated.entities.keys.DateKey
+            ),
+            participations=cls._create_many_relation_keys(
+                json_data,
+                "participations",
+                "event_participations",
+                jubladb_api.generated.entities.keys.EventParticipationKey,
             ),
             leaders=cls._create_many_relation_keys(
                 json_data,
