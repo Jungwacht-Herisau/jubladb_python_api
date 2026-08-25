@@ -28,7 +28,7 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
         zip_code: str,
         town: str,
         country: str | None,
-        household_key: str,
+        household_key: str | None,
         primary_group_id: int,
         gender: str,
         birthday: datetime.date,
@@ -144,7 +144,7 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
         return self._country
 
     @property
-    def household_key(self) -> str:
+    def household_key(self) -> str | None:
         return self._household_key
 
     @property
@@ -369,6 +369,7 @@ class Person(jubladb_api.core.base_entity.BaseEntity):
                 json_data,
                 "household_key",
                 jubladb_api.core.metamodel_classes.AttributeType.STRING,
+                optional=True,
             ),
             primary_group_id=cls._access_data_attribute(
                 json_data,
